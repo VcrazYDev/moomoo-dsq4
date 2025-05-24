@@ -1,3 +1,7 @@
+// ==UserScript==
+// @name         localserver.js
+// @description  try to take over the world!
+// ==/UserScript==
 var MODE = "NORMAL"
 var PASSWORD = "kooky"
 var PREFIX = "!"
@@ -37,117 +41,117 @@ const mathPOW = Math.pow;
 const config = {};
 config.maxScreenWidth = 1920;
 config.maxScreenHeight = 1080;
-    
-        // SERVER:
+
+// SERVER:
 config.serverUpdateRate = 9;
-        config.maxPlayers =  40;
-        config.maxPlayersHard =  config.maxPlayers + 10;
-        config.collisionDepth = 6;
-        config.minimapRate = 3000;
-    
-        // COLLISIONS:
-        config.colGrid = 10;
-    
-        // CLIENT:
-        config.clientSendRate = 5;
-    
-        // UI:
-        config.healthBarWidth = 50;
-        config.healthBarPad = 4.5;
-        config.iconPadding = 15;
-        config.iconPad = 0.9;
-        config.deathFadeout = 3000;
-        config.crownIconScale = 60;
-        config.crownPad = 35;
-    
-        // CHAT:
-        config.chatCountdown = 3000;
-        config.chatCooldown = 500;
-    
-        // SANDBOX:
-        config.inSandbox = true;
-    
-        // PLAYER:
-        config.maxAge = 100;
-        config.gatherAngle = Math.PI/2.6;
-        config.gatherWiggle = 10;
-        config.hitReturnRatio = 0.25;
-        config.hitAngle = Math.PI / 2;
-        config.playerScale = 35;
-        config.playerSpeed = 0.0016;
-        config.playerDecel = 0.993;
-        config.nameY = 34;
-    
-        // CUSTOMIZATION:
-        config.skinColors = ["#bf8f54", "#cbb091", "#896c4b",
-            "#fadadc", "#ececec", "#c37373", "#4c4c4c", "#ecaff7", "#738cc3",
-             "#8bc373"];
-    
-        // ANIMALS:
-        config.animalCount = 7;
-        config.aiTurnRandom = 0.06;
-        config.cowNames = ["Sid", "Steph", "Bmoe", "Romn", "Jononthecool", "Fiona", "Vince", "Nathan", "Nick", "Flappy", "Ronald", "Otis", "Pepe", "Mc Donald", "Theo", "Fabz", "Oliver", "Jeff", "Jimmy", "Helena", "Reaper",
-            "Ben", "Alan", "Naomi", "XYZ", "Clever", "Jeremy", "Mike", "Destined", "Stallion", "Allison", "Meaty", "Sophia", "Vaja", "Joey", "Pendy", "Murdoch", "Theo", "Jared", "July", "Sonia", "Mel", "Dexter", "Quinn", "Milky"];
-    
-        // WEAPONS:
-        config.shieldAngle = Math.PI/3;
-        config.weaponVariants = [{
-            id: 0,
-            src: "",
-            xp: 0,
-            val: 1
-        }, {
-            id: 1,
-            src: "_g",
-            xp: 3000,
-            val: 1.1
-        }, {
-            id: 2,
-            src: "_d",
-            xp: 7000,
-            val: 1.18
-        }, {
-            id: 3,
-            src: "_r",
-            poison: true,
-            xp: 12000,
-            val: 1.18
-        }];
-        config.fetchVariant = function(player) {
-            var tmpXP = player.weaponXP[player.weaponIndex]||0;
-            for (var i = config.weaponVariants.length - 1; i >= 0; --i) {
-                if (tmpXP >= config.weaponVariants[i].xp)
-                    return config.weaponVariants[i];
-            }
-        };
-    
-        // NATURE:
-        config.resourceTypes = ["wood", "food", "stone", "points"];
-        config.areaCount = 7;
-        config.treesPerArea = 9;
-        config.bushesPerArea = 3;
-        config.totalRocks = 32;
-        config.goldOres = 7;
-        config.riverWidth = 724;
-        config.riverPadding = 114;
-        config.waterCurrent = 0.0011;
-        config.waveSpeed = 0.0001;
-        config.waveMax = 1.3;
-        config.treeScales = [150, 160, 165, 175];
-        config.bushScales = [80, 85, 95];
-        config.rockScales = [80, 85, 90];
-    
-        // BIOME DATA:
-        config.snowBiomeTop = 2400;
-        config.snowSpeed = 0.75;
-    
-        // DATA:
-        config.maxNameLength = 15;
-    
-        // MAP:
-        config.mapScale = 14400;
-        config.mapPingScale = 40;
-        config.mapPingTime = 2200;
+config.maxPlayers =  40;
+config.maxPlayersHard =  config.maxPlayers + 10;
+config.collisionDepth = 6;
+config.minimapRate = 3000;
+
+// COLLISIONS:
+config.colGrid = 10;
+
+// CLIENT:
+config.clientSendRate = 5;
+
+// UI:
+config.healthBarWidth = 50;
+config.healthBarPad = 4.5;
+config.iconPadding = 15;
+config.iconPad = 0.9;
+config.deathFadeout = 3000;
+config.crownIconScale = 60;
+config.crownPad = 35;
+
+// CHAT:
+config.chatCountdown = 3000;
+config.chatCooldown = 500;
+
+// SANDBOX:
+config.inSandbox = true;
+
+// PLAYER:
+config.maxAge = 100;
+config.gatherAngle = Math.PI/2.6;
+config.gatherWiggle = 10;
+config.hitReturnRatio = 0.25;
+config.hitAngle = Math.PI / 2;
+config.playerScale = 35;
+config.playerSpeed = 0.0016;
+config.playerDecel = 0.993;
+config.nameY = 34;
+
+// CUSTOMIZATION:
+config.skinColors = ["#bf8f54", "#cbb091", "#896c4b",
+                     "#fadadc", "#ececec", "#c37373", "#4c4c4c", "#ecaff7", "#738cc3",
+                     "#8bc373"];
+
+// ANIMALS:
+config.animalCount = 7;
+config.aiTurnRandom = 0.06;
+config.cowNames = ["Sid", "Steph", "Bmoe", "Romn", "Jononthecool", "Fiona", "Vince", "Nathan", "Nick", "Flappy", "Ronald", "Otis", "Pepe", "Mc Donald", "Theo", "Fabz", "Oliver", "Jeff", "Jimmy", "Helena", "Reaper",
+                   "Ben", "Alan", "Naomi", "XYZ", "Clever", "Jeremy", "Mike", "Destined", "Stallion", "Allison", "Meaty", "Sophia", "Vaja", "Joey", "Pendy", "Murdoch", "Theo", "Jared", "July", "Sonia", "Mel", "Dexter", "Quinn", "Milky"];
+
+// WEAPONS:
+config.shieldAngle = Math.PI/3;
+config.weaponVariants = [{
+    id: 0,
+    src: "",
+    xp: 0,
+    val: 1
+}, {
+    id: 1,
+    src: "_g",
+    xp: 3000,
+    val: 1.1
+}, {
+    id: 2,
+    src: "_d",
+    xp: 7000,
+    val: 1.18
+}, {
+    id: 3,
+    src: "_r",
+    poison: true,
+    xp: 12000,
+    val: 1.18
+}];
+config.fetchVariant = function(player) {
+    var tmpXP = player.weaponXP[player.weaponIndex]||0;
+    for (var i = config.weaponVariants.length - 1; i >= 0; --i) {
+        if (tmpXP >= config.weaponVariants[i].xp)
+            return config.weaponVariants[i];
+    }
+};
+
+// NATURE:
+config.resourceTypes = ["wood", "food", "stone", "points"];
+config.areaCount = 7;
+config.treesPerArea = 9;
+config.bushesPerArea = 3;
+config.totalRocks = 32;
+config.goldOres = 7;
+config.riverWidth = 724;
+config.riverPadding = 114;
+config.waterCurrent = 0.0011;
+config.waveSpeed = 0.0001;
+config.waveMax = 1.3;
+config.treeScales = [150, 160, 165, 175];
+config.bushScales = [80, 85, 95];
+config.rockScales = [80, 85, 90];
+
+// BIOME DATA:
+config.snowBiomeTop = 2400;
+config.snowSpeed = 0.75;
+
+// DATA:
+config.maxNameLength = 15;
+
+// MAP:
+config.mapScale = 14400;
+config.mapPingScale = 40;
+config.mapPingTime = 2200;
 
 const UTILS = {};
 UTILS.randInt = function (min, max) {
@@ -271,26 +275,26 @@ UTILS.hookTouchEvents = function (element, skipPrevent) {
         isHovering = true;
     }
     function touchMove(e) {
-            UTILS.mousifyTouchEvent(e);
-            window.setUsingTouch(true);
-            if (preventDefault) {
-                e.preventDefault();
-                e.stopPropagation();
+        UTILS.mousifyTouchEvent(e);
+        window.setUsingTouch(true);
+        if (preventDefault) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        if (UTILS.containsPoint(element, e.pageX, e.pageY)) {
+            if (!isHovering) {
+                if (element.onmouseover)
+                    element.onmouseover(e);
+                isHovering = true;
             }
-            if (UTILS.containsPoint(element, e.pageX, e.pageY)) {
-                if (!isHovering) {
-                    if (element.onmouseover)
-                        element.onmouseover(e);
-                    isHovering = true;
-                }
-            } else {
-                if (isHovering) {
-                    if (element.onmouseout)
-                        element.onmouseout(e);
-                    isHovering = false;
-                }
+        } else {
+            if (isHovering) {
+                if (element.onmouseout)
+                    element.onmouseout(e);
+                isHovering = false;
             }
         }
+    }
     function touchEnd(e) {
         UTILS.mousifyTouchEvent(e);
         window.setUsingTouch(true);
@@ -475,7 +479,7 @@ class Tribe {
     getMembers() {
         return this.members
             .map(sid => this.findPlayerBySID(sid))
-            .filter(player => player)
+            .filter(player => player) // Évite les valeurs undefined
             .map(player => [player.sid, player.name]);
     }
 }
@@ -551,13 +555,13 @@ class GameObject {
     getScale(sM, ig) {
         sM = sM||1;
         return this.scale * ((this.isItem||this.type==2||this.type==3||this.type==4)
-            ?1:(0.6*sM)) * (ig?1:this.colDiv);
+                             ?1:(0.6*sM)) * (ig?1:this.colDiv);
     };
 
     // VISIBLE TO PLAYER:
     visibleToPlayer(player) {
         return !(this.hideFromEnemy) || (this.owner && (this.owner == player ||
-            (this.owner.team && player.team == this.owner.team)));
+                                                        (this.owner.team && player.team == this.owner.team)));
     };
 
     // UPDATE:
@@ -744,7 +748,7 @@ class ObjectManager {
                 this.disableObj(tmpObj);
                 server.broadcast("12", tmpObj.sid);
                 if (tmpObj.owner) {
-                     tmpObj.owner.changeItemCount(tmpObj.group.id, -1);
+                    tmpObj.owner.changeItemCount(tmpObj.group.id, -1);
                 }
                 break;
             }
@@ -756,12 +760,12 @@ class ObjectManager {
     checkItemLocation(x, y, s, sM, indx, ignoreWater, placer) {
         for (var i = 0; i < gameObjects.length; ++i) {
             var blockS = (gameObjects[i].blocker?
-                gameObjects[i].blocker:gameObjects[i].getScale(sM, gameObjects[i].isItem));
+                          gameObjects[i].blocker:gameObjects[i].getScale(sM, gameObjects[i].isItem));
             if (gameObjects[i].active && UTILS.getDistance(x, y, gameObjects[i].x,
-                gameObjects[i].y) < (s + blockS))
+                                                           gameObjects[i].y) < (s + blockS))
                 return false;
         } if (!ignoreWater && indx != 18 && y >= (config.mapScale / 2) - (config.riverWidth / 2) && y <=
-            (config.mapScale / 2) + (config.riverWidth / 2)) {
+              (config.mapScale / 2) + (config.riverWidth / 2)) {
             return false;
         }
         return true;
@@ -810,7 +814,7 @@ class ObjectManager {
                         player.yVel *= 0.75;
                     }
                     if (other.dmg && other.owner != player && !(other.owner &&
-                        other.owner.team && other.owner.team == player.team)) {
+                                                                other.owner.team && other.owner.team == player.team)) {
                         player.changeHealth(-other.dmg, other.owner, other);
                         var tmpSpd = 1.5 * (other.weightM||1);
                         player.xVel += tmpSpd * mathCOS(tmpDir);
@@ -826,7 +830,7 @@ class ObjectManager {
                         }
                     }
                 } else if (other.trap && !player.noTrap && other.owner != player && !(other.owner &&
-                    other.owner.team && other.owner.team == player.team)) {
+                                                                                      other.owner.team && other.owner.team == player.team)) {
                     player.lockMove = true;
                     other.hideFromEnemy = false;
                 } else if (other.boostSpeed) {
@@ -2023,7 +2027,7 @@ const accessories = [{
 
 class Projectile {
     constructor() {}
-    
+
     // INIT:
     init(indx, x, y, dir, spd, dmg, rng, scl, owner) {
         console.log("creation projectile")
@@ -2069,7 +2073,7 @@ class Projectile {
                     if (!this.sentTo[players[i].id] && players[i].canSee(this)) {
                         this.sentTo[players[i].id] = 1;
                         server.send(players[i].id, "18", UTILS.fixTo(this.x, 1), UTILS.fixTo(this.y, 1),
-                            UTILS.fixTo(this.dir, 2), UTILS.fixTo(this.range, 1), this.speed, this.indx, this.layer, this.sid);
+                                    UTILS.fixTo(this.dir, 2), UTILS.fixTo(this.range, 1), this.speed, this.indx, this.layer, this.sid);
                     }
                 }
                 this.objectsHit.length = 0;
@@ -2077,9 +2081,9 @@ class Projectile {
                     this.tmpObj = players[i];
                     if (this.tmpObj.alive && this.tmpObj != this.owner && !(this.owner.team && this.tmpObj.team == this.owner.team)) {
                         if (UTILS.lineInRect(tmpObj.x-tmpObj.scale, tmpObj.y-tmpObj.scale, tmpObj.x+tmpObj.scale,
-                            this.tmpObj.y+this.tmpObj.scale, this.x, this.y, this.x+(tmpSpeed*Math.cos(this.dir)),
-                            this.y+(tmpSpeed*Math.sin(this.dir)))) {
-                                this.objectsHit.push(this.tmpObj);
+                                             this.tmpObj.y+this.tmpObj.scale, this.x, this.y, this.x+(tmpSpeed*Math.cos(this.dir)),
+                                             this.y+(tmpSpeed*Math.sin(this.dir)))) {
+                            this.objectsHit.push(this.tmpObj);
                         }
                     }
                 }
@@ -2089,9 +2093,9 @@ class Projectile {
                         this.tmpObj = tmpList[x][y];
                         tmpScale = this.tmpObj.getScale();
                         if (this.tmpObj.active && !(this.ignoreObj == this.tmpObj.sid) && (this.layer <= this.tmpObj.layer) &&
-                        this.objectsHit.indexOf(this.tmpObj) < 0 && !this.tmpObj.ignoreCollision && UTILS.lineInRect(this.tmpObj.x-tmpScale, this.tmpObj.y-tmpScale, this.tmpObj.x+tmpScale, this.tmpObj.y+tmpScale,
-                            this.x, this.y, this.x+(tmpSpeed*Math.cos(this.dir)), this.y+(tmpSpeed*Math.sin(this.dir)))) {
-                                this.objectsHit.push(this.tmpObj);
+                            this.objectsHit.indexOf(this.tmpObj) < 0 && !this.tmpObj.ignoreCollision && UTILS.lineInRect(this.tmpObj.x-tmpScale, this.tmpObj.y-tmpScale, this.tmpObj.x+tmpScale, this.tmpObj.y+tmpScale,
+                                                                                                                         this.x, this.y, this.x+(tmpSpeed*Math.cos(this.dir)), this.y+(tmpSpeed*Math.sin(this.dir)))) {
+                            this.objectsHit.push(this.tmpObj);
                         }
                     }
                 }
@@ -2113,7 +2117,7 @@ class Projectile {
                         hitObj.xVel += tmpSd * Math.cos(this.dir);
                         hitObj.yVel += tmpSd * Math.sin(this.dir);
                         if (hitObj.weaponIndex == undefined || (!(items.weapons[hitObj.weaponIndex].shield &&
-                            UTILS.getAngleDist(this.dir+Math.PI, hitObj.dir) <= config.shieldAngle))) {
+                                                                  UTILS.getAngleDist(this.dir+Math.PI, hitObj.dir) <= config.shieldAngle))) {
                             hitObj.changeHealth(-this.dmg, this.owner, this.owner);
                         }
                     } else {
@@ -2241,6 +2245,7 @@ class Player {
         this.noMovTimer = 0;
         this.maxXP = 300;
         this.XP = 0;
+        this.autoAttackOn = false;
         this.age = 1;
         this.kills = 0;
         this.upgrAge = 2;
@@ -3035,6 +3040,10 @@ window.WebSocket = class {
     send(msg) {
         const [id, data] = msgpack.decode(msg);
 
+        if (id == "pp") {
+            server.send("self", "pp")
+        }
+
         if (id == "sp") {
             player = new Player("self", 0);
             if (player) {
@@ -3051,6 +3060,12 @@ window.WebSocket = class {
                 encounterPlayer(player);
                 players.push(player);
                 for (let i = 0; i < 9; i++) player.earnXP(player.maxXP);
+            }
+        }
+
+        if (id == "rmd") {
+            if (player && player.alive) {
+                player.resetMoveDir();
             }
         }
 
@@ -3113,8 +3128,18 @@ window.WebSocket = class {
             }
         }
 
+        if (id == "7") {
+            if (player && player.alive) {
+                if (data[0] === 0) {
+                    player.lockDir = player.lockDir ? 0 : 1
+                } else if (data[0] === 1) {
+                    player.autoGather = player.autoGather ? 0 : 1
+                }
+            }
+        }
+
         if (id == "6") {
-             if (items.weapons[data[0]]) {
+            if (items.weapons[data[0]]) {
                 player.weaponIndex = data[0];
                 player.weapons[data[0] < 9 ? 0 : 1] = data[0];
                 server.send("self", "17", [player.weapons, 1]);
@@ -3251,7 +3276,7 @@ window.WebSocket = class {
                 } else if (data[0] === PREFIX + "die") {
                     player.kill(player)
                 } else if (data[0].startsWith(`${PREFIX}upgrade`)) {
-                    msg = data[0].replace(PREFIX + "upgrade ", "")
+                   msg = data[0].replace(PREFIX + "upgrade ", "")
                     // sendUpgrade(parseInt(msg))
                     } else if (data[0].startsWith(PREFIX + "dmg")) {
                         if (data[0] === PREFIX + "dmg") {
@@ -3272,5 +3297,90 @@ window.WebSocket = class {
                 server.broadcast("ch", [player.sid, data[0].toString()])
             }
         }
+
+        if (id == "8") {
+            if (typeof data[0] !== "string" || data[0].length <= 0) return
+
+            if (player && player.alive) {
+                if (tribeManager.getTribe(data[0]) == null) {
+                    const tmpClan = tribeManager.createTribe(data[0], player)
+                    server.broadcast("ac", [tmpClan.getData()])
+                    server.send("self", "st", [data[0], 1])
+                }
+            }
+        }
+
+        if (id == "9") {
+            if (player && player.alive) {
+                if (player.isLeader) {
+                    server.broadcast("ad", [player.team])
+                    tribeManager.deleteTribe(player.team)
+                } else {
+                    tribeManager.getTribe(player.team).removePlayer(player)
+                    server.send("self", "st", [null, 0])
+                }
+            }
+        }
+
+        if (id == "13") {
+            if (player && player.alive && player.isLeader) {
+                const tmpObj = findPlayerBySID(data[0])
+                if (tmpObj) {
+                    tribeManager.getTribe(player.team).removePlayer(tmpObj)
+                    server.send(tmpObj.id, "st", [null, 0])
+                }
+            }
+        }
+
+        if (id == "10") {
+            if (player && player.alive && player.isLeader) {
+                const tmpClan = tribeManager.getTribe(data[0])
+                if (tmpClan) {
+                    let isRequestSent = false
+                    for (let i = 0; i < tmpClan.joinQueue.length; i++) {
+                        if (tmpClan.joinQueue[i][1] === "self") {
+                            isRequestSent = true
+                            break
+                        }
+                    }
+
+                    if (!isRequestSent) {
+                        tmpClan.joinQueue.push([player.sid, player.id])
+                        server.send(findPlayerBySID(tmpClan.ownerID).id, "an", [player.sid, player.name])
+                    }
+                }
+            }
+        }
+
+        if (id == "11") {
+            if (player && player.alive && player.isLeader) {
+                const tmpObj = findPlayerBySID(data[0])
+                const tmpClan = tribeManager.getTribe(player.team)
+                if (tmpClan && tmpObj) {
+                    let queue = tmpClan.joinQueue.shift()
+                    if (queue[1] !== tmpObj.id) return
+                    if (data[1] && tmpObj.team == null) {
+                        tmpClan.addPlayer(tmpObj)
+                        server.send(tmpObj.id, "st", [player.team, 0])
+                    }
+                }
+            }
+        }
+
+        if (id == "14") {
+            if (data[0]) {
+                if (player && player.alive) {
+                    if (player.team) {
+                        for (let i = 0; i < players.length; i++) {
+                            if (players[i] && players[i].team === player.team) {
+                                server.send(players[i].id, "p", [player.x, player.y])
+                            }
+                        }
+                    } else {
+                        server.send("self", "p", [player.x, player.y])
+                    }
+                }
+            }
+        }
     }
-};
+}
