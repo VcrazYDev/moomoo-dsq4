@@ -3047,20 +3047,17 @@ window.WebSocket = class {
         if (id == "sp") {
             player = new Player("self", 0);
             if (player) {
-                player.spawn();
-                player.resetResources();
-                player.setUserData({
-                    name: data[0].name,
-                    skinColor: data[0].skinColor
-                });
-                player.visible = false
-                /*const location = objectManager.fetchSpawnObj(player.sid) || [UTILS.randInt(0, config.mapScale), UTILS.randInt(0, config.mapScale)]
-                player.setData([player.id, player.sid, data[0].name, location[0], location[1], 0, 100, 100, config.playerScale, data[0].skin])*/
-                this.receive("1", 0);
-                encounterPlayer(player);
-                players.push(player);
-                for (let i = 0; i < 9; i++) player.earnXP(player.maxXP);
-            }
+            player.spawn();
+            player.resetResources();
+            player.setUserData({
+                name: data[0].name,
+                skinColor: data[0].skinColor
+            });
+            this.receive("1", 0);
+            encounterPlayer(player);
+            players.push(player);
+            for (let i = 0; i < 9; i++) player.earnXP(player.maxXP);
+        }
         }
 
         /*if (id == "rmd") {
@@ -3276,23 +3273,23 @@ window.WebSocket = class {
                 } else if (data[0] === PREFIX + "die") {
                     player.kill(player)
                 } else if (data[0].startsWith(`${PREFIX}upgrade`)) {
-                    msg = data[0].replace(PREFIX + "upgrade ", "")
+                   msg = data[0].replace(PREFIX + "upgrade ", "")
                     // sendUpgrade(parseInt(msg))
-                } else if (data[0].startsWith(PREFIX + "dmg")) {
-                    if (data[0] === PREFIX + "dmg") {
-                        player.customDmg = null
-                    } else {
-                        var dmg = data[0].replace(PREFIX + "dmg ", "")
-                        if (UTILS.isNumber(parseFloat(dmg))) {
-                            player.customDmg = parseFloat(dmg)
+                    } else if (data[0].startsWith(PREFIX + "dmg")) {
+                        if (data[0] === PREFIX + "dmg") {
+                            player.customDmg = null
+                        } else {
+                            var dmg = data[0].replace(PREFIX + "dmg ", "")
+                            if (UTILS.isNumber(parseFloat(dmg))) {
+                                player.customDmg = parseFloat(dmg)
+                            }
+                        }
+                    } else if (data[0] === PREFIX + "breakall") {
+                        objectManager.removeAllItems(player.sid, server)
+                        for (let i = 0; i < items.groups.length; i++) {
+                            player.changeItemAllCount(i, 0)
                         }
                     }
-                } else if (data[0] === PREFIX + "breakall") {
-                    objectManager.removeAllItems(player.sid, server)
-                    for (let i = 0; i < items.groups.length; i++) {
-                        player.changeItemAllCount(i, 0)
-                    }
-                }
             } else {
                 server.broadcast("ch", [player.sid, data[0].toString()])
             }
