@@ -3046,7 +3046,7 @@ window.WebSocket = class {
 
         if (id == "sp") {
             player = new Player("self", 0);
-            if (player) {
+            //if (player) {
                 player.spawn();
                 player.resetResources();
                 player.setUserData({
@@ -3060,7 +3060,7 @@ window.WebSocket = class {
                 encounterPlayer(player);
                 players.push(player);
                 for (let i = 0; i < 9; i++) player.earnXP(player.maxXP);
-            }
+           // }
         }
 
         /*if (id == "rmd") {
