@@ -2402,37 +2402,37 @@ class Player {
     };
 
   useTool(delta) {
-if (this.buildIndex < 0) {
-                    if (this.reloads[this.weaponIndex] > 0) {
-                        this.reloads[this.weaponIndex] -= delta;
-                        this.gathering = this.mouseState;
-                    } else if (this.gathering || this.autoGather) {
-                        var worked = true;
-                        if (items.weapons[this.weaponIndex].gather != undefined) {
-                            this.gather(players);
-                        } else if (items.weapons[this.weaponIndex].projectile != undefined &&
-                                   this.hasRes(items.weapons[this.weaponIndex], (this.skin?this.skin.projCost:0))) {
-                            this.useRes(items.weapons[this.weaponIndex], (this.skin?this.skin.projCost:0));
-                            this.noMovTimer = 0;
-                            var tmpIndx = items.weapons[this.weaponIndex].projectile;
-                            var projOffset = this.scale * 2;
-                            var aMlt = (this.skin&&this.skin.aMlt)?this.skin.aMlt:1;
-                            if (items.weapons[this.weaponIndex].rec) {
-                                this.xVel -= items.weapons[this.weaponIndex].rec * mathCOS(this.dir);
-                                this.yVel -= items.weapons[this.weaponIndex].rec * mathSIN(this.dir);
-                            }
-                            projectileManager.addProjectile(this.x+(projOffset*mathCOS(this.dir)),
-                                                            this.y+(projOffset*mathSIN(this.dir)), this.dir, items.projectiles[tmpIndx].range*aMlt,
-                                                            items.projectiles[tmpIndx].speed*aMlt, tmpIndx, this, null, this.zIndex);
-                        } else {
-                            worked = false;
-                        }
-                        this.gathering = this.mouseState;
-                        if (worked) {
-                            this.reloads[this.weaponIndex] = items.weapons[this.weaponIndex].speed*(this.skin?(this.skin.atkSpd||1):1);
-                        }
+        if (this.buildIndex < 0) {
+            this.gathering = this.mouseState || this.hits > 0;
+            if (this.reloads[this.weaponIndex] > 0) {
+                this.reloads[this.weaponIndex] -= delta;
+            } else if (this.gathering || this.autoGather) {
+                var worked = true;
+                if (items.weapons[this.weaponIndex].gather != undefined) {
+                    this.gather(players);
+                } else if (items.weapons[this.weaponIndex].projectile != undefined &&
+                           this.hasRes(items.weapons[this.weaponIndex], (this.skin?this.skin.projCost:0))) {
+                    this.useRes(items.weapons[this.weaponIndex], (this.skin?this.skin.projCost:0));
+                    this.noMovTimer = 0;
+                    var tmpIndx = items.weapons[this.weaponIndex].projectile;
+                    var projOffset = this.scale * 2;
+                    var aMlt = (this.skin&&this.skin.aMlt)?this.skin.aMlt:1;
+                    if (items.weapons[this.weaponIndex].rec) {
+                        this.xVel -= items.weapons[this.weaponIndex].rec * mathCOS(this.dir);
+                        this.yVel -= items.weapons[this.weaponIndex].rec * mathSIN(this.dir);
                     }
+                    projectileManager.addProjectile(this.x+(projOffset*mathCOS(this.dir)),
+                                                    this.y+(projOffset*mathSIN(this.dir)), this.dir, items.projectiles[tmpIndx].range*aMlt,
+                                                    items.projectiles[tmpIndx].speed*aMlt, tmpIndx, this, null, this.zIndex);
+                } else {
+                    worked = false;
                 }
+                this.gathering = this.mouseState;
+                if (worked) {
+                    this.reloads[this.weaponIndex] = items.weapons[this.weaponIndex].speed*(this.skin?(this.skin.atkSpd||1):1);
+                }
+            }
+        }
     }
 
     // ADD WEAPON XP:
