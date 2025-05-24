@@ -2960,6 +2960,13 @@ window.WebSocket = class {
             player.dir = data[0];
         }
 
+                if (id == "7") {
+            if (data[0] && player.buildIndex == -1) {
+                player.hits++;
+            }
+        }
+
+
         if (id == "5") {
             if (data[1]) {
                 player.buildIndex = -1;
