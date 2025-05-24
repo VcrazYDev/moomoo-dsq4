@@ -1,5 +1,25 @@
+var MODE = "NORMAL"
+var PASSWORD = "kooky"
+var PREFIX = "!"
+const PORT = "1234" || 1234
 let player;
 let server;
+function findPlayerByID(id) {
+    for (let i = 0; i < players.length; ++i) {
+        if (players[i].id === id) {
+            return players[i]
+        }
+    }
+    return null
+}
+function findPlayerBySID(sid) {
+    for (let i = 0; i < players.length; ++i) {
+        if (players[i].sid === sid) {
+            return players[i]
+        }
+    }
+    return null
+}
 
 let gameObjects = [];
 
@@ -369,6 +389,98 @@ UTILS.countInArray = function(array, val) {
         if (array[i] === val) count++;
     } return count;
 };
+
+class TribeManager {
+    constructor(Tribe, findPlayerBySID, server) {
+        this.tribes = {};
+        this.Tribe = Tribe;
+        this.findPlayerBySID = findPlayerBySID;
+        this.server = server;
+    }
+
+    createTribe(name, player) {
+        const newTribe = new this.Tribe(name, this.findPlayerBySID, this.server);
+        this.tribes[name] = newTribe;
+        newTribe.addPlayer(player);
+        return newTribe;
+    }
+
+    deleteTribe(name) {
+        const tmpTribe = this.tribes[name];
+        if (!tmpTribe) return;
+
+        tmpTribe.members.forEach(memberId => {
+            const tmpPlayer = this.findPlayerBySID(memberId);
+            if (tmpPlayer) {
+                tmpPlayer.team = null;
+                tmpPlayer.isLeader = false;
+                this.server.send(tmpPlayer.id, "st", [null, 0]);
+            }
+        });
+
+        delete this.tribes[name];
+    }
+
+    getTribe(name) {
+        return this.tribes[name] || null;
+    }
+}
+
+class Tribe {
+    constructor(name, findPlayerBySID, server) {
+        this.name = name;
+        this.members = [];
+        this.ownerID = null;
+        this.joinQueue = [];
+        this.findPlayerBySID = findPlayerBySID;
+        this.server = server;
+    }
+
+    addPlayer(player) {
+        player.team = this.name;
+        if (this.ownerID === null) {
+            this.ownerID = player.sid;
+            player.isLeader = true;
+        }
+        this.members.push(player.sid);
+
+        this.members.forEach(memberSid => {
+            const tmpPlayer = this.findPlayerBySID(memberSid);
+            if (tmpPlayer) {
+                this.server.send(tmpPlayer.id, "sa", [this.getMembers()]);
+            }
+        });
+    }
+
+    removePlayer(player) {
+        player.team = null;
+        player.isLeader = false;
+        this.members = this.members.filter(memberSid => memberSid !== player.sid);
+
+        this.members.forEach(memberSid => {
+            const tmpPlayer = this.findPlayerBySID(memberSid);
+            if (tmpPlayer) {
+                this.server.send(tmpPlayer.id, "sa", [this.getMembers()]);
+            }
+        });
+    }
+
+    getData() {
+        return {
+            sid: this.name,
+            ownerID: this.ownerID
+        };
+    }
+
+    getMembers() {
+        return this.members
+            .map(sid => this.findPlayerBySID(sid))
+            .filter(player => player)
+            .map(player => [player.sid, player.name]);
+    }
+}
+
+let tribeManager = new TribeManager(Tribe, findPlayerBySID, server)
 
 class GameObject {
     constructor(sid) {
