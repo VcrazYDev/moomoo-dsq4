@@ -2847,7 +2847,7 @@ function gameLoop() {
 
 // INIT SERVER
 
-let bots = 200
+let bots = 1
 
 const botOffset = 500;
 
