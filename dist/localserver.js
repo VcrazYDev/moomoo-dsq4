@@ -1,7 +1,4 @@
-// ==UserScript==
-// @name         localserver.js
-// @description  try to take over the world!
-// ==/UserScript==
+
 var MODE = "NORMAL"
 var PASSWORD = "kooky"
 var PREFIX = "!"
