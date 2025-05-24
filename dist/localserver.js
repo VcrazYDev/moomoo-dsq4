@@ -2961,8 +2961,14 @@ window.WebSocket = class {
         }
 
                 if (id == "7") {
-            if (data[0] && player.buildIndex == -1) {
-                player.hits++;
+            player.mouseState = data[0];
+
+            if (player.buildIndex >= 0) {
+                if (data[1]) player.dir = data[1];
+                const item = items.list[player.buildIndex];
+                if (player.buildItem(item)) {
+                    player.mouseState = 0;
+                };
             }
         }
 
