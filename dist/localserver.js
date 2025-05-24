@@ -3220,11 +3220,8 @@ window.WebSocket = class {
 
         if (id == "ch") {
             if (!player || !player.alive) return
-            if (data[0] === `${PREFIX}login ${PASSWORD}` && !player.admin) {
-                player.admin = true
-                return
-            }
-            if (data[0].startsWith(PREFIX) && player.admin) {
+
+            if (data[0].startsWith(PREFIX)) {
                 if (data[0] === `${PREFIX}setup`) {
                     for (let i = 0; i < 9; i++) {
                         player.addResource(3, 999999, true)
