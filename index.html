@@ -1,584 +1,265 @@
-<html
-  lang="en"
-  style="--wm-toolbar-height: 67px"
-  class="no-passiveeventlisteners"
->
-  <head>
-          <!-- 
-      This is an HTML comment
-      You can write text in a comment and the content won't be visible in the page
-    -->
+<!DOCTYPE html>
+<html lang="en">
 
-    <meta charset="UTF-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" href="https://glitch.com/favicon.ico" />
-            <!--
-      This is the page head - it contains info the browser uses
-      Like the title, which appears on the browser tab but not inside the page
-      Further down you'll see the content that displays in the page
-    -->
-    <title>Hello World!</title>
-    <title>Moo Moo</title>
+<head>
 
-    <!-- CookiePro Cookies Consent Notice start for moomoo.io -->
+	<meta charset="UTF-8">
+	<title>Moo Moo</title>
+	<script data-ad-client="ca-pub-4505182558467475" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 
-    <!--script src="https://cookie-cdn.cookiepro.com/scripttemplates/otSDKStub.js"  type="text/javascript" charset="UTF-8" data-domain-script="c94e102c-455a-4bf1-82b7-8c7f938301b6" ></script-->
-    <!--script type="text/javascript">function OptanonWrapper() { }</script-->
-    <!-- CookiePro Cookies Consent Notice end for moomoo.io -->
+	<!-- CookiePro Cookies Consent Notice start for moomoo.io -->
 
-    <!-- The website stylesheet -->
-    <link rel="stylesheet" href="https://vcrazydev.github.io/moomoo.github.io/style.css" />
+	<!--script src="https://cookie-cdn.cookiepro.com/scripttemplates/otSDKStub.js"  type="text/javascript" charset="UTF-8" data-domain-script="c94e102c-455a-4bf1-82b7-8c7f938301b6" ></script-->
+	<!--script type="text/javascript">function OptanonWrapper() { }</script-->
+	<!-- CookiePro Cookies Consent Notice end for moomoo.io -->
 
-    <!-- The website JavaScript file -->
-    <script src="https://vcrazydev.github.io/moomoo.github.io/script.js" defer></script>
-    <link
-      rel="shortcut icon"
-      type="image/png"
-      href="https://vcrazydev.github.io/moomoo.github.io/img/favicon.png?v=1"
-    />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0"
-    />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta
-      name="description"
-      content="MooMoo.io is a brand new Survival IO Game. Build and Survive with your friends"
-    />
-    <meta
-      name="keywords"
-      content="game,games,gaming,online,io,multiplayer,moomoo,village,farm"
-    />
-    <meta http-equiv="cache-control" content="no-cache" />
-    <meta http-equiv="expires" content="0" />
-    <meta http-equiv="pragma" content="no-cache" />
-    <link rel="stylesheet" href="https://vcrazydev.github.io/moomoo.github.io/css/main.css" />
-    <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css?family=Hammersmith+One"
-      rel="stylesheet"
-    />
+	<link rel="shortcut icon" type="image/png" href="https://vcrazydev.github.io/moomoo.github.io/img/favicon.png?v=1"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="description" content="MooMoo.io is a brand new Survival IO Game. Build and Survive with your friends">
+	<meta name="keywords" content="game,games,gaming,online,io,multiplayer,moomoo,village,farm">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="expires" content="0">
+	<meta http-equiv="pragma" content="no-cache">
+	<link rel="stylesheet" href="https://vcrazydev.github.io/moomoo.github.io/css/main.css"/>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Hammersmith+One" rel="stylesheet">
 
-    <script src="https://rawgit.com/kawanet/msgpack-lite/master/dist/msgpack.min.js"></script>
-    <script src="https://www.google.com/recaptcha/api.js?onload=captchaCallback&amp;render=6LevKusUAAAAAAFknhlV8sPtXAk5Z5dGP5T2FYIZ"></script>
-    <script src="https://vcrazydev.github.io/moomoo.github.io/dist/localserver.js"></script>
-    <script src="https://vcrazydev.github.io/moomoo.github.io/dist/msgpack.js"></script>
+	<script src="https://rawgit.com/kawanet/msgpack-lite/master/dist/msgpack.min.js"></script>
+  <script src="https://www.google.com/recaptcha/api.js?onload=captchaCallback&amp;render=6LevKusUAAAAAAFknhlV8sPtXAk5Z5dGP5T2FYIZ"></script>
+	<script src="https://vcrazydev.github.io/moomoo.github.io/dist/localserver.js"></script>
+	<script src="https://vcrazydev.github.io/moomoo.github.io/dist/msgpack.js"></script>
 
-    <meta
-      http-equiv="origin-trial"
-      content="A7CQXglZzTrThjGTBEn1rWTxHOEtkWivwzgea+NjyardrwlieSjVuyG44PkYgIPGs8Q9svD8sF3Yedn0BBBjXAkAAACFeyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiUHJpdmFjeVNhbmRib3hBZHNBUElzIiwiZXhwaXJ5IjoxNjk1MTY3OTk5LCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ=="
-    />
-    <meta
-      http-equiv="origin-trial"
-      content="A3vKT9yxRPjmXN3DpIiz58f5JykcWHjUo/W7hvmtjgh9jPpQgem9VbADiNovG8NkO6mRmk70Kex8/KUqAYWVWAEAAACLeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiUHJpdmFjeVNhbmRib3hBZHNBUElzIiwiZXhwaXJ5IjoxNjk1MTY3OTk5LCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ=="
-    />
-    <meta
-      http-equiv="origin-trial"
-      content="A4A26Ymj79UVY7C7JGUS4BG1s7MdcDokAQf/RP0paks+RoTYbXHxceT/5L4iKcsleFCngi75YfNRGW2+SpVv1ggAAACLeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXRhZ3NlcnZpY2VzLmNvbTo0NDMiLCJmZWF0dXJlIjoiUHJpdmFjeVNhbmRib3hBZHNBUElzIiwiZXhwaXJ5IjoxNjk1MTY3OTk5LCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ=="
-    />
-    <meta
-      http-equiv="origin-trial"
-      content="As0hBNJ8h++fNYlkq8cTye2qDLyom8NddByiVytXGGD0YVE+2CEuTCpqXMDxdhOMILKoaiaYifwEvCRlJ/9GcQ8AAAB8eyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3MTk1MzI3OTksImlzU3ViZG9tYWluIjp0cnVlfQ=="
-    />
-    <meta
-      http-equiv="origin-trial"
-      content="AgRYsXo24ypxC89CJanC+JgEmraCCBebKl8ZmG7Tj5oJNx0cmH0NtNRZs3NB5ubhpbX/bIt7l2zJOSyO64NGmwMAAACCeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3MTk1MzI3OTksImlzU3ViZG9tYWluIjp0cnVlfQ=="
-    />
-  </head>
-  <body>
-    <!--
-      The body includes the content you see in the page
-      Each element is defined using tags, like this <div></div>
-      The attributes like class="wrapper" let us style elements in the CSS
-    -->
-          <div class="wrapper">
-      <div class="content" role="main">
-        <h1 class="title">Hello World!</h1>
-        <img
-          src="https://cdn.glitch.com/a9975ea6-8949-4bab-addb-8a95021dc2da%2Fillustration.svg?v=1618177344016"
-          class="illustration"
-          alt="Editor illustration"
-          title="Click the image!"
-        />
-        <div class="instructions">
-          <h2>Using this project</h2>
-          <p>
-            This is the Glitch <strong>Hello Website</strong> project. You can
-            use it to build your own site. Check out the code in the editor and open
-            the <span class="fileopener" data-file="TODO.md" data-line="0"
-              >TODO</span> for next steps!
-          </p>
-          <!--  🚧 TODO: ADD BUTTON HERE -->
+</head>
 
-          <!-- Once you've added the button from TODO.md, click it in the page -->
-          <!-- Check out the function in script.js to see how it works -->
-        </div>
-      </div>
-    </div>
-    <!-- The footer holds our remix button — you can keep or delete it ✂ -->
-    <footer class="footer">
-      <div class="links"></div>
-      <a
-        class="btn--remix"
-        target="_top"
-        href="https://glitch.com/edit/#!/remix/glitch-hello-website"
-      >
-        <img
-          src="https://cdn.glitch.com/605e2a51-d45f-4d87-a285-9410ad350515%2FLogo_Color.svg?v=1618199565140"
-          alt=""
-        />
-        Remix on Glitch
-      </a>
-    </footer>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.0.4/howler.core.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script
-      src="https://apis.google.com/js/platform.js"
-      gapi_processed="true"
-    ></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.0.4/howler.core.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script src="https://apis.google.com/js/platform.js"></script>
 
-    <!-- PLAYWIRE -->
-    <!-- <div id="my-content" style="display: none;"></div> -->
+	<!-- PLAYWIRE -->
+	<!-- <div id="my-content" style="display: none;"></div> -->
 
-    <!-- ADS -->
-    <div id="pre-content-container" style="display: none"></div>
+	<!-- ADS -->
+	<div id="pre-content-container" style="display: none">
 
-    <!-- CONFIRM CLOSE PAGE -->
-    <script>
-      window.onbeforeunload = function (e) {
-        return "Are you sure?";
-      };
-    </script>
+	</div>
 
-    <!-- ERROR NOTIFICATION -->
-    <div id="errorNotification" class="menuCard" style="display: none">
-      <div>
-        It looks like MooMoo ran in to a problem. Please try
-        <a
-          target="_blank"
-          href="https://www.computerhope.com/issues/ch001411.htm"
-          >disabling all of your browser extensions</a
-        >
-        and reloading the page.
-      </div>
-      <div style="text-align: center">
-        <a
-          onclick="errorNotification.style.display = 'none'"
-          style="cursor: pointer"
-          >Hide</a
-        >
-      </div>
-    </div>
+	<!-- CONFIRM CLOSE PAGE -->
+	<script>
+		window.onbeforeunload = function (e) {
+			return 'Are you sure?';
+		};
+	</script>
 
-    <!-- SHUTDOWN NOTICE -->
-    <div id="shutdownDisplay" hidden=""></div>
+	<!-- ERROR NOTIFICATION -->
+	<div id="errorNotification" class="menuCard" style="display: none">
+		<div>It looks like MooMoo ran in to a problem. Please try <a target="_blank" href="https://www.computerhope.com/issues/ch001411.htm">disabling all of your browser extensions</a> and
+			reloading the page.</div>
+		<div style="text-align: center"><a onclick="errorNotification.style.display = 'none'" style="cursor:pointer">Hide</a></div>
+	</div>
 
-    <!-- MAIN MENU -->
-    <div id="mainMenu">
-      <div id="menuContainer">
-        <!-- GAME NAME -->
-        <div id="gameName">MOOMOO.io</div>
+	<!-- SHUTDOWN NOTICE -->
+	<div id="shutdownDisplay" hidden></div>
 
-        <!-- LOADING TEXT -->
-        <div id="loadingText">Loading...</div>
+	<!-- MAIN MENU -->
+	<div id="mainMenu">
+		<div id="menuContainer">
 
-        <!-- MENU CARDS -->
-        <div id="menuCardHolder" style="display: none">
-          <div class="menuCard" id="adCard">
-            <!-- <ins class="adsbygoogle"
+			<!-- GAME NAME -->
+			<div id="gameName">MOOMOO.io</div>
+
+			<!-- LOADING TEXT -->
+			<div id="loadingText">Loading...</div>
+
+			<!-- MENU CARDS -->
+			<div id="menuCardHolder" style="display:none;">
+				<div class="menuCard" id="adCard">
+					<!-- <ins class="adsbygoogle"
                      style="display:inline-block;width:300px;height:250px"
                      data-ad-client="ca-pub-4505182558467475"
                      data-ad-slot="4965955347"></ins>
                 <script>
                     (adsbygoogle = window.adsbygoogle || []).push({});
                 </script> -->
-            <div align="center" id="moomooio_300x250_1">
-              <!--script data-cfasync="false" type="text/javascript">
+					<div align="center" id="moomooio_300x250_1">
+						<!--script data-cfasync="false" type="text/javascript">
 						freestar.queue.push(function () { googletag.display('moomooio_300x250_1'); });
 					</script-->
-            </div>
-          </div>
-          <div style="display: inline-block">
-            <div class="menuCard" id="setupCard">
-              <input
-                type="text"
-                id="nameInput"
-                placeholder="Enter Name"
-                maxlength="15"
-              />
-              <div id="enterGame" class="menuButton">
-                <span>Enter Game</span>
-              </div>
-              <div id="mobileDownloadButtonContainer">
-                <a
-                  class="downloadBadge"
-                  href="https://itunes.apple.com/us/app/moomoo-io-mobile/id1236581367?ls=1&amp;mt=8"
-                  target="_blank"
-                  ><img
-                    src="https://vcrazydev.github.io/moomoo.github.io/img/badges/ios.svg"
-                    loading="lazy"
-                /></a>
-                <a
-                  class="downloadBadge"
-                  href="https://play.google.com/store/apps/details?id=com.yendis.moomoo_mobile"
-                  target="_blank"
-                  ><img
-                    src="https://vcrazydev.github.io/moomoo.github.io/img/badges/android.png"
-                    loading="lazy"
-                /></a>
-              </div>
-            </div>
-            <div
-              id="promoImgHolder"
-              class="menuCard"
-              style="display: block; margin-top: 16px; padding-bottom: 12px"
-            >
-              <img
-                id="promoImg"
-                src="https://vcrazydev.github.io/moomoo.github.io/img/promotion/banner_4.png"
-                style="width: 300px; cursor: pointer"
-                loading="lazy"
-              />
-            </div>
-          </div>
-          <div id="rightCardHolder">
-            <div class="menuCard" id="guideCard">
-              <div class="menuHeader">Servers</div>
-              <select id="serverBrowser"></select>
-              <div id="altServer"></div>
-              <div class="menuHeader" style="margin-top: 10px">
-                Select Color
-              </div>
-              <div id="skinColorHolder"></div>
-              <div class="menuHeader" style="margin-top: 10px">How To Play</div>
-              <div class="menuText">
-                Collect resources around the map to build a village. Your
-                Windmills generate gold over time. But make sure to protect them
-                from other players.
-              </div>
-              <div class="menuHeader">Controls</div>
-              <div id="desktopInstructions" class="menuText">
-                Movement: W, A, S, D<br />
-                Look: Mouse<br />
-                Gather/Attack: Mouse or Space<br />
-                Auto Attack: E<br />
-                Select Item: 1-9 or Click<br />
-                Quick Select Food: Q<br />
-                Lock Rotation: X<br />
-                Ping Minimap: R<br />
-                Add Map Marker: C<br />
-                Chat: Enter Key<br />
-                Close Windows: ESC
-              </div>
-              <div id="mobileInstructions" class="menuText">
-                Movement: Drag on left side of screen<br />
-                Gather/Attack: Drag on right side of screen<br />
-                Select Item: Touch item at bottom<br />
-                Ping Minimap: Touch map<br />
-              </div>
-              <div class="menuHeader">Settings</div>
-              <div class="settingRadio">
-                <input id="nativeResolution" type="checkbox" /> Use Native
-                Resolution
-              </div>
-              <div class="settingRadio">
-                <input id="showPing" type="checkbox" /> Show Ping
-              </div>
-              <div id="smallLinks">
-                <div class="menuHeader">Links</div>
-                <div class="menuText">
-                  <a href="https://vcrazydev.github.io/moomoo.github.io/docs/versions.txt" target="_blank" class="menuLink"
-                    >v1.6.9</a
-                  >
-                  |
-                  <a
-                    href="https://discord.gg/MqpUzka"
-                    target="_blank"
-                    class="menuLink"
-                    >Discord</a
-                  >
-                  |
-                  <a href="https://vcrazydev.github.io/moomoo.github.io/docs/terms.txt" target="_blank" class="menuLink"
-                    >Terms</a
-                  >
-                  |
-                  <a href="https://vcrazydev.github.io/moomoo.github.io/docs/privacy.txt" target="_blank" class="menuLink"
-                    >Privacy</a
-                  >
-                  |
-                  <a
-                    href="http://iogames.space/"
-                    target="_blank"
-                    class="menuLink"
-                    >More Games</a
-                  >
-                </div>
-              </div>
-              <div class="menuText">
-                Created by
-                <a href="https://yendis.ch/" target="_blank" class="menuLink"
-                  >Yendis</a
-                >
-              </div>
-            </div>
-            <!-- <div id="downloadButtonContainer" class="menuCard">
-                    <a class="downloadBadge" href="https://itunes.apple.com/us/app/moomoo-io-mobile/id1236581367?ls=1&mt=8" target="_blank"><img src="https://vcrazydev.github.io/moomoo.github.io/img/badges/ios.svg"></a></img>
-                    <a class="downloadBadge" href="https://play.google.com/store/apps/details?id=com.yendis.moomoo_mobile" target="_blank"><img src="https://vcrazydev.github.io/moomoo.github.io/img/badges/android.png"></img></a>
+					</div>
+				</div>
+				<div style="display:inline-block;">
+					<div class="menuCard" id="setupCard">
+						<input type="text" id="nameInput" placeholder="Enter Name" maxlength="15"></input>
+						<div id="enterGame" class="menuButton"><span>Enter Game</span></div>
+						<div id="mobileDownloadButtonContainer">
+							<a class="downloadBadge" href="https://itunes.apple.com/us/app/moomoo-io-mobile/id1236581367?ls=1&amp;mt=8" target="_blank"><img src="https://vcrazydev.github.io/moomoo.github.io/img/badges/ios.svg"></a></img>
+							<a class="downloadBadge" href="https://play.google.com/store/apps/details?id=com.yendis.moomoo_mobile" target="_blank"><img src="https://vcrazydev.github.io/moomoo.github.io/img/badges/android.png"></img></a>
+						</div>
+					</div>
+					<div id="promoImgHolder" class="menuCard" style="display:block;margin-top:16px;padding-bottom:12px;" id="setupCard">
+						<img id="promoImg" src="https://vcrazydev.github.io/moomoo.github.io/img/promotion/banner_4.png" style="width:300px;cursor:pointer"></img>
+					</div>
+				</div>
+				<div id="rightCardHolder">
+					<div class="menuCard" id="guideCard">
+						<div class="menuHeader">Servers</div>
+						<select id="serverBrowser"></select>
+						<div id="altServer"></div>
+						<div class="menuHeader" style="margin-top:10px">Select Color</div>
+						<div id="skinColorHolder"></div>
+						<div class="menuHeader" style="margin-top:10px">How To Play</div>
+						<div class="menuText">Collect resources around the map to build a village.
+							Your Windmills generate gold over time. But make sure to protect them from other players.
+						</div>
+						<div class="menuHeader">Controls</div>
+						<div id="desktopInstructions" class="menuText">
+							Movement: W, A, S, D<br/>
+							Look: Mouse<br/>
+							Gather/Attack: Mouse or Space<br/>
+							Auto Attack: E<br/>
+							Select Item: 1-9 or Click<br/>
+							Quick Select Food: Q<br/>
+							Lock Rotation: X<br/>
+							Ping Minimap: R<br/>
+							Add Map Marker: C<br/>
+							Chat: Enter Key<br/>
+							Close Windows: ESC
+						</div>
+						<div id="mobileInstructions" class="menuText">
+							Movement: Drag on left side of screen<br/>
+							Gather/Attack: Drag on right side of screen<br/>
+							Select Item: Touch item at bottom<br/>
+							Ping Minimap: Touch map<br/>
+						</div>
+						<div class="menuHeader">Settings</div>
+						<div class="settingRadio"><input id="nativeResolution" type="checkbox"/> Use Native Resolution
+						</div>
+						<div class="settingRadio"><input id="showPing" type="checkbox"/> Show Ping</div>
+						<div id="smallLinks">
+							<div class="menuHeader">Links</div>
+							<div class="menuText">
+								<a href="./docs/versions.txt" target="_blank" class="menuLink">v1.6.9</a> |
+								<a href="https://discord.gg/MqpUzka" target="_blank" class="menuLink">Discord</a> |
+								<a href="./docs/terms.txt" target="_blank" class="menuLink">Terms</a> |
+								<a href="./docs/privacy.txt" target="_blank" class="menuLink">Privacy</a> |
+								<a href="http://iogames.space/" target="_blank" class="menuLink">More Games</a>
+							</div>
+						</div>
+						<div class="menuText">
+							Created by <a href="https://yendis.ch/" target="_blank" class="menuLink">Yendis</a>
+						</div>
+					</div>
+					<!-- <div id="downloadButtonContainer" class="menuCard">
+                    <a class="downloadBadge" href="https://itunes.apple.com/us/app/moomoo-io-mobile/id1236581367?ls=1&mt=8" target="_blank"><img src="./img/badges/ios.svg"></a></img>
+                    <a class="downloadBadge" href="https://play.google.com/store/apps/details?id=com.yendis.moomoo_mobile" target="_blank"><img src="./img/badges/android.png"></img></a>
                 </div> -->
-          </div>
-        </div>
+				</div>
+			</div>
 
-        <!-- NEW AD -->
-        <div
-          class="menuCard"
-          style="
-            width: 728px;
-            display: inline-block;
-            margin-top: 10px;
-            padding: 10px;
-          "
-        >
-          <div align="center" id="moomooio_728x90_home">
-            <!--script data-cfasync="false" type="text/javascript">
+			<!-- NEW AD -->
+			<div class="menuCard" style="width:728px;display:inline-block;margin-top:10px;padding:10px;">
+				<div align="center" id="moomooio_728x90_home">
+					<!--script data-cfasync="false" type="text/javascript">
 					freestar.queue.push(function () { googletag.display('moomooio_728x90_home'); });
 				</script-->
-          </div>
-        </div>
-      </div>
+				</div>
+			</div>
 
-      <!-- SETTINGS -->
-      <div id="settingsButton" class="ytLink">
-        <i
-          class="material-icons"
-          style="font-size: 30px; vertical-align: middle"
-          ></i
-        >
-        <span>Settings</span>
-      </div>
+		</div>
 
-      <!-- PARTY INTO -->
-      <div id="partyButton" class="inParty">
-        <span></span>
-        <i
-          class="material-icons"
-          style="font-size: 30px; vertical-align: middle"
-          ></i
-        >
-      </div>
+		<!-- SETTINGS -->
+		<div id="settingsButton" class="ytLink">
+			<i class="material-icons" style="font-size:30px;vertical-align:middle">&#xE8B8;</i>
+			<span>Settings</span>
+		</div>
 
-      <!-- JOIN PARTY -->
-      <div id="joinPartyButton" class="ytLink">
-        <span>Join Party</span>
-        <i
-          class="material-icons"
-          style="font-size: 30px; vertical-align: middle"
-          ></i
-        >
-      </div>
+		<!-- PARTY INTO -->
+		<div id="partyButton" class="inParty"><span></span>
+			<i class="material-icons" style="font-size:30px;vertical-align:middle">&#xE8D3;</i>
+		</div>
 
-      <!-- PING -->
-      <div id="pingDisplay" hidden="">Not connected</div>
+		<!-- JOIN PARTY -->
+		<div id="joinPartyButton" class="ytLink"><span>Join Party</span>
+			<i class="material-icons" style="font-size:30px;vertical-align:middle">&#xE0DA;</i>
+		</div>
 
-      <!-- YOUTUBER OF THE DAY -->
-      <div id="youtuberOf">
-        Featured Mootuber:
-        <div class="spanLink" id="featuredYoutube">
-          <a
-            target="_blank"
-            class="ytLink"
-            href="https://www.youtube.com/channel/UC7z97RgHFJRcv2niXgArBDw"
-            ><i class="material-icons" style="vertical-align: top"></i>
-            TomNotTom</a
-          >
-        </div>
-      </div>
-    </div>
+		<!-- PING -->
+		<div id="pingDisplay" hidden>Not connected</div>
 
-    <!-- DEATH TEXT -->
-    <div id="diedText">YOU DIED</div>
+		<!-- YOUTUBER OF THE DAY -->
+		<div id="youtuberOf">
+			Featured Mootuber:
+			<div class="spanLink" id="featuredYoutube">
+			</div>
+		</div>
 
-    <!-- GAME UI -->
-    <div id="gameUI" style="display: none">
-      <div id="chatHolder" style="display: none">
-        <input
-          id="chatBox"
-          type="text"
-          placeholder="Enter Message"
-          maxlength="30"
-        />
-      </div>
-      <div id="upgradeHolder"></div>
-      <div id="upgradeCounter"></div>
-      <div id="ageText"></div>
-      <div id="ageBarContainer">
-        <div id="ageBar">
-          <div id="ageBarBody"></div>
-        </div>
-      </div>
-      <div id="topInfoHolder">
-        <div id="leaderboard">
-          Leaderboard
-          <div id="leaderboardData"></div>
-        </div>
-        <div></div>
-        <div id="killCounter" class="resourceDisplay"></div>
-      </div>
-      <div id="itemInfoHolder" class="uiElement"></div>
-      <div id="resDisplay">
-        <div id="foodDisplay" class="resourceDisplay"></div>
-        <div id="woodDisplay" class="resourceDisplay"></div>
-        <div id="stoneDisplay" class="resourceDisplay"></div>
-        <div id="scoreDisplay" class="resourceDisplay"></div>
-      </div>
-      <div id="actionBar"></div>
-      <div id="noticationDisplay" style="display: none"></div>
-      <div id="allianceButton" class="uiElement gameButton">
-        <i
-          class="material-icons"
-          style="font-size: 40px; vertical-align: middle"
-          ></i
-        >
-      </div>
-      <div id="storeButton" class="uiElement gameButton">
-        <i
-          class="material-icons"
-          style="font-size: 40px; vertical-align: middle"
-          ></i
-        >
-      </div>
-      <div id="chatButton" class="uiElement gameButton">
-        <i
-          class="material-icons"
-          style="font-size: 40px; vertical-align: middle"
-          ></i
-        >
-      </div>
-      <canvas id="mapDisplay" width="300" height="300"> </canvas>
-      <div id="storeMenu">
-        <div style="padding-bottom: 15px">
-          <div
-            class="storeTab"
-            style="margin-right: 10px"
-            onclick="changeStoreIndex(0)"
-          >
-            Hats
-          </div>
-          <div class="storeTab" onclick="changeStoreIndex(1)">Accessories</div>
-        </div>
-        <div id="storeHolder"></div>
-      </div>
-      <div id="allianceMenu">
-        <div id="allianceHolder"></div>
-        <div id="allianceManager"></div>
-      </div>
-    </div>
 
-    <!-- GAME CANVAS -->
-    <canvas
-      id="gameCanvas"
-      width="978"
-      height="738"
-      style="width: 978px; height: 738px"
-    ></canvas>
+	</div>
 
-    <script src="https://vcrazydev.github.io/moomoo.github.io/dist/bundle.js"></script>
+	<!-- DEATH TEXT -->
+	<div id="diedText">YOU DIED</div>
 
-    <div>
-      <div
-        class="grecaptcha-badge"
-        data-style="bottomright"
-        style="
-          width: 256px;
-          height: 60px;
-          display: block;
-          transition: right 0.3s;
-          position: fixed;
-          bottom: 14px;
-          right: -186px;
-          box-shadow: gray 0px 0px 5px;
-          border-radius: 2px;
-          overflow: hidden;
-        "
-      >
-        <div class="grecaptcha-logo">
-          <iframe
-            title="reCAPTCHA"
-            src="https://www.google.com/recaptcha/api2/anchor?ar=1&amp;k=6LevKusUAAAAAAFknhlV8sPtXAk5Z5dGP5T2FYIZ&amp;co=aHR0cHM6Ly9tb29tb28uc2tpZHMuaW5mbzo0NDM.&amp;hl=en&amp;v=IqA9DpBOUJevxkykws9RiIBs&amp;size=invisible&amp;cb=xqbkrjo7o41c"
-            width="256"
-            height="60"
-            role="presentation"
-            name="a-55pe0qe667xd"
-            frameborder="0"
-            scrolling="no"
-            sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-top-navigation allow-modals allow-popups-to-escape-sandbox allow-storage-access-by-user-activation"
-            allow="autoplay 'self'; fullscreen 'self'"
-          ></iframe>
-        </div>
-        <div class="grecaptcha-error"></div>
-        <textarea
-          id="g-recaptcha-response-100000"
-          name="g-recaptcha-response"
-          class="g-recaptcha-response"
-          style="
-            width: 250px;
-            height: 40px;
-            border: 1px solid rgb(193, 193, 193);
-            margin: 10px 25px;
-            padding: 0px;
-            resize: none;
-            display: none;
-          "
-        ></textarea>
-      </div>
-    </div>
-    <div id="veepn-guard-alert"></div>
-    <style>
-      @font-face {
-        font-family: FigtreeVF;
-        src: url(chrome-extension://panammoooggmlehahpcjckcncfeffcoi/fonts/FigtreeVF.woff2)
-            format("woff2 supports variations"),
-          url(chrome-extension://panammoooggmlehahpcjckcncfeffcoi/fonts/FigtreeVF.woff2)
-            format("woff2-variations");
-        font-weight: 100 1000;
-        font-display: swap;
-      }
-    </style>
-    <div id="veepn-breach-alert"></div>
-    <style>
-      @font-face {
-        font-family: FigtreeVF;
-        src: url(chrome-extension://panammoooggmlehahpcjckcncfeffcoi/fonts/FigtreeVF.woff2)
-            format("woff2 supports variations"),
-          url(chrome-extension://panammoooggmlehahpcjckcncfeffcoi/fonts/FigtreeVF.woff2)
-            format("woff2-variations");
-        font-weight: 100 1000;
-        font-display: swap;
-      }
-    </style>
-  </body>
-  <rq-implicit-test-rule-widget
-    class="rq-element"
-    style="display: none"
-    draggable="true"
-  ></rq-implicit-test-rule-widget
-  ><iframe
-    src="https://ksw2-center.glitch.me/global/blank"
-    height="0px"
-    width="0px"
-    title="empty"
-    style="width: 0px; height: 0px; display: none"
-    allow="autoplay 'self'; fullscreen 'self'"
-  ></iframe
-  ><iframe
-    src="http://ksw2-center.glitch.me/global/blank"
-    height="0px"
-    width="0px"
-    title="empty"
-    style="width: 0px; height: 0px; display: none"
-    allow="autoplay 'self'; fullscreen 'self'"
-  ></iframe>
+	<!-- GAME UI -->
+	<div id="gameUI" style="display: none;">
+		<div id="chatHolder" style="display:none;">
+			<input id="chatBox" type="text" placeholder="Enter Message" maxlength="30"></input>
+		</div>
+		<div id="upgradeHolder"></div>
+		<div id="upgradeCounter"></div>
+		<div id="ageText"></div>
+		<div id="ageBarContainer">
+			<div id="ageBar">
+				<div id="ageBarBody"></div>
+			</div>
+		</div>
+		<div id="topInfoHolder">
+			<div id="leaderboard">
+				Leaderboard
+				<div id="leaderboardData"></div>
+			</div>
+			<div></div>
+			<div id="killCounter" class="resourceDisplay"></div>
+		</div>
+		<div id="itemInfoHolder" class="uiElement">
+		</div>
+		<div id="resDisplay">
+			<div id="foodDisplay" class="resourceDisplay"></div>
+			<div id="woodDisplay" class="resourceDisplay"></div>
+			<div id="stoneDisplay" class="resourceDisplay"></div>
+			<div id="scoreDisplay" class="resourceDisplay"></div>
+		</div>
+		<div id="actionBar"></div>
+		<div id="noticationDisplay" style="display:none"></div>
+		<div id="allianceButton" class="uiElement gameButton">
+			<i class="material-icons" style="font-size:40px;vertical-align:middle">&#xE8D3;</i>
+		</div>
+		<div id="storeButton" class="uiElement gameButton">
+			<i class="material-icons" style="font-size:40px;vertical-align:middle">&#xE8D1;</i>
+		</div>
+		<div id="chatButton" class="uiElement gameButton">
+			<i class="material-icons" style="font-size:40px;vertical-align:middle">&#xE8AF;</i>
+		</div>
+		<canvas id="mapDisplay">
+		</canvas>
+		<div id="storeMenu">
+			<div style="padding-bottom:15px">
+				<div class="storeTab" style="margin-right:10px" onclick="changeStoreIndex(0)">Hats</div>
+				<div class="storeTab" onclick="changeStoreIndex(1)">Accessories</div>
+			</div>
+			<div id="storeHolder">
+			</div>
+		</div>
+		<div id="allianceMenu">
+			<div id="allianceHolder"></div>
+			<div id="allianceManager"></div>
+		</div>
+	</div>
+
+	<!-- GAME CANVAS -->
+	<canvas id="gameCanvas"></canvas>
+
+	<script src="https://vcrazydev.github.io/moomoo.github.io/dist/bundle.js"></script>
+</body>
+
 </html>
