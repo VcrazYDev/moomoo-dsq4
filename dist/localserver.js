@@ -2,10 +2,6 @@
 // @name         localserver.js
 // @description  try to take over the world!
 // ==/UserScript==
-var MODE = "NORMAL"
-var PASSWORD = "kooky"
-var PREFIX = "!"
-const PORT = "1234" || 1234
 let player;
 let server;
 function findPlayerByID(id) {
@@ -3140,12 +3136,13 @@ window.WebSocket = class {
         }
 
         if (id == "6") {
+            if (!player || !player.alive) return
             let item = data[0];
             const upgradableItems = items.list.filter(item => item.age == player.upgrAge);
             const upgradableWeapons = items.weapons.filter(item => item.age == player.upgrAge);
 
             let worked = false;
-            
+
             if (item <= 15) {
                 if (upgradableWeapons.map(weapon => weapon.id).indexOf(item) != -1) {
                     if (upgradableWeapons.filter(weapon => weapon.type == 0).map(weapon => weapon.id).indexOf(item) != -1) {
@@ -3189,97 +3186,27 @@ window.WebSocket = class {
         }
 
         if (id == "13c") {
-			let tmpPlayer = findPlayerByID("self")
-			if (tmpPlayer && tmpPlayer.alive) {
-            if (data[0] && !(data[2] ? player.tails : player.skins)[data[1]]) {
-                const item = (data[2] ? accessories : hats).find(x => x.id == data[1]);
-                if (player.points >= item.price) {
-                    player.addResource(3, -item.price, true);
-                    player[data[2] ? "tails" : "skins"][item.id] = 1;
+            if (!player || !player.alive) return
+            let tmpPlayer = findPlayerByID("self")
+            if (tmpPlayer && tmpPlayer.alive) {
+                if (data[0] && !(data[2] ? player.tails : player.skins)[data[1]]) {
+                    const item = (data[2] ? accessories : hats).find(x => x.id == data[1]);
+                    if (player.points >= item.price) {
+                        player.addResource(3, -item.price, true);
+                        player[data[2] ? "tails" : "skins"][item.id] = 1;
+                    }
+                    server.send("self", "us", false, data[1], data[2]);
+                } else if (!data[0] && ((data[2] ? player.tails : player.skins)[data[1]] || !data[1])) {
+                    const item = data[1] ? (data[2] ? accessories : hats).find(x => x.id == data[1]) : { id: 0 };
+                    player[data[2] ? "setTail" : "setSkin"](item.id);
+                    server.send("self", "us", true, data[1], data[2]);
                 }
-                server.send("self", "us", false, data[1], data[2]);
-            } else if (!data[0] && ((data[2] ? player.tails : player.skins)[data[1]] || !data[1])) {
-                const item = data[1] ? (data[2] ? accessories : hats).find(x => x.id == data[1]) : { id: 0 };
-                player[data[2] ? "setTail" : "setSkin"](item.id);
-                server.send("self", "us", true, data[1], data[2]);
             }
-			}
         }
 
         if (id == "ch") {
             if (!player || !player.alive) return
-            if (data[0] === `${PREFIX}login ${PASSWORD}` && !player.admin) {
-                player.admin = true
-                return
-            }
-            if (data[0].startsWith(PREFIX) && player.admin) {
-                if (data[0] === `${PREFIX}setup`) {
-                    for (let i = 0; i < 9; i++) {
-                        player.addResource(3, 999999, true)
-                    }
-                    player.addResource(2, 999999, true)
-                    player.addResource(1, 999999, true)
-                    player.addResource(0, 999999, true)
-                } else if (data[0].startsWith(`${PREFIX}speed`)) {
-                    var speedmlt = data[0].replace(PREFIX + "speed ", "")
-                    if (UTILS.isNumber(parseFloat(speedmlt))) {
-                        player.speed = parseFloat(speedmlt)
-                    }
-                } else if (data[0].startsWith(`${PREFIX}tp`)) {
-                    var tmpArgs = data[0].replace(PREFIX + "tp ", "").split(" ")
-                    if (tmpArgs[1] == null) {
-                        var tmpObj = players[0]
-                        if (tmpObj) {
-                            player.x = tmpObj.x
-                            player.y = tmpObj.y
-                        }
-                    } else {
-                        const tmpX = parseInt(tmpArgs[0])
-                        const tmpY = parseInt(tmpArgs[1])
-                        if (UTILS.isNumber(tmpX) && UTILS.isNumber(tmpY)) {
-                            player.x = tmpX
-                            player.y = tmpY
-                        }
-                    }
-                } else if (data[0].startsWith(`${PREFIX}v`)) {
-                    msg = data[0].replace(PREFIX + "v ", "")
-                    switch (msg) {
-                        case "ruby":
-                            player.weaponXP[player.weaponIndex] = 12000
-                            break
-                        case "diamond":
-                            player.weaponXP[player.weaponIndex] = 7000
-                            break
-                        case "gold":
-                            player.weaponXP[player.weaponIndex] = 3000
-                            break
-                        case "normal":
-                            player.weaponXP[player.weaponIndex] = 0
-                            break
-                    }
-                } else if (data[0] === PREFIX + "die") {
-                    player.kill(player)
-                } else if (data[0].startsWith(`${PREFIX}upgrade`)) {
-                    msg = data[0].replace(PREFIX + "upgrade ", "")
-                    // sendUpgrade(parseInt(msg))
-                } else if (data[0].startsWith(PREFIX + "dmg")) {
-                    if (data[0] === PREFIX + "dmg") {
-                        player.customDmg = null
-                    } else {
-                        var dmg = data[0].replace(PREFIX + "dmg ", "")
-                        if (UTILS.isNumber(parseFloat(dmg))) {
-                            player.customDmg = parseFloat(dmg)
-                        }
-                    }
-                } else if (data[0] === PREFIX + "breakall") {
-                    objectManager.removeAllItems(player.sid, server)
-                    for (let i = 0; i < items.groups.length; i++) {
-                        player.changeItemAllCount(i, 0)
-                    }
-                }
-            } else {
-                server.broadcast("ch", [player.sid, data[0].toString()])
-            }
+            server.broadcast("ch", player.sid, data[0]);
         }
 
         if (id == "8") {
