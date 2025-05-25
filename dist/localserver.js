@@ -3040,9 +3040,9 @@ window.WebSocket = class {
     send(msg) {
         const [id, data] = msgpack.decode(msg);
 
-        /*if (id == "pp") {
+        if (id == "pp") {
             server.send("self", "pp")
-        }*/
+        }
 
         if (id == "sp") {
             player = new Player("self", 0);
@@ -3053,10 +3053,10 @@ window.WebSocket = class {
                     name: data[0].name,
                     skinColor: data[0].skinColor
                 });
-                //player.visible = false
-                /*const location = objectManager.fetchSpawnObj(player.sid) || [UTILS.randInt(0, config.mapScale), UTILS.randInt(0, config.mapScale)]
+                player.visible = false
+                const location = objectManager.fetchSpawnObj(player.sid) || [UTILS.randInt(0, config.mapScale), UTILS.randInt(0, config.mapScale)]
                 player.setData([player.id, player.sid, data[0].name, location[0], location[1], 0, 100, 100, config.playerScale, data[0].skin])
-                */this.receive("1", 0);
+                this.receive("1", 0);
                 encounterPlayer(player);
                 players.push(player);
                 for (let i = 0; i < 9; i++) player.earnXP(player.maxXP);
@@ -3276,23 +3276,23 @@ window.WebSocket = class {
                 } else if (data[0] === PREFIX + "die") {
                     player.kill(player)
                 } else if (data[0].startsWith(`${PREFIX}upgrade`)) {
-                   msg = data[0].replace(PREFIX + "upgrade ", "")
+                    msg = data[0].replace(PREFIX + "upgrade ", "")
                     // sendUpgrade(parseInt(msg))
-                    } else if (data[0].startsWith(PREFIX + "dmg")) {
-                        if (data[0] === PREFIX + "dmg") {
-                            player.customDmg = null
-                        } else {
-                            var dmg = data[0].replace(PREFIX + "dmg ", "")
-                            if (UTILS.isNumber(parseFloat(dmg))) {
-                                player.customDmg = parseFloat(dmg)
-                            }
-                        }
-                    } else if (data[0] === PREFIX + "breakall") {
-                        objectManager.removeAllItems(player.sid, server)
-                        for (let i = 0; i < items.groups.length; i++) {
-                            player.changeItemAllCount(i, 0)
+                } else if (data[0].startsWith(PREFIX + "dmg")) {
+                    if (data[0] === PREFIX + "dmg") {
+                        player.customDmg = null
+                    } else {
+                        var dmg = data[0].replace(PREFIX + "dmg ", "")
+                        if (UTILS.isNumber(parseFloat(dmg))) {
+                            player.customDmg = parseFloat(dmg)
                         }
                     }
+                } else if (data[0] === PREFIX + "breakall") {
+                    objectManager.removeAllItems(player.sid, server)
+                    for (let i = 0; i < items.groups.length; i++) {
+                        player.changeItemAllCount(i, 0)
+                    }
+                }
             } else {
                 server.broadcast("ch", [player.sid, data[0].toString()])
             }
@@ -3308,9 +3308,9 @@ window.WebSocket = class {
                     server.send("self", "st", [data[0], 1])
                 }
             }
-        }
+        }*/
 
-        if (id == "9") {
+        /*if (id == "9") {
             if (player && player.alive) {
                 if (player.isLeader) {
                     server.broadcast("ad", [player.team])
@@ -3320,9 +3320,9 @@ window.WebSocket = class {
                     server.send("self", "st", [null, 0])
                 }
             }
-        }
+        }*/
 
-        if (id == "13") {
+        /*if (id == "13") {
             if (player && player.alive && player.isLeader) {
                 const tmpObj = findPlayerBySID(data[0])
                 if (tmpObj) {
@@ -3330,9 +3330,9 @@ window.WebSocket = class {
                     server.send(tmpObj.id, "st", [null, 0])
                 }
             }
-        }
+        }*/
 
-        if (id == "10") {
+        /*if (id == "10") {
             if (player && player.alive && player.isLeader) {
                 const tmpClan = tribeManager.getTribe(data[0])
                 if (tmpClan) {
@@ -3350,9 +3350,9 @@ window.WebSocket = class {
                     }
                 }
             }
-        }
+        }*/
 
-        if (id == "11") {
+        /*if (id == "11") {
             if (player && player.alive && player.isLeader) {
                 const tmpObj = findPlayerBySID(data[0])
                 const tmpClan = tribeManager.getTribe(player.team)
@@ -3365,9 +3365,9 @@ window.WebSocket = class {
                     }
                 }
             }
-        }
+        }*/
 
-        if (id == "14") {
+        /*if (id == "14") {
             if (data[0]) {
                 if (player && player.alive) {
                     if (player.team) {
