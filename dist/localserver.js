@@ -3143,8 +3143,7 @@ window.WebSocket = class {
             let index = data[0];
             //if (index < 0 || index > items.weapons.length + items.list.length) return
 
-            let tmpPlayer = findPlayerByID("self")
-            if (tmpPlayer && tmpPlayer.alive) {
+            if (player && player.alive) {
                 let item = data[0];
                 const upgradableItems = items.list.filter(item => item.age == player.upgrAge);
                 const upgradableWeapons = items.weapons.filter(item => item.age == player.upgrAge);
