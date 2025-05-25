@@ -3191,48 +3191,18 @@ window.WebSocket = class {
         if (id == "13c") {
 			let tmpPlayer = findPlayerByID("self")
 			if (tmpPlayer && tmpPlayer.alive) {
-				var tmpObj = null
-				if (data[1] !== 0) {
-					if (data[2]) {
-						for (let i = 0; i < accessories.length; ++i) {
-							if (accessories[i].id === data[1]) {
-								tmpObj = accessories[i]
-								break
-							}
-						}
-					} else {
-						for (let i = 0; i < hats.length; i++) {
-							if (hats[i].id === data[1]) {
-								tmpObj = hats[i]
-								break
-							}
-						}
-					}
-				}
-
-				if (data[2]) {
-					if (data[0]) {
-						if (tmpObj.price <= tmpPlayer.points) {
-							tmpPlayer.addResource(3, -tmpObj.price)
-							server.send("self", "us", [0, data[1], data[2]])
-						}
-					} else {
-						tmpPlayer.tail = tmpObj
-						tmpPlayer.tailIndex = data[1]
-						server.send("self", "us", [1, data[1], data[2]])
-					}
-				} else {
-					if (data[0]) {
-						if (tmpObj.price <= tmpPlayer.points) {
-							tmpPlayer.addResource(3, -tmpObj.price)
-							server.send("self", "us", [0, data[1], data[2]])
-						}
-					} else {
-						tmpPlayer.skin = tmpObj
-						tmpPlayer.skinIndex = data[1]
-						server.send("self", "us", [1, data[1], data[2]])
-					}
-				}
+            if (data[0] && !(data[2] ? player.tails : player.skins)[data[1]]) {
+                const item = (data[2] ? accessories : hats).find(x => x.id == data[1]);
+                if (player.points >= item.price) {
+                    player.addResource(3, -item.price, true);
+                    player[data[2] ? "tails" : "skins"][item.id] = 1;
+                }
+                server.send("self", "us", false, data[1], data[2]);
+            } else if (!data[0] && ((data[2] ? player.tails : player.skins)[data[1]] || !data[1])) {
+                const item = data[1] ? (data[2] ? accessories : hats).find(x => x.id == data[1]) : { id: 0 };
+                player[data[2] ? "setTail" : "setSkin"](item.id);
+                server.send("self", "us", true, data[1], data[2]);
+            }
 			}
         }
 
