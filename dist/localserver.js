@@ -1,12 +1,22 @@
 // ==UserScript==
 // @name         localserver.js
 // @description  try to take over the world!
+// @version      ALFA
 // ==/UserScript==
+
 let player;
 let server;
 
 let gameObjects = [];
 
+function findPlayerBySID(sid) {
+	for (let i = 0; i < players.length; ++i) {
+		if (players[i].sid === sid) {
+			return players[i]
+		}
+	}
+	return null
+}
 const mathSQRT = Math.sqrt;
 const mathABS = Math.abs;
 const mathATAN2 = Math.atan2;
@@ -22,116 +32,116 @@ const config = {};
 config.maxScreenWidth = 1920;
 config.maxScreenHeight = 1080;
 
-        // SERVER:
+// SERVER:
 config.serverUpdateRate = 9;
-        config.maxPlayers =  40;
-        config.maxPlayersHard =  config.maxPlayers + 10;
-        config.collisionDepth = 6;
-        config.minimapRate = 3000;
+config.maxPlayers =  40;
+config.maxPlayersHard =  config.maxPlayers + 10;
+config.collisionDepth = 6;
+config.minimapRate = 3000;
 
-        // COLLISIONS:
-        config.colGrid = 10;
+// COLLISIONS:
+config.colGrid = 10;
 
-        // CLIENT:
-        config.clientSendRate = 5;
+// CLIENT:
+config.clientSendRate = 5;
 
-        // UI:
-        config.healthBarWidth = 50;
-        config.healthBarPad = 4.5;
-        config.iconPadding = 15;
-        config.iconPad = 0.9;
-        config.deathFadeout = 3000;
-        config.crownIconScale = 60;
-        config.crownPad = 35;
+// UI:
+config.healthBarWidth = 50;
+config.healthBarPad = 4.5;
+config.iconPadding = 15;
+config.iconPad = 0.9;
+config.deathFadeout = 3000;
+config.crownIconScale = 60;
+config.crownPad = 35;
 
-        // CHAT:
-        config.chatCountdown = 3000;
-        config.chatCooldown = 500;
+// CHAT:
+config.chatCountdown = 3000;
+config.chatCooldown = 500;
 
-        // SANDBOX:
-        config.inSandbox = true;
+// SANDBOX:
+config.inSandbox = true;
 
-        // PLAYER:
-        config.maxAge = 100;
-        config.gatherAngle = Math.PI/2.6;
-        config.gatherWiggle = 10;
-        config.hitReturnRatio = 0.25;
-        config.hitAngle = Math.PI / 2;
-        config.playerScale = 35;
-        config.playerSpeed = 0.0016;
-        config.playerDecel = 0.993;
-        config.nameY = 34;
+// PLAYER:
+config.maxAge = 100;
+config.gatherAngle = Math.PI/2.6;
+config.gatherWiggle = 10;
+config.hitReturnRatio = 0.25;
+config.hitAngle = Math.PI / 2;
+config.playerScale = 35;
+config.playerSpeed = 0.0016;
+config.playerDecel = 0.993;
+config.nameY = 34;
 
-        // CUSTOMIZATION:
-        config.skinColors = ["#bf8f54", "#cbb091", "#896c4b",
-            "#fadadc", "#ececec", "#c37373", "#4c4c4c", "#ecaff7", "#738cc3",
-             "#8bc373"];
+// CUSTOMIZATION:
+config.skinColors = ["#bf8f54", "#cbb091", "#896c4b",
+                     "#fadadc", "#ececec", "#c37373", "#4c4c4c", "#ecaff7", "#738cc3",
+                     "#8bc373"];
 
-        // ANIMALS:
-        config.animalCount = 7;
-        config.aiTurnRandom = 0.06;
-        config.cowNames = ["Sid", "Steph", "Bmoe", "Romn", "Jononthecool", "Fiona", "Vince", "Nathan", "Nick", "Flappy", "Ronald", "Otis", "Pepe", "Mc Donald", "Theo", "Fabz", "Oliver", "Jeff", "Jimmy", "Helena", "Reaper",
-            "Ben", "Alan", "Naomi", "XYZ", "Clever", "Jeremy", "Mike", "Destined", "Stallion", "Allison", "Meaty", "Sophia", "Vaja", "Joey", "Pendy", "Murdoch", "Theo", "Jared", "July", "Sonia", "Mel", "Dexter", "Quinn", "Milky"];
+// ANIMALS:
+config.animalCount = 7;
+config.aiTurnRandom = 0.06;
+config.cowNames = ["Sid", "Steph", "Bmoe", "Romn", "Jononthecool", "Fiona", "Vince", "Nathan", "Nick", "Flappy", "Ronald", "Otis", "Pepe", "Mc Donald", "Theo", "Fabz", "Oliver", "Jeff", "Jimmy", "Helena", "Reaper",
+                   "Ben", "Alan", "Naomi", "XYZ", "Clever", "Jeremy", "Mike", "Destined", "Stallion", "Allison", "Meaty", "Sophia", "Vaja", "Joey", "Pendy", "Murdoch", "Theo", "Jared", "July", "Sonia", "Mel", "Dexter", "Quinn", "Milky"];
 
-        // WEAPONS:
-        config.shieldAngle = Math.PI/3;
-        config.weaponVariants = [{
-            id: 0,
-            src: "",
-            xp: 0,
-            val: 1
-        }, {
-            id: 1,
-            src: "_g",
-            xp: 3000,
-            val: 1.1
-        }, {
-            id: 2,
-            src: "_d",
-            xp: 7000,
-            val: 1.18
-        }, {
-            id: 3,
-            src: "_r",
-            poison: true,
-            xp: 12000,
-            val: 1.18
-        }];
-        config.fetchVariant = function(player) {
-            var tmpXP = player.weaponXP[player.weaponIndex]||0;
-            for (var i = config.weaponVariants.length - 1; i >= 0; --i) {
-                if (tmpXP >= config.weaponVariants[i].xp)
-                    return config.weaponVariants[i];
-            }
-        };
+// WEAPONS:
+config.shieldAngle = Math.PI/3;
+config.weaponVariants = [{
+    id: 0,
+    src: "",
+    xp: 0,
+    val: 1
+}, {
+    id: 1,
+    src: "_g",
+    xp: 3000,
+    val: 1.1
+}, {
+    id: 2,
+    src: "_d",
+    xp: 7000,
+    val: 1.18
+}, {
+    id: 3,
+    src: "_r",
+    poison: true,
+    xp: 12000,
+    val: 1.18
+}];
+config.fetchVariant = function(player) {
+    var tmpXP = player.weaponXP[player.weaponIndex]||0;
+    for (var i = config.weaponVariants.length - 1; i >= 0; --i) {
+        if (tmpXP >= config.weaponVariants[i].xp)
+            return config.weaponVariants[i];
+    }
+};
 
-        // NATURE:
-        config.resourceTypes = ["wood", "food", "stone", "points"];
-        config.areaCount = 7;
-        config.treesPerArea = 9;
-        config.bushesPerArea = 3;
-        config.totalRocks = 32;
-        config.goldOres = 7;
-        config.riverWidth = 724;
-        config.riverPadding = 114;
-        config.waterCurrent = 0.0011;
-        config.waveSpeed = 0.0001;
-        config.waveMax = 1.3;
-        config.treeScales = [150, 160, 165, 175];
-        config.bushScales = [80, 85, 95];
-        config.rockScales = [80, 85, 90];
+// NATURE:
+config.resourceTypes = ["wood", "food", "stone", "points"];
+config.areaCount = 7;
+config.treesPerArea = 9;
+config.bushesPerArea = 3;
+config.totalRocks = 32;
+config.goldOres = 7;
+config.riverWidth = 724;
+config.riverPadding = 114;
+config.waterCurrent = 0.0011;
+config.waveSpeed = 0.0001;
+config.waveMax = 1.3;
+config.treeScales = [150, 160, 165, 175];
+config.bushScales = [80, 85, 95];
+config.rockScales = [80, 85, 90];
 
-        // BIOME DATA:
-        config.snowBiomeTop = 2400;
-        config.snowSpeed = 0.75;
+// BIOME DATA:
+config.snowBiomeTop = 2400;
+config.snowSpeed = 0.75;
 
-        // DATA:
-        config.maxNameLength = 15;
+// DATA:
+config.maxNameLength = 15;
 
-        // MAP:
-        config.mapScale = 14400;
-        config.mapPingScale = 40;
-        config.mapPingTime = 2200;
+// MAP:
+config.mapScale = 14400;
+config.mapPingScale = 40;
+config.mapPingTime = 2200;
 
 const UTILS = {};
 UTILS.randInt = function (min, max) {
@@ -255,26 +265,26 @@ UTILS.hookTouchEvents = function (element, skipPrevent) {
         isHovering = true;
     }
     function touchMove(e) {
-            UTILS.mousifyTouchEvent(e);
-            window.setUsingTouch(true);
-            if (preventDefault) {
-                e.preventDefault();
-                e.stopPropagation();
+        UTILS.mousifyTouchEvent(e);
+        window.setUsingTouch(true);
+        if (preventDefault) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        if (UTILS.containsPoint(element, e.pageX, e.pageY)) {
+            if (!isHovering) {
+                if (element.onmouseover)
+                    element.onmouseover(e);
+                isHovering = true;
             }
-            if (UTILS.containsPoint(element, e.pageX, e.pageY)) {
-                if (!isHovering) {
-                    if (element.onmouseover)
-                        element.onmouseover(e);
-                    isHovering = true;
-                }
-            } else {
-                if (isHovering) {
-                    if (element.onmouseout)
-                        element.onmouseout(e);
-                    isHovering = false;
-                }
+        } else {
+            if (isHovering) {
+                if (element.onmouseout)
+                    element.onmouseout(e);
+                isHovering = false;
             }
         }
+    }
     function touchEnd(e) {
         UTILS.mousifyTouchEvent(e);
         window.setUsingTouch(true);
@@ -443,13 +453,13 @@ class GameObject {
     getScale(sM, ig) {
         sM = sM||1;
         return this.scale * ((this.isItem||this.type==2||this.type==3||this.type==4)
-            ?1:(0.6*sM)) * (ig?1:this.colDiv);
+                             ?1:(0.6*sM)) * (ig?1:this.colDiv);
     };
 
     // VISIBLE TO PLAYER:
     visibleToPlayer(player) {
         return !(this.hideFromEnemy) || (this.owner && (this.owner == player ||
-            (this.owner.team && player.team == this.owner.team)));
+                                                        (this.owner.team && player.team == this.owner.team)));
     };
 
     // UPDATE:
@@ -636,7 +646,7 @@ class ObjectManager {
                 this.disableObj(tmpObj);
                 server.broadcast("12", tmpObj.sid);
                 if (tmpObj.owner) {
-                     tmpObj.owner.changeItemCount(tmpObj.group.id, -1);
+                    tmpObj.owner.changeItemCount(tmpObj.group.id, -1);
                 }
                 break;
             }
@@ -648,12 +658,12 @@ class ObjectManager {
     checkItemLocation(x, y, s, sM, indx, ignoreWater, placer) {
         for (var i = 0; i < gameObjects.length; ++i) {
             var blockS = (gameObjects[i].blocker?
-                gameObjects[i].blocker:gameObjects[i].getScale(sM, gameObjects[i].isItem));
+                          gameObjects[i].blocker:gameObjects[i].getScale(sM, gameObjects[i].isItem));
             if (gameObjects[i].active && UTILS.getDistance(x, y, gameObjects[i].x,
-                gameObjects[i].y) < (s + blockS))
+                                                           gameObjects[i].y) < (s + blockS))
                 return false;
         } if (!ignoreWater && indx != 18 && y >= (config.mapScale / 2) - (config.riverWidth / 2) && y <=
-            (config.mapScale / 2) + (config.riverWidth / 2)) {
+              (config.mapScale / 2) + (config.riverWidth / 2)) {
             return false;
         }
         return true;
@@ -702,7 +712,7 @@ class ObjectManager {
                         player.yVel *= 0.75;
                     }
                     if (other.dmg && other.owner != player && !(other.owner &&
-                        other.owner.team && other.owner.team == player.team)) {
+                                                                other.owner.team && other.owner.team == player.team)) {
                         player.changeHealth(-other.dmg, other.owner, other);
                         var tmpSpd = 1.5 * (other.weightM||1);
                         player.xVel += tmpSpd * mathCOS(tmpDir);
@@ -718,7 +728,7 @@ class ObjectManager {
                         }
                     }
                 } else if (other.trap && !player.noTrap && other.owner != player && !(other.owner &&
-                    other.owner.team && other.owner.team == player.team)) {
+                                                                                      other.owner.team && other.owner.team == player.team)) {
                     player.lockMove = true;
                     other.hideFromEnemy = false;
                 } else if (other.boostSpeed) {
@@ -1961,7 +1971,7 @@ class Projectile {
                     if (!this.sentTo[players[i].id] && players[i].canSee(this)) {
                         this.sentTo[players[i].id] = 1;
                         server.send(players[i].id, "18", UTILS.fixTo(this.x, 1), UTILS.fixTo(this.y, 1),
-                            UTILS.fixTo(this.dir, 2), UTILS.fixTo(this.range, 1), this.speed, this.indx, this.layer, this.sid);
+                                    UTILS.fixTo(this.dir, 2), UTILS.fixTo(this.range, 1), this.speed, this.indx, this.layer, this.sid);
                     }
                 }
                 this.objectsHit.length = 0;
@@ -1969,9 +1979,9 @@ class Projectile {
                     this.tmpObj = players[i];
                     if (this.tmpObj.alive && this.tmpObj != this.owner && !(this.owner.team && this.tmpObj.team == this.owner.team)) {
                         if (UTILS.lineInRect(tmpObj.x-tmpObj.scale, tmpObj.y-tmpObj.scale, tmpObj.x+tmpObj.scale,
-                            this.tmpObj.y+this.tmpObj.scale, this.x, this.y, this.x+(tmpSpeed*Math.cos(this.dir)),
-                            this.y+(tmpSpeed*Math.sin(this.dir)))) {
-                                this.objectsHit.push(this.tmpObj);
+                                             this.tmpObj.y+this.tmpObj.scale, this.x, this.y, this.x+(tmpSpeed*Math.cos(this.dir)),
+                                             this.y+(tmpSpeed*Math.sin(this.dir)))) {
+                            this.objectsHit.push(this.tmpObj);
                         }
                     }
                 }
@@ -1981,9 +1991,9 @@ class Projectile {
                         this.tmpObj = tmpList[x][y];
                         tmpScale = this.tmpObj.getScale();
                         if (this.tmpObj.active && !(this.ignoreObj == this.tmpObj.sid) && (this.layer <= this.tmpObj.layer) &&
-                        this.objectsHit.indexOf(this.tmpObj) < 0 && !this.tmpObj.ignoreCollision && UTILS.lineInRect(this.tmpObj.x-tmpScale, this.tmpObj.y-tmpScale, this.tmpObj.x+tmpScale, this.tmpObj.y+tmpScale,
-                            this.x, this.y, this.x+(tmpSpeed*Math.cos(this.dir)), this.y+(tmpSpeed*Math.sin(this.dir)))) {
-                                this.objectsHit.push(this.tmpObj);
+                            this.objectsHit.indexOf(this.tmpObj) < 0 && !this.tmpObj.ignoreCollision && UTILS.lineInRect(this.tmpObj.x-tmpScale, this.tmpObj.y-tmpScale, this.tmpObj.x+tmpScale, this.tmpObj.y+tmpScale,
+                                                                                                                         this.x, this.y, this.x+(tmpSpeed*Math.cos(this.dir)), this.y+(tmpSpeed*Math.sin(this.dir)))) {
+                            this.objectsHit.push(this.tmpObj);
                         }
                     }
                 }
@@ -2005,7 +2015,7 @@ class Projectile {
                         hitObj.xVel += tmpSd * Math.cos(this.dir);
                         hitObj.yVel += tmpSd * Math.sin(this.dir);
                         if (hitObj.weaponIndex == undefined || (!(items.weapons[hitObj.weaponIndex].shield &&
-                            UTILS.getAngleDist(this.dir+Math.PI, hitObj.dir) <= config.shieldAngle))) {
+                                                                  UTILS.getAngleDist(this.dir+Math.PI, hitObj.dir) <= config.shieldAngle))) {
                             hitObj.changeHealth(-this.dmg, this.owner, this.owner);
                         }
                     } else {
@@ -2066,6 +2076,623 @@ class ProjectileManager {
 };
 
 const projectileManager = new ProjectileManager();
+
+class AiManager {
+    constructor(ais, AI, players, items, objectManager, config, UTILS, scoreCallback, server) {
+        // AI TYPES:
+        this.aiTypes = [
+            {
+                id: 0,
+                src: "cow_1",
+                killScore: 150,
+                health: 500,
+                weightM: 0.8,
+                speed: 0.00095,
+                turnSpeed: 0.001,
+                scale: 72,
+                drop: ["food", 50]
+            },
+            {
+                id: 1,
+                src: "pig_1",
+                killScore: 200,
+                health: 800,
+                weightM: 0.6,
+                speed: 0.00085,
+                turnSpeed: 0.001,
+                scale: 72,
+                drop: ["food", 80]
+            },
+            {
+                id: 2,
+                name: "Bull",
+                src: "bull_2",
+                hostile: true,
+                dmg: 20,
+                killScore: 1000,
+                health: 1800,
+                weightM: 0.5,
+                speed: 0.00094,
+                turnSpeed: 0.00074,
+                scale: 78,
+                viewRange: 800,
+                chargePlayer: true,
+                drop: ["food", 100]
+            },
+            {
+                id: 3,
+                name: "Bully",
+                src: "bull_1",
+                hostile: true,
+                dmg: 20,
+                killScore: 2000,
+                health: 2800,
+                weightM: 0.45,
+                speed: 0.001,
+                turnSpeed: 0.0008,
+                scale: 90,
+                viewRange: 900,
+                chargePlayer: true,
+                drop: ["food", 400]
+            },
+            {
+                id: 4,
+                name: "Wolf",
+                src: "wolf_1",
+                hostile: true,
+                dmg: 8,
+                killScore: 500,
+                health: 300,
+                weightM: 0.45,
+                speed: 0.001,
+                turnSpeed: 0.002,
+                scale: 84,
+                viewRange: 800,
+                chargePlayer: true,
+                drop: ["food", 200]
+            },
+            {
+                id: 5,
+                name: "Quack",
+                src: "chicken_1",
+                dmg: 8,
+                killScore: 2000,
+                noTrap: true,
+                health: 300,
+                weightM: 0.2,
+                speed: 0.0018,
+                turnSpeed: 0.006,
+                scale: 70,
+                drop: ["food", 100]
+            },
+            {
+                id: 6,
+                name: "MOOSTAFA",
+                nameScale: 50,
+                src: "enemy",
+                hostile: true,
+                dontRun: true,
+                fixedSpawn: true,
+                spawnDelay: 60000,
+                noTrap: true,
+                colDmg: 100,
+                dmg: 40,
+                killScore: 8000,
+                health: 18000,
+                weightM: 0.4,
+                speed: 0.0007,
+                turnSpeed: 0.01,
+                scale: 80,
+                spriteMlt: 1.8,
+                leapForce: 0.9,
+                viewRange: 1000,
+                hitRange: 210,
+                hitDelay: 1000,
+                chargePlayer: true,
+                drop: ["food", 100]
+            },
+            {
+                id: 7,
+                name: "Treasure",
+                hostile: true,
+                nameScale: 35,
+                src: "crate_1",
+                fixedSpawn: true,
+                spawnDelay: 120000,
+                colDmg: 200,
+                killScore: 5000,
+                health: 20000,
+                weightM: 0.1,
+                speed: 0.0,
+                turnSpeed: 0.0,
+                scale: 70,
+                spriteMlt: 1.0
+            },
+            {
+                id: 8,
+                name: "MOOFIE",
+                src: "wolf_2",
+                hostile: true,
+                fixedSpawn: true,
+                dontRun: true,
+                hitScare: 4,
+                spawnDelay: 30000,
+                noTrap: true,
+                nameScale: 35,
+                dmg: 10,
+                colDmg: 100,
+                killScore: 3000,
+                health: 7000,
+                weightM: 0.45,
+                speed: 0.0015,
+                turnSpeed: 0.002,
+                scale: 90,
+                viewRange: 800,
+                chargePlayer: true,
+                drop: ["food", 1000]
+            }
+        ]
+
+        // SPAWN AI:
+        this.spawn = function (x, y, dir, index) {
+            var tmpObj
+            for (var i = 0; i < ais.length; ++i) {
+                if (!ais[i].active) {
+                    tmpObj = ais[i]
+                    break
+                }
+            }
+            if (!tmpObj) {
+                tmpObj = new AI(ais.length, objectManager, players, items, UTILS, config, scoreCallback, server)
+                ais.push(tmpObj)
+            }
+            tmpObj.init(x, y, dir, index, this.aiTypes[index])
+            return tmpObj
+        }
+    }
+}
+const aiManager = new AiManager([]);
+
+var PI2 = Math.PI * 2
+
+class AI {
+    constructor(sid, objectManager, players, items, UTILS, config, scoreCallback, server) {
+        this.sid = sid
+        this.isAI = true
+        this.nameIndex = UTILS.randInt(0, config.cowNames.length - 1)
+
+        // INIT:
+        this.init = function (x, y, dir, index, data) {
+            this.x = x
+            this.y = y
+            this.startX = data.fixedSpawn ? x : null
+            this.startY = data.fixedSpawn ? y : null
+            this.xVel = 0
+            this.yVel = 0
+            this.zIndex = 0
+            this.dir = dir
+            this.dirPlus = 0
+            this.index = index
+            this.src = data.src
+            if (data.name) this.name = data.name
+            this.weightM = data.weightM
+            this.speed = data.speed
+            this.killScore = data.killScore
+            this.turnSpeed = data.turnSpeed
+            this.scale = data.scale
+            this.maxHealth = data.health
+            this.leapForce = data.leapForce
+            this.health = this.maxHealth
+            this.chargePlayer = data.chargePlayer
+            this.viewRange = data.viewRange
+            this.drop = data.drop
+            this.dmg = data.dmg
+            this.hostile = data.hostile
+            this.dontRun = data.dontRun
+            this.hitRange = data.hitRange
+            this.hitDelay = data.hitDelay
+            this.hitScare = data.hitScare
+            this.spriteMlt = data.spriteMlt
+            this.nameScale = data.nameScale
+            this.colDmg = data.colDmg
+            this.noTrap = data.noTrap
+            this.spawnDelay = data.spawnDelay
+            this.hitWait = 0
+            this.waitCount = 1000
+            this.moveCount = 0
+            this.targetDir = 0
+            this.active = true
+            this.alive = true
+            this.runFrom = null
+            this.chargeTarget = null
+            this.dmgOverTime = {}
+        }
+
+        // UPDATE:
+        var timerCount = 0
+        this.update = function (delta) {
+            if (this.active) {
+                // SPAWN DELAY:
+                if (this.spawnCounter) {
+                    this.spawnCounter -= delta
+                    if (this.spawnCounter <= 0) {
+                        this.spawnCounter = 0
+                        this.x = this.startX || UTILS.randInt(0, config.mapScale)
+                        this.y = this.startY || UTILS.randInt(0, config.mapScale)
+                    }
+                    return
+                }
+
+                // REGENS AND AUTO:
+                timerCount -= delta
+                if (timerCount <= 0) {
+                    if (this.dmgOverTime.dmg) {
+                        this.changeHealth(-this.dmgOverTime.dmg, this.dmgOverTime.doer)
+                        this.dmgOverTime.time -= 1
+                        if (this.dmgOverTime.time <= 0) {
+                            this.dmgOverTime.dmg = 0
+                        }
+                    }
+                    timerCount = 1000
+                }
+
+                // BEHAVIOUR:
+                var charging = false
+                var slowMlt = 1
+                if (
+                    !this.zIndex &&
+                    !this.lockMove &&
+                    this.y >= config.mapScale / 2 - config.riverWidth / 2 &&
+                    this.y <= config.mapScale / 2 + config.riverWidth / 2
+                ) {
+                    slowMlt = 0.33
+                    this.xVel += config.waterCurrent * delta
+                }
+                if (this.lockMove) {
+                    this.xVel = 0
+                    this.yVel = 0
+                } else if (this.waitCount > 0) {
+                    this.waitCount -= delta
+                    if (this.waitCount <= 0) {
+                        if (this.chargePlayer) {
+                            var tmpPlayer, bestDst, tmpDist
+                            for (let i = 0; i < players.length; ++i) {
+                                if (players[i].alive && !(players[i].skin && players[i].skin.bullRepel)) {
+                                    tmpDist = UTILS.getDistance(this.x, this.y, players[i].x, players[i].y)
+                                    if (tmpDist <= this.viewRange && (!tmpPlayer || tmpDist < bestDst)) {
+                                        bestDst = tmpDist
+                                        tmpPlayer = players[i]
+                                    }
+                                }
+                            }
+                            if (tmpPlayer) {
+                                this.chargeTarget = tmpPlayer
+                                this.moveCount = UTILS.randInt(8000, 12000)
+                            } else {
+                                this.moveCount = UTILS.randInt(1000, 2000)
+                                this.targetDir = UTILS.randFloat(-Math.PI, Math.PI)
+                            }
+                        } else {
+                            this.moveCount = UTILS.randInt(4000, 10000)
+                            this.targetDir = UTILS.randFloat(-Math.PI, Math.PI)
+                        }
+                    }
+                } else if (this.moveCount > 0) {
+                    var tmpSpd = this.speed * slowMlt
+                    if (this.runFrom && this.runFrom.active && !(this.runFrom.isPlayer && !this.runFrom.alive)) {
+                        this.targetDir = UTILS.getDirection(this.x, this.y, this.runFrom.x, this.runFrom.y)
+                        tmpSpd *= 1.42
+                    } else if (this.chargeTarget && this.chargeTarget.alive) {
+                        this.targetDir = UTILS.getDirection(this.chargeTarget.x, this.chargeTarget.y, this.x, this.y)
+                        tmpSpd *= 1.75
+                        charging = true
+                    }
+                    if (this.hitWait) {
+                        tmpSpd *= 0.3
+                    }
+                    if (this.dir != this.targetDir) {
+                        this.dir %= PI2
+                        var netAngle = (this.dir - this.targetDir + PI2) % PI2
+                        var amnt = Math.min(Math.abs(netAngle - PI2), netAngle, this.turnSpeed * delta)
+                        var sign = netAngle - Math.PI >= 0 ? 1 : -1
+                        this.dir += sign * amnt + PI2
+                    }
+                    this.dir %= PI2
+                    this.xVel += tmpSpd * delta * Math.cos(this.dir)
+                    this.yVel += tmpSpd * delta * Math.sin(this.dir)
+                    this.moveCount -= delta
+                    if (this.moveCount <= 0) {
+                        this.runFrom = null
+                        this.chargeTarget = null
+                        this.waitCount = this.hostile ? 1500 : UTILS.randInt(1500, 6000)
+                    }
+                }
+
+                // OBJECT COLL:
+                this.zIndex = 0
+                this.lockMove = false
+                var tmpList
+                var tmpSpeed = UTILS.getDistance(0, 0, this.xVel * delta, this.yVel * delta)
+                var depth = Math.min(4, Math.max(1, Math.round(tmpSpeed / 40)))
+                var tMlt = 1 / depth
+                for (let i = 0; i < depth; ++i) {
+                    if (this.xVel) {
+                        this.x += this.xVel * delta * tMlt
+                    }
+                    if (this.yVel) {
+                        this.y += this.yVel * delta * tMlt
+                    }
+                    tmpList = objectManager.getGridArrays(this.x, this.y, this.scale)
+                    for (let x = 0; x < tmpList.length; ++x) {
+                        for (let y = 0; y < tmpList[x].length; ++y) {
+                            if (tmpList[x][y].active) {
+                                objectManager.checkCollision(this, tmpList[x][y], tMlt)
+                            }
+                        }
+                    }
+                }
+
+                // HITTING:
+                var hitting = false
+                if (this.hitWait > 0) {
+                    this.hitWait -= delta
+                    if (this.hitWait <= 0) {
+                        hitting = true
+                        this.hitWait = 0
+                        if (this.leapForce && !UTILS.randInt(0, 2)) {
+                            this.xVel += this.leapForce * Math.cos(this.dir)
+                            this.yVel += this.leapForce * Math.sin(this.dir)
+                        }
+                        let tmpList = objectManager.getGridArrays(this.x, this.y, this.hitRange)
+                        let tmpObj, tmpDst
+                        for (var t = 0; t < tmpList.length; ++t) {
+                            for (var x = 0; x < tmpList[t].length; ++x) {
+                                tmpObj = tmpList[t][x]
+                                if (tmpObj.health) {
+                                    tmpDst = UTILS.getDistance(this.x, this.y, tmpObj.x, tmpObj.y)
+                                    if (tmpDst < tmpObj.scale + this.hitRange) {
+                                        if (tmpObj.changeHealth(-this.dmg * 5)) objectManager.disableObj(tmpObj)
+                                        objectManager.hitObj(tmpObj, UTILS.getDirection(this.x, this.y, tmpObj.x, tmpObj.y))
+                                    }
+                                }
+                            }
+                        }
+                        for (let x = 0; x < players.length; ++x) {
+                            if (players[x].canSee(this)) {
+                                server.send(players[x].id, "aa", this.sid)
+                            }
+                        }
+                    }
+                }
+
+                // PLAYER COLLISIONS:
+                if (charging || hitting) {
+                    let tmpObj, tmpDst, tmpDir
+                    for (let i = 0; i < players.length; ++i) {
+                        tmpObj = players[i]
+                        if (tmpObj && tmpObj.alive) {
+                            tmpDst = UTILS.getDistance(this.x, this.y, tmpObj.x, tmpObj.y)
+                            if (this.hitRange) {
+                                if (!this.hitWait && tmpDst <= this.hitRange + tmpObj.scale) {
+                                    if (hitting) {
+                                        tmpDir = UTILS.getDirection(tmpObj.x, tmpObj.y, this.x, this.y)
+                                        tmpObj.changeHealth(-this.dmg)
+                                        tmpObj.xVel += 0.6 * Math.cos(tmpDir)
+                                        tmpObj.yVel += 0.6 * Math.sin(tmpDir)
+                                        this.runFrom = null
+                                        this.chargeTarget = null
+                                        this.waitCount = 3000
+                                        this.hitWait = !UTILS.randInt(0, 2) ? 600 : 0
+                                    } else this.hitWait = this.hitDelay
+                                }
+                            } else if (tmpDst <= this.scale + tmpObj.scale) {
+                                tmpDir = UTILS.getDirection(tmpObj.x, tmpObj.y, this.x, this.y)
+                                tmpObj.changeHealth(-this.dmg)
+                                tmpObj.xVel += 0.55 * Math.cos(tmpDir)
+                                tmpObj.yVel += 0.55 * Math.sin(tmpDir)
+                            }
+                        }
+                    }
+                }
+
+                // DECEL:
+                if (this.xVel) {
+                    this.xVel *= Math.pow(config.playerDecel, delta)
+                }
+                if (this.yVel) {
+                    this.yVel *= Math.pow(config.playerDecel, delta)
+                }
+
+                // MAP BOUNDARIES:
+                var tmpScale = this.scale
+                if (this.x - tmpScale < 0) {
+                    this.x = tmpScale
+                    this.xVel = 0
+                } else if (this.x + tmpScale > config.mapScale) {
+                    this.x = config.mapScale - tmpScale
+                    this.xVel = 0
+                }
+                if (this.y - tmpScale < 0) {
+                    this.y = tmpScale
+                    this.yVel = 0
+                } else if (this.y + tmpScale > config.mapScale) {
+                    this.y = config.mapScale - tmpScale
+                    this.yVel = 0
+                }
+            }
+        }
+
+        // CAN SEE:
+        this.canSee = function (other) {
+            if (!other) return false
+            if (other.skin && other.skin.invisTimer && other.noMovTimer >= other.skin.invisTimer) return false
+            var dx = Math.abs(other.x - this.x) - other.scale
+            var dy = Math.abs(other.y - this.y) - other.scale
+            return dx <= (config.maxScreenWidth / 2) * 1.3 && dy <= (config.maxScreenHeight / 2) * 1.3
+        }
+
+        var tmpRatio = 0
+        var animIndex = 0
+        this.animate = function (delta) {
+            if (this.animTime > 0) {
+                this.animTime -= delta
+                if (this.animTime <= 0) {
+                    this.animTime = 0
+                    this.dirPlus = 0
+                    tmpRatio = 0
+                    animIndex = 0
+                } else {
+                    if (animIndex == 0) {
+                        tmpRatio += delta / (this.animSpeed * config.hitReturnRatio)
+                        this.dirPlus = UTILS.lerp(0, this.targetAngle, Math.min(1, tmpRatio))
+                        if (tmpRatio >= 1) {
+                            tmpRatio = 1
+                            animIndex = 1
+                        }
+                    } else {
+                        tmpRatio -= delta / (this.animSpeed * (1 - config.hitReturnRatio))
+                        this.dirPlus = UTILS.lerp(0, this.targetAngle, Math.max(0, tmpRatio))
+                    }
+                }
+            }
+        }
+
+        // ANIMATION:
+        this.startAnim = function () {
+            this.animTime = this.animSpeed = 600
+            this.targetAngle = Math.PI * 0.8
+            tmpRatio = 0
+            animIndex = 0
+        }
+
+        // CHANGE HEALTH:
+        this.changeHealth = function (val, doer, runFrom) {
+            if (this.active) {
+                this.health += val
+                if (runFrom) {
+                    if (this.hitScare && !UTILS.randInt(0, this.hitScare)) {
+                        this.runFrom = runFrom
+                        this.waitCount = 0
+                        this.moveCount = 2000
+                    } else if (this.hostile && this.chargePlayer && runFrom.isPlayer) {
+                        this.chargeTarget = runFrom
+                        this.waitCount = 0
+                        this.moveCount = 8000
+                    } else if (!this.dontRun) {
+                        this.runFrom = runFrom
+                        this.waitCount = 0
+                        this.moveCount = 2000
+                    }
+                }
+                if (val < 0 && this.hitRange && UTILS.randInt(0, 1)) this.hitWait = 500
+                if (doer && doer.canSee(this) && val < 0) {
+                    server.send(doer.id, "t", Math.round(this.x), Math.round(this.y), Math.round(-val), 1)
+                }
+                if (this.health <= 0) {
+                    if (this.spawnDelay) {
+                        this.spawnCounter = this.spawnDelay
+                        this.x = -1000000
+                        this.y = -1000000
+                    } else {
+                        this.x = this.startX || UTILS.randInt(0, config.mapScale)
+                        this.y = this.startY || UTILS.randInt(0, config.mapScale)
+                    }
+                    this.health = this.maxHealth
+                    this.runFrom = null
+                    if (doer) {
+                        scoreCallback(doer, this.killScore)
+                        if (this.drop) {
+                            for (var i = 0; i < this.drop.length; ) {
+                                doer.addResource(config.resourceTypes.indexOf(this.drop[i]), this.drop[i + 1])
+                                i += 2
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+class TribeManager {
+    constructor(Tribe, findPlayerBySID, server) {
+        this.tribes = {}
+        this.createTribe = (name, player) => {
+            const newTribe = new Tribe(name, findPlayerBySID, server)
+            this.tribes[name] = newTribe
+            newTribe.addPlayer(player)
+            return newTribe
+        }
+
+        this.deleteTribe = (name) => {
+            const tmpTribe = this.tribes[name]
+            if (tmpTribe) {
+                for (let i = 0; i < tmpTribe.members.length; i++) {
+                    const tmpPlayer = findPlayerBySID(tmpTribe.members[i])
+                    tmpPlayer.team = null
+                    tmpPlayer.isLeader = false
+                    server.send(tmpPlayer.id, "st", null, 0)
+                }
+                delete this.tribes[name]
+            }
+        }
+
+        this.getTribe = (name) => {
+            return this.tribes[name]
+        }
+    }
+}
+let tribeManager = new TribeManager([]);
+
+class Tribe {
+    constructor(name, findPlayerBySID, server) {
+        this.name = name
+        this.members = []
+        this.ownerID = null
+        this.joinQueue = []
+
+        this.addPlayer = (player) => {
+            player.team = this.name
+            if (this.ownerID === null) {
+                this.ownerID = player.sid
+                player.isLeader = true
+            }
+            this.members.push(player.sid)
+            const tmpData = this.getMembers()
+            for (let i = 0; i < this.members.length; i++) {
+                server.send(findPlayerBySID(this.members[i]).id, "sa", tmpData)
+            }
+        }
+
+        this.removePlayer = (player) => {
+            player.team = null
+            player.isLeader = false
+            this.members.splice(this.members.indexOf(player.sid), 1)
+            const tmpData = this.getMembers()
+            for (let i = 0; i < this.members.length; i++) {
+                server.send(findPlayerBySID(this.members[i]).id, "sa", tmpData)
+            }
+        }
+
+        this.getData = () => {
+            return {
+                sid: this.name,
+                ownerID: this.ownerID
+            }
+        }
+
+        this.getMembers = () => {
+            var tmpMembers = []
+            for (let i = 0; i < this.members.length; i++) {
+                const tmpPlayer = findPlayerBySID(this.members[i])
+                if (tmpPlayer) {
+                    tmpMembers.push(tmpPlayer.sid, tmpPlayer.name)
+                }
+            }
+            return tmpMembers
+        }
+    }
+}
 
 class Player {
     constructor(id, sid, isBot = false, data = {}) {
@@ -2896,7 +3523,7 @@ window.WebSocket = class {
         this.events = [];
     }
 
-     set onopen(callback) {
+    set onopen(callback) {
         callback();
         this.receive("io-init", "self");
         this.receive("id", {
@@ -2945,7 +3572,7 @@ window.WebSocket = class {
                 player.visible = false;
                 /*const location = objectManager.fetchSpawnObj(player.sid) || [UTILS.randInt(0, config.mapScale), UTILS.randInt(0, config.mapScale)]
                 player.setData([player.id, player.sid, data[0].name, location[0], location[1], 0, 100, 100, config.playerScale, data[0].skin])*/
-                server.send("self", "1", [player.sid])
+                server.send("self", "1", player.sid)
                 this.receive("1", 0);
                 encounterPlayer(player);
                 players.push(player);
@@ -3080,18 +3707,18 @@ window.WebSocket = class {
 
         if (id == "13c") {
             if (!player || !player.alive) return
-                if (data[0] && !(data[2] ? player.tails : player.skins)[data[1]]) {
-                    const item = (data[2] ? accessories : hats).find(x => x.id == data[1]);
-                    if (player.points >= item.price) {
-                        player.addResource(3, -item.price, true);
-                        player[data[2] ? "tails" : "skins"][item.id] = 1;
-                    }
-                    server.send("self", "us", false, data[1], data[2]);
-                } else if (!data[0] && ((data[2] ? player.tails : player.skins)[data[1]] || !data[1])) {
-                    const item = data[1] ? (data[2] ? accessories : hats).find(x => x.id == data[1]) : { id: 0 };
-                    player[data[2] ? "setTail" : "setSkin"](item.id);
-                    server.send("self", "us", true, data[1], data[2]);
+            if (data[0] && !(data[2] ? player.tails : player.skins)[data[1]]) {
+                const item = (data[2] ? accessories : hats).find(x => x.id == data[1]);
+                if (player.points >= item.price) {
+                    player.addResource(3, -item.price, true);
+                    player[data[2] ? "tails" : "skins"][item.id] = 1;
                 }
+                server.send("self", "us", false, data[1], data[2]);
+            } else if (!data[0] && ((data[2] ? player.tails : player.skins)[data[1]] || !data[1])) {
+                const item = data[1] ? (data[2] ? accessories : hats).find(x => x.id == data[1]) : { id: 0 };
+                player[data[2] ? "setTail" : "setSkin"](item.id);
+                server.send("self", "us", true, data[1], data[2]);
+            }
         }
 
         if (id == "ch") {
@@ -3099,14 +3726,14 @@ window.WebSocket = class {
             server.broadcast("ch", player.sid, data[0]);
         }
 
-        /*if (id == "8") {
+        if (id == "8") {
             if (typeof data[0] !== "string" || data[0].length <= 0) return
 
             if (player && player.alive) {
                 if (tribeManager.getTribe(data[0]) == null) {
                     const tmpClan = tribeManager.createTribe(data[0], player)
                     server.broadcast("ac", tmpClan.getData())
-                    server.send("self", "st", [data[0], 1])
+                    server.send("self", "st", data[0], 1)
                 }
             }
         }
@@ -3118,7 +3745,7 @@ window.WebSocket = class {
                     tribeManager.deleteTribe(player.team)
                 } else {
                     tribeManager.getTribe(player.team).removePlayer(player)
-                    server.send("self", "st", [null, 0])
+                    server.send("self", "st", null, 0)
                 }
             }
         }
@@ -3128,7 +3755,7 @@ window.WebSocket = class {
                 const tmpObj = findPlayerBySID(data[0])
                 if (tmpObj) {
                     tribeManager.getTribe(player.team).removePlayer(tmpObj)
-                    server.send(tmpObj.id, "st", [null, 0])
+                    server.send(tmpObj.id, "st", null, 0)
                 }
             }
         }
@@ -3147,7 +3774,7 @@ window.WebSocket = class {
 
                     if (!isRequestSent) {
                         tmpClan.joinQueue.push([player.sid, player.id])
-                        server.send(findPlayerBySID(tmpClan.ownerID).id, "an", [player.sid, player.name])
+                        server.send(findPlayerBySID(tmpClan.ownerID).id, "an", player.sid, player.name)
                     }
                 }
             }
@@ -3162,11 +3789,11 @@ window.WebSocket = class {
                     if (queue[1] !== tmpObj.id) return
                     if (data[1] && tmpObj.team == null) {
                         tmpClan.addPlayer(tmpObj)
-                        server.send(tmpObj.id, "st", [player.team, 0])
+                        server.send(tmpObj.id, "st", player.team, 0)
                     }
                 }
             }
-        }*/
+        }
 
         if (id == "14") {
             if (data[0]) {
@@ -3174,11 +3801,11 @@ window.WebSocket = class {
                     if (player.team) {
                         for (let i = 0; i < players.length; i++) {
                             if (players[i] && players[i].team === player.team) {
-                                server.send(players[i].id, "p", [player.x, player.y])
+                                server.send(players[i].id, "p", player.x, player.y)
                             }
                         }
                     } else {
-                        server.send("self", "p", [player.x, player.y])
+                        server.send("self", "p", player.x, player.y)
                     }
                 }
             }
