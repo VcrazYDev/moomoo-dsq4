@@ -3040,9 +3040,9 @@ window.WebSocket = class {
     send(msg) {
         const [id, data] = msgpack.decode(msg);
 
-        /*if (id == "pp") {
+        if (id == "pp") {
             server.send("self", "pp")
-        }*/
+        }
 
         if (id == "sp") {
             player = new Player("self", 0);
