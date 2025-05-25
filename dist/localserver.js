@@ -3298,7 +3298,7 @@ window.WebSocket = class {
             }
         }
 
-        if (id == "8") {
+        /*if (id == "8") {
             if (typeof data[0] !== "string" || data[0].length <= 0) return
 
             if (player && player.alive) {
@@ -3381,6 +3381,6 @@ window.WebSocket = class {
                     }
                 }
             }
-        }
+        }*/
     }
 }
