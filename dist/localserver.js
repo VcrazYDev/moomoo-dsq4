@@ -3047,17 +3047,20 @@ window.WebSocket = class {
         if (id == "sp") {
             player = new Player("self", 0);
             if (player) {
-            player.spawn();
-            player.resetResources();
-            player.setUserData({
-                name: data[0].name,
-                skinColor: data[0].skinColor
-            });
-            this.receive("1", 0);
-            encounterPlayer(player);
-            players.push(player);
-            for (let i = 0; i < 9; i++) player.earnXP(player.maxXP);
-        }
+                player.spawn(data[0].moofoll);
+                player.resetResources();
+                player.setUserData({
+                    name: data[0].name,
+                    skinColor: data[0].skinColor
+                });
+                player.visible = false
+                const location = objectManager.fetchSpawnObj(player.sid) || [UTILS.randInt(0, config.mapScale), UTILS.randInt(0, config.mapScale)]
+                player.setData([player.id, player.sid, data[0].name, location[0], location[1], 0, 100, 100, config.playerScale, data[0].skin])
+                this.receive("1", 0);
+                encounterPlayer(player);
+                players.push(player);
+                for (let i = 0; i < 9; i++) player.earnXP(player.maxXP);
+            }
         }
 
         /*if (id == "rmd") {
