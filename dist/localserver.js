@@ -3140,50 +3140,42 @@ window.WebSocket = class {
         }
 
         if (id == "6") {
-            if (items.weapons[data[0]]) {
-                player.weaponIndex = data[0];
-                player.weapons[data[0] < 9 ? 0 : 1] = data[0];
-                server.send("self", "17", [player.weapons, 1]);
-            } else {
-                data[0] -= 16;
-                if (player.buildIndex !== -1 && items.list[data[0]].group.id === items.list[player.buildIndex].group.id) {
-                    player.buildIndex = data[0];
-                }
+            let index = data[0];
+			if (index < 0 || index > items.weapons.length + items.list.length) return
 
-                const existingItem = player.items.find(i => items.list[i].group.id === items.list[data[0]].group.id);
-                if (existingItem) {
-                    player.items[player.items.indexOf(existingItem)] = data[0];
-                } else {
-                    player.items.push(data[0]);
-                }
+			let tmpPlayer = findPlayerByID("self")
+			if (tmpPlayer && tmpPlayer.alive) {
+				if (items.weapons[index]) {
+					if (tmpPlayer.weaponIndex < 9 && index < 9) {
+						tmpPlayer.weaponIndex = index
+					} else if (!(tmpPlayer.weaponIndex < 9) && !(index < 9)) {
+						tmpPlayer.weaponIndex = index
+					}
+					tmpPlayer.weapons[index < 9 ? 0 : 1] = index
+					server.send("self", "17", [tmpPlayer.weapons, 1])
+				} else {
+					index -= 16
+					if (tmpPlayer.buildIndex !== -1 && items.list[index].group.id === items.list[tmpPlayer.buildIndex].group.id) {
+						tmpPlayer.buildIndex = index
+					}
 
-                server.send("self", "17", [player.items]);
-            }
-
-            player.upgrAge++;
-            player.upgradePoints--;
-            server.send("self", "16", [player.upgradePoints, player.upgrAge]);
-
-            if (data[0] < 0 || data[0] > items.weapons.length + items.list.length) return;
-
-            if (player?.alive) {
-                const upgradableItems = items.list.filter(item => item.age == player.upgrAge);
-                const upgradableWeapons = items.weapons.filter(item => item.age == player.upgrAge);
-
-                if (upgradableWeapons.some(weapon => weapon.id === data[0])) {
-                    const weaponSlot = upgradableWeapons.some(w => w.type === 0 && w.id === data[0]) ? 0 : 1;
-                    player.weapons[weaponSlot] = data[0];
-                    player.weaponXP[weaponSlot] = 0;
-                    console.log(`${weaponSlot === 0 ? "primary" : "secondary"} update`);
-                } else if (upgradableItems.some(item => item.id === data[0] - 16)) {
-                    player.items[items.list[data[0] - 16].group.id] = data[0] - 16;
-                }
-
-                player.upgrAge++;
-                server.send("self", "17", player.items, 0);
-                server.send("self", "17", player.weapons, 1);
-                server.send("self", "16", Math.max(0, player.age - player.upgrAge + 1), player.upgrAge);
-            }
+					let addedItem = false
+					for (let i = 0; i < tmpPlayer.items.length; i++) {
+						if (items.list[tmpPlayer.items[i]].group.id === items.list[index].group.id) {
+							tmpPlayer.items[i] = index
+							addedItem = true
+							break
+						}
+					}
+					if (!addedItem) {
+						tmpPlayer.items.push(index)
+					}
+					server.send("self", "17", [tmpPlayer.items])
+				}
+				tmpPlayer.upgrAge++
+				tmpPlayer.upgradePoints--
+				server.send("self", "16", [tmpPlayer.upgradePoints, tmpPlayer.upgrAge])
+			}
         }
 
         if (id == "13c") {
