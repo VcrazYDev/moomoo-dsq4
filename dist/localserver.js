@@ -2,12 +2,18 @@
 // @name         localserver.js
 // @description  try to take over the world!
 // ==/UserScript==
-var MODE = "NORMAL"
-var PASSWORD = "kooky"
-var PREFIX = "!"
-const PORT = "1234" || 1234
+
 let player;
 let server;
+
+let delta,
+	now,
+	lastUpdate = Date.now()
+
+var ais = []
+var players = []
+let gameObjects = []
+var projectiles = []
 function findPlayerByID(id) {
     for (let i = 0; i < players.length; ++i) {
         if (players[i].id === id) {
@@ -24,9 +30,6 @@ function findPlayerBySID(sid) {
     }
     return null
 }
-
-let gameObjects = [];
-
 const mathSQRT = Math.sqrt;
 const mathABS = Math.abs;
 const mathATAN2 = Math.atan2;
@@ -39,8 +42,13 @@ const mathPI3 = Math.PI * 3;
 const mathPOW = Math.pow;
 
 const config = {};
-config.maxScreenWidth = 1920;
-config.maxScreenHeight = 1080;
+//Default screen:
+/*config.maxScreenWidth = 1920;
+config.maxScreenHeight = 1080;*/
+
+//Max screen:
+config.maxScreenWidth = 2820 //2820;//optimal what im finded
+config.maxScreenHeight = 1754 //1754;//optimal what im finded
 
 // SERVER:
 config.serverUpdateRate = 9;
@@ -854,7 +862,8 @@ class ObjectManager {
 const objectManager = new ObjectManager([]);
 
 const items = {}
-items.groups = [{
+items.groups = [
+    {
     id: 0,
     name: "food",
     layer: 0
@@ -939,7 +948,8 @@ items.groups = [{
 }];
 
 // PROJECTILES:
-items.projectiles = [{
+items.projectiles = [
+    {
     indx: 0,
     layer: 0,
     src: "arrow_1",
@@ -984,7 +994,8 @@ items.projectiles = [{
 }];
 
 // WEAPONS:
-items.weapons = [{
+items.weapons = [
+    {
     id: 0,
     type: 0,
     name: "tool hammer",
@@ -1260,7 +1271,8 @@ items.weapons = [{
 }];
 
 // ITEMS:
-items.list = [{
+items.list = [
+    {
     group: items.groups[0],
     name: "apple",
     desc: "restores 20 health when consumed",
@@ -1558,7 +1570,8 @@ for (var i = 0; i < items.list.length; ++i) {
     if (items.list[i].pre) items.list[i].pre = i - items.list[i].pre;
 }
 
-const hats = [{
+const hats = [
+    {
     id: 45,
     name: "Shame!",
     dontSell: true,
@@ -1878,7 +1891,8 @@ const hats = [{
     invisTimer: 1000
 }];
 
-const accessories = [{
+const accessories = [
+    {
     id: 12,
     name: "Snowball",
     price: 1000,
@@ -3035,6 +3049,30 @@ window.WebSocket = class {
     }
 
     close(reason) {
+        let tmpPlayer = findPlayerByID("self")
+        if (!tmpPlayer) return
+        if (tmpPlayer.team) {
+            if (tmpPlayer.isLeader) {
+                server.broadcast("ad", tmpPlayer.team)
+                tribeManager.deleteTribe(tmpPlayer.team)
+            } else {
+                tribeManager.getTribe(tmpPlayer.team).removePlayer(tmpPlayer)
+            }
+        }
+        server.broadcast("4", "self")
+        objectManager.removeAllItems(tmpPlayer.sid, server)
+        for (let i = 0; i < players.length; ++i) {
+            if (players[i].id == "self") {
+                players.splice(i, 1)
+                const tmpIndex = playersSid.indexOf("self")
+                if (tmpIndex !== -1) {
+                    playersSid.splice(tmpIndex, 1)
+                }
+                updateLeaderboard()
+                iconCallback()
+                break
+            }
+        }
         console.log("Closed: " + reason);
     }
 
@@ -3220,7 +3258,7 @@ window.WebSocket = class {
             if (player && player.alive) {
                 if (tribeManager.getTribe(data[0]) == null) {
                     const tmpClan = tribeManager.createTribe(data[0], player)
-                    server.broadcast("ac", [tmpClan.getData()])
+                    server.broadcast("ac", tmpClan.getData())
                     server.send("self", "st", [data[0], 1])
                 }
             }
@@ -3229,7 +3267,7 @@ window.WebSocket = class {
         if (id == "9") {
             if (player && player.alive) {
                 if (player.isLeader) {
-                    server.broadcast("ad", [player.team])
+                    server.broadcast("ad", player.team)
                     tribeManager.deleteTribe(player.team)
                 } else {
                     tribeManager.getTribe(player.team).removePlayer(player)
