@@ -3576,143 +3576,69 @@ window.WebSocket = class {
     }
 
     close(reason) {
-        /*let tmpPlayer = findPlayerByID("self")
-        if (!tmpPlayer) return
-        if (tmpPlayer.team) {
-            if (tmpPlayer.isLeader) {
-                server.broadcast("ad", tmpPlayer.team)
-                tribeManager.deleteTribe(tmpPlayer.team)
-            } else {
-                tribeManager.getTribe(tmpPlayer.team).removePlayer(tmpPlayer)
-            }
-        }
-        server.broadcast("4", "self")
-        objectManager.removeAllItems(tmpPlayer.sid, server)
-        for (let i = 0; i < players.length; ++i) {
-            if (players[i].id == "self") {
-                players.splice(i, 1)
-                const tmpIndex = playersSid.indexOf("self")
-                if (tmpIndex !== -1) {
-                    playersSid.splice(tmpIndex, 1)
-                }
-                updateLeaderboard()
-                iconCallback()
-                break
-            }
-        }*/
         console.log("Closed: " + reason);
     }
 
     send(msg) {
         const [id, data] = msgpack.decode(msg);
 
-        if (id == "pp") {
-            //server.send("self", "pp")
-        }
-
         if (id == "sp") {
             player = new Player("self", 0);
-            if (player) {
-                player.spawn();
-                player.resetResources();
-                player.setUserData({
-                    name: data[0].name,
-                    skinColor: data[0].skinColor
-                });
-                player.visible = false;
-                /*const location = objectManager.fetchSpawnObj(player.sid) || [UTILS.randInt(0, config.mapScale), UTILS.randInt(0, config.mapScale)]
-                player.setData([player.id, player.sid, data[0].name, location[0], location[1], 0, 100, 100, config.playerScale, data[0].skin])*/
-                server.send("self", "1", [player.sid])
-                this.receive("1", 0);
-                encounterPlayer(player);
-                players.push(player);
-                for (let i = 0; i < 9; i++) player.earnXP(player.maxXP);
-            }
-        }
-
-        if (id == "rmd") {
-            if (player && player.alive) {
-                player.resetMoveDir();
-            }
+            player.spawn();
+            player.resetResources();
+            player.setUserData({
+                name: data[0].name,
+                skinColor: data[0].skinColor
+            });
+            this.receive("1", 0);
+            encounterPlayer(player);
+            players.push(player);
+            for (let i = 0; i < 9; i++) player.earnXP(player.maxXP);
         }
 
         if (id == "33") {
-            if (player && player.alive) {
-                player.moveDir = data[0];
-            }
+            player.moveDir = data[0];
         }
 
         if (id == "c") {
-            if (player && player.alive) {
-                if (data[1]) {
-                    player.dir = data[1]
-                }
-                player.mouseState = data[0];
-                if (data[0] && player.buildIndex == -1) {
-                    player.hits++;
-                }
+            player.mouseState = data[0];
+            if (data[0] && player.buildIndex == -1) {
+                player.hits++;
+            }
 
-                if (player.buildIndex >= 0) {
-                    const item = items.list[player.buildIndex];
-
-                    if (item) {
-                        player.buildItem(item);
-                        player.mouseState = 0;
-                    }
-
-                    if (data[1]) player.dir = data[1];
-                } else {
-                    player.gathering = data[0]
-                }
+            if (player.buildIndex >= 0) {
+                if (data[1]) player.dir = data[1];
+                const item = items.list[player.buildIndex];
+                if (player.buildItem(item)) {
+                    player.mouseState = 0;
+                };
             }
         }
 
         if (id == "2") {
-            if (player && player.alive) {
-                player.dir = data[0];
-            }
+            player.dir = data[0];
         }
 
         if (id == "5") {
-            if (player && player.alive) {
-                if (data[1]) {
-                    player.buildIndex = -1;
-                    player.weaponIndex = data[0];
+            if (data[1]) {
+                player.buildIndex = -1;
+                player.weaponIndex = data[0];
+            } else {
+                if (player.buildIndex != data[0]) {
+                    player.buildIndex = data[0];
                 } else {
-                    var canbuild = true
-                    for (let i = 0; i < items.list.length; i++) {
-                        if (i === data[0]) {
-                            canbuild = player.canBuild(items.list[i])
-                            break
-                        }
-                    }
-                    if (!canbuild || player.buildIndex === data[0]) {
-                        player.buildIndex = -1
-                    } else {
-                        player.buildIndex = data[0]
-                    }
-                }
-            }
-        }
-
-        if (id == "7") {
-            if (player && player.alive) {
-                if (data[0] === 0) {
-                    player.lockDir = player.lockDir ? 0 : 1
-                } else if (data[0] === 1) {
-                    player.autoGather = player.autoGather ? 0 : 1
+                    player.buildIndex = -1;
                 }
             }
         }
 
         if (id == "6") {
-            if (!player || !player.alive) return
             let item = data[0];
             const upgradableItems = items.list.filter(item => item.age == player.upgrAge);
             const upgradableWeapons = items.weapons.filter(item => item.age == player.upgrAge);
 
             let worked = false;
-
+            
             if (item <= 15) {
                 if (upgradableWeapons.map(weapon => weapon.id).indexOf(item) != -1) {
                     if (upgradableWeapons.filter(weapon => weapon.type == 0).map(weapon => weapon.id).indexOf(item) != -1) {
@@ -3756,115 +3682,25 @@ window.WebSocket = class {
         }
 
         if (id == "13c") {
-            if (!player || !player.alive) return
-            let tmpPlayer = findPlayerByID("self")
-            if (tmpPlayer && tmpPlayer.alive) {
-                if (data[0] && !(data[2] ? player.tails : player.skins)[data[1]]) {
-                    const item = (data[2] ? accessories : hats).find(x => x.id == data[1]);
-                    if (player.points >= item.price) {
-                        player.addResource(3, -item.price, true);
-                        player[data[2] ? "tails" : "skins"][item.id] = 1;
-                    }
-                    server.send("self", "us", false, data[1], data[2]);
-                } else if (!data[0] && ((data[2] ? player.tails : player.skins)[data[1]] || !data[1])) {
-                    const item = data[1] ? (data[2] ? accessories : hats).find(x => x.id == data[1]) : { id: 0 };
-                    player[data[2] ? "setTail" : "setSkin"](item.id);
-                    server.send("self", "us", true, data[1], data[2]);
+            if (data[0] && !(data[2] ? player.tails : player.skins)[data[1]]) {
+                const item = (data[2] ? accessories : hats).find(x => x.id == data[1]);
+                if (player.points >= item.price) {
+                    player.addResource(3, -item.price, true);
+                    player[data[2] ? "tails" : "skins"][item.id] = 1;
                 }
+                server.send("self", "us", false, data[1], data[2]);
+            } else if (!data[0] && ((data[2] ? player.tails : player.skins)[data[1]] || !data[1])) {
+                const item = data[1] ? (data[2] ? accessories : hats).find(x => x.id == data[1]) : { id: 0 };
+                player[data[2] ? "setTail" : "setSkin"](item.id);
+                server.send("self", "us", true, data[1], data[2]);
             }
         }
 
         if (id == "ch") {
-            if (!player || !player.alive) return
             server.broadcast("ch", player.sid, data[0]);
         }
-
-        if (id == "8") {
-            if (typeof data[0] !== "string" || data[0].length <= 0) return
-
-            if (player && player.alive) {
-                if (tribeManager.getTribe(data[0]) == null) {
-                    const tmpClan = tribeManager.createTribe(data[0], player)
-                    server.broadcast("ac", tmpClan.getData())
-                    server.send("self", "st", [data[0], 1])
-                }
-            }
-        }
-
-        if (id == "9") {
-            if (player && player.alive) {
-                if (player.isLeader) {
-                    server.broadcast("ad", player.team)
-                    tribeManager.deleteTribe(player.team)
-                } else {
-                    tribeManager.getTribe(player.team).removePlayer(player)
-                    server.send("self", "st", [null, 0])
-                }
-            }
-        }
-
-        if (id == "13") {
-            if (player && player.alive && player.isLeader) {
-                const tmpObj = findPlayerBySID(data[0])
-                if (tmpObj) {
-                    tribeManager.getTribe(player.team).removePlayer(tmpObj)
-                    server.send(tmpObj.id, "st", [null, 0])
-                }
-            }
-        }
-
-        if (id == "10") {
-            if (player && player.alive && player.isLeader) {
-                const tmpClan = tribeManager.getTribe(data[0])
-                if (tmpClan) {
-                    let isRequestSent = false
-                    for (let i = 0; i < tmpClan.joinQueue.length; i++) {
-                        if (tmpClan.joinQueue[i][1] === "self") {
-                            isRequestSent = true
-                            break
-                        }
-                    }
-
-                    if (!isRequestSent) {
-                        tmpClan.joinQueue.push([player.sid, player.id])
-                        server.send(findPlayerBySID(tmpClan.ownerID).id, "an", [player.sid, player.name])
-                    }
-                }
-            }
-        }
-
-        if (id == "11") {
-            if (player && player.alive && player.isLeader) {
-                const tmpObj = findPlayerBySID(data[0])
-                const tmpClan = tribeManager.getTribe(player.team)
-                if (tmpClan && tmpObj) {
-                    let queue = tmpClan.joinQueue.shift()
-                    if (queue[1] !== tmpObj.id) return
-                    if (data[1] && tmpObj.team == null) {
-                        tmpClan.addPlayer(tmpObj)
-                        server.send(tmpObj.id, "st", [player.team, 0])
-                    }
-                }
-            }
-        }
-
-        if (id == "14") {
-            if (data[0]) {
-                if (player && player.alive) {
-                    if (player.team) {
-                        for (let i = 0; i < players.length; i++) {
-                            if (players[i] && players[i].team === player.team) {
-                                server.send(players[i].id, "p", [player.x, player.y])
-                            }
-                        }
-                    } else {
-                        server.send("self", "p", [player.x, player.y])
-                    }
-                }
-            }
-        }
     }
-}
+};
 
 function scoreCallback(player, amount, setResource) {
 	player.points += amount
