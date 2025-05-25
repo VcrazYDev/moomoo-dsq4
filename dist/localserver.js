@@ -21,20 +21,20 @@ const mathPOW = Math.pow;
 const config = {};
 config.maxScreenWidth = 1920;
 config.maxScreenHeight = 1080;
-    
+
         // SERVER:
 config.serverUpdateRate = 9;
         config.maxPlayers =  40;
         config.maxPlayersHard =  config.maxPlayers + 10;
         config.collisionDepth = 6;
         config.minimapRate = 3000;
-    
+
         // COLLISIONS:
         config.colGrid = 10;
-    
+
         // CLIENT:
         config.clientSendRate = 5;
-    
+
         // UI:
         config.healthBarWidth = 50;
         config.healthBarPad = 4.5;
@@ -43,14 +43,14 @@ config.serverUpdateRate = 9;
         config.deathFadeout = 3000;
         config.crownIconScale = 60;
         config.crownPad = 35;
-    
+
         // CHAT:
         config.chatCountdown = 3000;
         config.chatCooldown = 500;
-    
+
         // SANDBOX:
         config.inSandbox = true;
-    
+
         // PLAYER:
         config.maxAge = 100;
         config.gatherAngle = Math.PI/2.6;
@@ -61,18 +61,18 @@ config.serverUpdateRate = 9;
         config.playerSpeed = 0.0016;
         config.playerDecel = 0.993;
         config.nameY = 34;
-    
+
         // CUSTOMIZATION:
         config.skinColors = ["#bf8f54", "#cbb091", "#896c4b",
             "#fadadc", "#ececec", "#c37373", "#4c4c4c", "#ecaff7", "#738cc3",
              "#8bc373"];
-    
+
         // ANIMALS:
         config.animalCount = 7;
         config.aiTurnRandom = 0.06;
         config.cowNames = ["Sid", "Steph", "Bmoe", "Romn", "Jononthecool", "Fiona", "Vince", "Nathan", "Nick", "Flappy", "Ronald", "Otis", "Pepe", "Mc Donald", "Theo", "Fabz", "Oliver", "Jeff", "Jimmy", "Helena", "Reaper",
             "Ben", "Alan", "Naomi", "XYZ", "Clever", "Jeremy", "Mike", "Destined", "Stallion", "Allison", "Meaty", "Sophia", "Vaja", "Joey", "Pendy", "Murdoch", "Theo", "Jared", "July", "Sonia", "Mel", "Dexter", "Quinn", "Milky"];
-    
+
         // WEAPONS:
         config.shieldAngle = Math.PI/3;
         config.weaponVariants = [{
@@ -104,7 +104,7 @@ config.serverUpdateRate = 9;
                     return config.weaponVariants[i];
             }
         };
-    
+
         // NATURE:
         config.resourceTypes = ["wood", "food", "stone", "points"];
         config.areaCount = 7;
@@ -120,14 +120,14 @@ config.serverUpdateRate = 9;
         config.treeScales = [150, 160, 165, 175];
         config.bushScales = [80, 85, 95];
         config.rockScales = [80, 85, 90];
-    
+
         // BIOME DATA:
         config.snowBiomeTop = 2400;
         config.snowSpeed = 0.75;
-    
+
         // DATA:
         config.maxNameLength = 15;
-    
+
         // MAP:
         config.mapScale = 14400;
         config.mapPingScale = 40;
@@ -1915,7 +1915,7 @@ const accessories = [{
 
 class Projectile {
     constructor() {}
-    
+
     // INIT:
     init(indx, x, y, dir, spd, dmg, rng, scl, owner) {
         console.log("creation projectile")
@@ -2943,8 +2943,8 @@ window.WebSocket = class {
                     skinColor: data[0].skinColor
                 });
                 player.visible = false;
-                const location = objectManager.fetchSpawnObj(player.sid) || [UTILS.randInt(0, config.mapScale), UTILS.randInt(0, config.mapScale)]
-                player.setData([player.id, player.sid, data[0].name, location[0], location[1], 0, 100, 100, config.playerScale, data[0].skin])
+                /*const location = objectManager.fetchSpawnObj(player.sid) || [UTILS.randInt(0, config.mapScale), UTILS.randInt(0, config.mapScale)]
+                player.setData([player.id, player.sid, data[0].name, location[0], location[1], 0, 100, 100, config.playerScale, data[0].skin])*/
                 server.send("self", "1", [player.sid])
                 this.receive("1", 0);
                 encounterPlayer(player);
@@ -3080,8 +3080,6 @@ window.WebSocket = class {
 
         if (id == "13c") {
             if (!player || !player.alive) return
-            let tmpPlayer = findPlayerByID("self")
-            if (tmpPlayer && tmpPlayer.alive) {
                 if (data[0] && !(data[2] ? player.tails : player.skins)[data[1]]) {
                     const item = (data[2] ? accessories : hats).find(x => x.id == data[1]);
                     if (player.points >= item.price) {
@@ -3094,7 +3092,6 @@ window.WebSocket = class {
                     player[data[2] ? "setTail" : "setSkin"](item.id);
                     server.send("self", "us", true, data[1], data[2]);
                 }
-            }
         }
 
         if (id == "ch") {
@@ -3102,7 +3099,7 @@ window.WebSocket = class {
             server.broadcast("ch", player.sid, data[0]);
         }
 
-        if (id == "8") {
+        /*if (id == "8") {
             if (typeof data[0] !== "string" || data[0].length <= 0) return
 
             if (player && player.alive) {
@@ -3169,7 +3166,7 @@ window.WebSocket = class {
                     }
                 }
             }
-        }
+        }*/
 
         if (id == "14") {
             if (data[0]) {
