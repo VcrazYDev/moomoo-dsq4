@@ -3128,7 +3128,7 @@ window.WebSocket = class {
             }
         }
 
-        if (id == "7") {
+        /*if (id == "7") {
             if (player && player.alive) {
                 if (data[0] === 0) {
                     player.lockDir = player.lockDir ? 0 : 1
@@ -3136,7 +3136,7 @@ window.WebSocket = class {
                     player.autoGather = player.autoGather ? 0 : 1
                 }
             }
-        }
+        }*/
 
         if (id == "6") {
             if (items.weapons[data[0]]) {
@@ -3298,7 +3298,7 @@ window.WebSocket = class {
             }
         }
 
-        /*if (id == "8") {
+        if (id == "8") {
             if (typeof data[0] !== "string" || data[0].length <= 0) return
 
             if (player && player.alive) {
@@ -3308,9 +3308,9 @@ window.WebSocket = class {
                     server.send("self", "st", [data[0], 1])
                 }
             }
-        }*/
+        }
 
-        /*if (id == "9") {
+        if (id == "9") {
             if (player && player.alive) {
                 if (player.isLeader) {
                     server.broadcast("ad", [player.team])
@@ -3320,9 +3320,9 @@ window.WebSocket = class {
                     server.send("self", "st", [null, 0])
                 }
             }
-        }*/
+        }
 
-        /*if (id == "13") {
+        if (id == "13") {
             if (player && player.alive && player.isLeader) {
                 const tmpObj = findPlayerBySID(data[0])
                 if (tmpObj) {
@@ -3330,9 +3330,9 @@ window.WebSocket = class {
                     server.send(tmpObj.id, "st", [null, 0])
                 }
             }
-        }*/
+        }
 
-        /*if (id == "10") {
+        if (id == "10") {
             if (player && player.alive && player.isLeader) {
                 const tmpClan = tribeManager.getTribe(data[0])
                 if (tmpClan) {
@@ -3350,9 +3350,9 @@ window.WebSocket = class {
                     }
                 }
             }
-        }*/
+        }
 
-        /*if (id == "11") {
+        if (id == "11") {
             if (player && player.alive && player.isLeader) {
                 const tmpObj = findPlayerBySID(data[0])
                 const tmpClan = tribeManager.getTribe(player.team)
@@ -3365,9 +3365,9 @@ window.WebSocket = class {
                     }
                 }
             }
-        }*/
+        }
 
-        /*if (id == "14") {
+        if (id == "14") {
             if (data[0]) {
                 if (player && player.alive) {
                     if (player.team) {
@@ -3381,6 +3381,6 @@ window.WebSocket = class {
                     }
                 }
             }
-        }*/
+        }
     }
 }
