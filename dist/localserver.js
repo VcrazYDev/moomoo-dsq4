@@ -3054,9 +3054,9 @@ window.WebSocket = class {
                     skinColor: data[0].skinColor
                 });
                 player.visible = false;
-                const location = objectManager.fetchSpawnObj(player.sid) || [UTILS.randInt(0, config.mapScale), UTILS.randInt(0, config.mapScale)]
+                /*const location = objectManager.fetchSpawnObj(player.sid) || [UTILS.randInt(0, config.mapScale), UTILS.randInt(0, config.mapScale)]
                 player.setData([player.id, player.sid, data[0].name, location[0], location[1], 0, 100, 100, config.playerScale, data[0].skin])
-                server.send("self", "1", [player.sid])
+                */server.send("self", "1", [player.sid])
                 this.receive("1", 0);
                 encounterPlayer(player);
                 players.push(player);
