@@ -3129,7 +3129,7 @@ window.WebSocket = class {
             }
         }
 
-        /*if (id == "7") {
+        if (id == "7") {
             if (player && player.alive) {
                 if (data[0] === 0) {
                     player.lockDir = player.lockDir ? 0 : 1
@@ -3137,7 +3137,7 @@ window.WebSocket = class {
                     player.autoGather = player.autoGather ? 0 : 1
                 }
             }
-        }*/
+        }
 
         if (id == "6") {
             if (items.weapons[data[0]]) {
