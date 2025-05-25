@@ -3041,7 +3041,7 @@ window.WebSocket = class {
         const [id, data] = msgpack.decode(msg);
 
         if (id == "pp") {
-            server.send("self", "pp")
+            //server.send("self", "pp")
         }
 
         if (id == "sp") {
@@ -3060,11 +3060,11 @@ window.WebSocket = class {
         }
         }
 
-        /*if (id == "rmd") {
+        if (id == "rmd") {
             if (player && player.alive) {
                 player.resetMoveDir();
             }
-        }*/
+        }
 
         if (id == "33") {
             if (player && player.alive) {
