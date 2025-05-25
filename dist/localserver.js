@@ -3141,7 +3141,7 @@ window.WebSocket = class {
 
         if (id == "6") {
             let index = data[0];
-            if (index < 0 || index > items.weapons.length + items.list.length) return
+            if (/*index < 0 || */index > items.weapons.length + items.list.length) return
 
             let tmpPlayer = findPlayerByID("self")
             if (tmpPlayer && tmpPlayer.alive) {
