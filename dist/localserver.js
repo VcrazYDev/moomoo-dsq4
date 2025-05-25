@@ -3041,7 +3041,7 @@ window.WebSocket = class {
         const [id, data] = msgpack.decode(msg);
 
         if (id == "pp") {
-            server.send("self", "pp")
+        //    server.send("self", "pp")
         }
 
         if (id == "sp") {
