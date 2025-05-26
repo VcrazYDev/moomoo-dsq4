@@ -3672,7 +3672,6 @@ function addAnimal() {
 		}
 	}
 }
-		config.canHitObj = true
 		addBossArenaStones(config.totalRocks - 1, config.rockScales[1], config.mapScale / 2, config.mapScale - config.snowBiomeTop / 2)
 		addTree(200)
 		addBush(100)
