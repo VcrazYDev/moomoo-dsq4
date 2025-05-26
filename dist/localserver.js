@@ -8,6 +8,7 @@ let player;
 let server;
 
 let gameObjects = [];
+var projectiles = []
 
 function findPlayerBySID(sid) {
     for (let i = 0; i < players.length; ++i) {
@@ -3430,7 +3431,93 @@ function gameLoop() {
 
     for (let i = 0; i < players.length; i++) players[i].update(delta);
     for (let i = 0; i < ais.length; i++) ais[i].update(delta);
+    
+    	for (let i = 0; i < players.length; ++i) {
+		let tmpObj = players[i]
+		if (tmpObj && tmpObj.alive) {
+			if (tmpObj.shootCount > 0) {
+				tmpObj.shootCount -= delta
+			} else if (tmpObj.skin && tmpObj.skin.turret) {
+				var tmpPlayer, bestDst, tmpDist
+				for (let i = 0; i < players.length; ++i) {
+					if (
+						players[i].alive &&
+						!(players[i].skin && players[i].skin.antiTurret) &&
+						players[i].sid !== tmpObj.sid &&
+						!(tmpObj.team && tmpObj.team == players[i].team)
+					) {
+						tmpDist = UTILS.getDistance(tmpObj.x, tmpObj.y, players[i].x, players[i].y)
+						if (tmpDist <= tmpObj.skin.turret.range && (!tmpPlayer || tmpDist < bestDst)) {
+							bestDst = tmpDist
+							tmpPlayer = players[i]
+						}
+					}
+				}
+				for (let i = 0; i < ais.length; ++i) {
+					if (ais[i].alive && ais[i].hostile) {
+						tmpDist = UTILS.getDistance(tmpObj.x, tmpObj.y, ais[i].x, ais[i].y)
+						if (tmpDist <= tmpObj.skin.turret.range && (!tmpPlayer || tmpDist < bestDst)) {
+							bestDst = tmpDist
+							tmpPlayer = ais[i]
+						}
+					}
+				}
+				if (tmpPlayer) {
+					tmpObj.shootCount = tmpObj.skin.turret.rate
+					projectileManager.addProjectile(
+						tmpObj.x,
+						tmpObj.y,
+						UTILS.getDirection(tmpPlayer.x, tmpPlayer.y, tmpObj.x, tmpObj.y),
+						tmpObj.skin.turret.range,
+						1.5,
+						tmpObj.skin.turret.proj,
+						tmpObj
+					)
+				}
+			}
+		}
+	}
+
+	for (let i = 0; i < objectManager.updateObjects.length; i++) {
+		let tmpObj = objectManager.updateObjects[i]
+		if (tmpObj.shootCount > 0) {
+			tmpObj.shootCount -= delta
+		} else {
+			var tmpPlayer, bestDst, tmpDist
+			for (let i = 0; i < players.length; ++i) {
+				if (
+					players[i].alive &&
+					!(players[i].skin && players[i].skin.antiTurret) &&
+					players[i].sid !== tmpObj.owner.sid &&
+					!(tmpObj.owner.team && tmpObj.owner.team == players[i].team)
+				) {
+					tmpDist = UTILS.getDistance(tmpObj.x, tmpObj.y, players[i].x, players[i].y)
+					if (tmpDist <= tmpObj.shootRange && (!tmpPlayer || tmpDist < bestDst)) {
+						bestDst = tmpDist
+						tmpPlayer = players[i]
+					}
+				}
+			}
+			for (let i = 0; i < ais.length; ++i) {
+				if (ais[i].alive && ais[i].hostile) {
+					tmpDist = UTILS.getDistance(tmpObj.x, tmpObj.y, ais[i].x, ais[i].y)
+					if (tmpDist <= tmpObj.shootRange && (!tmpPlayer || tmpDist < bestDst)) {
+						bestDst = tmpDist
+						tmpPlayer = ais[i]
+					}
+				}
+			}
+			if (tmpPlayer) {
+				tmpObj.dir = UTILS.getDirection(tmpPlayer.x, tmpPlayer.y, tmpObj.x, tmpObj.y)
+				tmpObj.shootCount = tmpObj.shootRate
+				projectileManager.addProjectile(tmpObj.x, tmpObj.y, tmpObj.dir, tmpObj.shootRange, 1.5, tmpObj.projectile, tmpObj.owner, tmpObj.sid)
+				server.broadcast("sp", tmpObj.sid, tmpObj.dir)
+			}
+		}
+	}
+    
     for (let i = 0; i < projectileManager.projectiles.length; i++) projectileManager.projectiles[i].update(delta);
+    for (let i = 0; i < projectiles.length; i++) projectiles[i].update(delta);
 
     for (let i = 0; i < players.length; i++) {
         if (!player) break;
