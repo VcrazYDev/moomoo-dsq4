@@ -3520,9 +3520,8 @@ function gameLoop() {
     for (let i = 0; i < projectiles.length; i++) projectiles[i].update(delta);
 
     for (let i = 0; i < players.length; i++) {
-        let tmpPlayer = players[i];
-        if (!tmpPlayer) return;
-        if (!tmpPlayer.canSee(player.id)) return;
+        if (!player.id) return;
+        if (!player.id.canSee(player.id)) return;
         if (!player) break;
         if (!players[i].sentTo[player.id]) {
             encounterPlayer(players[i]);
