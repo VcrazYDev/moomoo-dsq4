@@ -647,7 +647,7 @@ class ObjectManager {
                 this.disableObj(tmpObj);
                 server.broadcast("12", tmpObj.sid);
                 if (tmpObj.owner) {
-                     tmpObj.owner.changeItemCount(tmpObj.group.id, -1);
+                    tmpObj.owner.changeItemCount(tmpObj.group.id, -1);
                 }
                 break;
             }
@@ -659,12 +659,12 @@ class ObjectManager {
     checkItemLocation(x, y, s, sM, indx, ignoreWater, placer) {
         for (var i = 0; i < gameObjects.length; ++i) {
             var blockS = (gameObjects[i].blocker?
-                gameObjects[i].blocker:gameObjects[i].getScale(sM, gameObjects[i].isItem));
+                          gameObjects[i].blocker:gameObjects[i].getScale(sM, gameObjects[i].isItem));
             if (gameObjects[i].active && UTILS.getDistance(x, y, gameObjects[i].x,
-                gameObjects[i].y) < (s + blockS))
+                                                           gameObjects[i].y) < (s + blockS))
                 return false;
         } if (!ignoreWater && indx != 18 && y >= (config.mapScale / 2) - (config.riverWidth / 2) && y <=
-            (config.mapScale / 2) + (config.riverWidth / 2)) {
+              (config.mapScale / 2) + (config.riverWidth / 2)) {
             return false;
         }
         return true;
@@ -713,7 +713,7 @@ class ObjectManager {
                         player.yVel *= 0.75;
                     }
                     if (other.dmg && other.owner != player && !(other.owner &&
-                        other.owner.team && other.owner.team == player.team)) {
+                                                                other.owner.team && other.owner.team == player.team)) {
                         player.changeHealth(-other.dmg, other.owner, other);
                         var tmpSpd = 1.5 * (other.weightM||1);
                         player.xVel += tmpSpd * mathCOS(tmpDir);
@@ -729,7 +729,7 @@ class ObjectManager {
                         }
                     }
                 } else if (other.trap && !player.noTrap && other.owner != player && !(other.owner &&
-                    other.owner.team && other.owner.team == player.team)) {
+                                                                                      other.owner.team && other.owner.team == player.team)) {
                     player.lockMove = true;
                     other.hideFromEnemy = false;
                 } else if (other.boostSpeed) {
@@ -3431,99 +3431,117 @@ function gameLoop() {
 
     for (let i = 0; i < players.length; i++) players[i].update(delta);
     for (let i = 0; i < ais.length; i++) ais[i].update(delta);
-    
-    	for (let i = 0; i < players.length; ++i) {
-		let tmpObj = players[i]
-		if (tmpObj && tmpObj.alive) {
-			if (tmpObj.shootCount > 0) {
-				tmpObj.shootCount -= delta
-			} else if (tmpObj.skin && tmpObj.skin.turret) {
-				var tmpPlayer, bestDst, tmpDist
-				for (let i = 0; i < players.length; ++i) {
-					if (
-						players[i].alive &&
-						!(players[i].skin && players[i].skin.antiTurret) &&
-						players[i].sid !== tmpObj.sid &&
-						!(tmpObj.team && tmpObj.team == players[i].team)
-					) {
-						tmpDist = UTILS.getDistance(tmpObj.x, tmpObj.y, players[i].x, players[i].y)
-						if (tmpDist <= tmpObj.skin.turret.range && (!tmpPlayer || tmpDist < bestDst)) {
-							bestDst = tmpDist
-							tmpPlayer = players[i]
-						}
-					}
-				}
-				for (let i = 0; i < ais.length; ++i) {
-					if (ais[i].alive && ais[i].hostile) {
-						tmpDist = UTILS.getDistance(tmpObj.x, tmpObj.y, ais[i].x, ais[i].y)
-						if (tmpDist <= tmpObj.skin.turret.range && (!tmpPlayer || tmpDist < bestDst)) {
-							bestDst = tmpDist
-							tmpPlayer = ais[i]
-						}
-					}
-				}
-				if (tmpPlayer) {
-					tmpObj.shootCount = tmpObj.skin.turret.rate
-					projectileManager.addProjectile(
-						tmpObj.x,
-						tmpObj.y,
-						UTILS.getDirection(tmpPlayer.x, tmpPlayer.y, tmpObj.x, tmpObj.y),
-						tmpObj.skin.turret.range,
-						1.5,
-						tmpObj.skin.turret.proj,
-						tmpObj
-					)
-				}
-			}
-		}
-	}
 
-	for (let i = 0; i < objectManager.updateObjects.length; i++) {
-		let tmpObj = objectManager.updateObjects[i]
-		if (tmpObj.shootCount > 0) {
-			tmpObj.shootCount -= delta
-		} else {
-			var tmpPlayer, bestDst, tmpDist
-			for (let i = 0; i < players.length; ++i) {
-				if (
-					players[i].alive &&
-					!(players[i].skin && players[i].skin.antiTurret) &&
-					players[i].sid !== tmpObj.owner.sid &&
-					!(tmpObj.owner.team && tmpObj.owner.team == players[i].team)
-				) {
-					tmpDist = UTILS.getDistance(tmpObj.x, tmpObj.y, players[i].x, players[i].y)
-					if (tmpDist <= tmpObj.shootRange && (!tmpPlayer || tmpDist < bestDst)) {
-						bestDst = tmpDist
-						tmpPlayer = players[i]
-					}
-				}
-			}
-			for (let i = 0; i < ais.length; ++i) {
-				if (ais[i].alive && ais[i].hostile) {
-					tmpDist = UTILS.getDistance(tmpObj.x, tmpObj.y, ais[i].x, ais[i].y)
-					if (tmpDist <= tmpObj.shootRange && (!tmpPlayer || tmpDist < bestDst)) {
-						bestDst = tmpDist
-						tmpPlayer = ais[i]
-					}
-				}
-			}
-			if (tmpPlayer) {
-				tmpObj.dir = UTILS.getDirection(tmpPlayer.x, tmpPlayer.y, tmpObj.x, tmpObj.y)
-				tmpObj.shootCount = tmpObj.shootRate
-				projectileManager.addProjectile(tmpObj.x, tmpObj.y, tmpObj.dir, tmpObj.shootRange, 1.5, tmpObj.projectile, tmpObj.owner, tmpObj.sid)
-				server.broadcast("sp", tmpObj.sid, tmpObj.dir)
-			}
-		}
-	}
-    
+    for (let i = 0; i < players.length; ++i) {
+        let tmpObj = players[i]
+        if (tmpObj && tmpObj.alive) {
+            if (tmpObj.shootCount > 0) {
+                tmpObj.shootCount -= delta
+            } else if (tmpObj.skin && tmpObj.skin.turret) {
+                var tmpPlayer, bestDst, tmpDist
+                for (let i = 0; i < players.length; ++i) {
+                    if (
+                        players[i].alive &&
+                        !(players[i].skin && players[i].skin.antiTurret) &&
+                        players[i].sid !== tmpObj.sid &&
+                        !(tmpObj.team && tmpObj.team == players[i].team)
+                    ) {
+                        tmpDist = UTILS.getDistance(tmpObj.x, tmpObj.y, players[i].x, players[i].y)
+                        if (tmpDist <= tmpObj.skin.turret.range && (!tmpPlayer || tmpDist < bestDst)) {
+                            bestDst = tmpDist
+                            tmpPlayer = players[i]
+                        }
+                    }
+                }
+                for (let i = 0; i < ais.length; ++i) {
+                    if (ais[i].alive && ais[i].hostile) {
+                        tmpDist = UTILS.getDistance(tmpObj.x, tmpObj.y, ais[i].x, ais[i].y)
+                        if (tmpDist <= tmpObj.skin.turret.range && (!tmpPlayer || tmpDist < bestDst)) {
+                            bestDst = tmpDist
+                            tmpPlayer = ais[i]
+                        }
+                    }
+                }
+                if (tmpPlayer) {
+                    tmpObj.shootCount = tmpObj.skin.turret.rate
+                    projectileManager.addProjectile(
+                        tmpObj.x,
+                        tmpObj.y,
+                        UTILS.getDirection(tmpPlayer.x, tmpPlayer.y, tmpObj.x, tmpObj.y),
+                        tmpObj.skin.turret.range,
+                        1.5,
+                        tmpObj.skin.turret.proj,
+                        tmpObj
+                    )
+                }
+            }
+        }
+    }
+
+    for (let i = 0; i < objectManager.updateObjects.length; i++) {
+        let tmpObj = objectManager.updateObjects[i]
+        if (tmpObj.shootCount > 0) {
+            tmpObj.shootCount -= delta
+        } else {
+            var tmpPlayer, bestDst, tmpDist
+            for (let i = 0; i < players.length; ++i) {
+                if (
+                    players[i].alive &&
+                    !(players[i].skin && players[i].skin.antiTurret) &&
+                    players[i].sid !== tmpObj.owner.sid &&
+                    !(tmpObj.owner.team && tmpObj.owner.team == players[i].team)
+                ) {
+                    tmpDist = UTILS.getDistance(tmpObj.x, tmpObj.y, players[i].x, players[i].y)
+                    if (tmpDist <= tmpObj.shootRange && (!tmpPlayer || tmpDist < bestDst)) {
+                        bestDst = tmpDist
+                        tmpPlayer = players[i]
+                    }
+                }
+            }
+            for (let i = 0; i < ais.length; ++i) {
+                if (ais[i].alive && ais[i].hostile) {
+                    tmpDist = UTILS.getDistance(tmpObj.x, tmpObj.y, ais[i].x, ais[i].y)
+                    if (tmpDist <= tmpObj.shootRange && (!tmpPlayer || tmpDist < bestDst)) {
+                        bestDst = tmpDist
+                        tmpPlayer = ais[i]
+                    }
+                }
+            }
+            if (tmpPlayer) {
+                tmpObj.dir = UTILS.getDirection(tmpPlayer.x, tmpPlayer.y, tmpObj.x, tmpObj.y)
+                tmpObj.shootCount = tmpObj.shootRate
+                projectileManager.addProjectile(tmpObj.x, tmpObj.y, tmpObj.dir, tmpObj.shootRange, 1.5, tmpObj.projectile, tmpObj.owner, tmpObj.sid)
+                server.broadcast("sp", tmpObj.sid, tmpObj.dir)
+            }
+        }
+    }
+
     for (let i = 0; i < projectileManager.projectiles.length; i++) projectileManager.projectiles[i].update(delta);
     for (let i = 0; i < projectiles.length; i++) projectiles[i].update(delta);
 
     for (let i = 0; i < players.length; i++) {
+        if (!players[i].canSee(players[i])) return;
         if (!player) break;
         if (!players[i].sentTo[player.id]) {
             encounterPlayer(players[i]);
             players[i].sentTo[player.id] = true;
+        }
+        if (server) {
+            server.broadcast("33", players.filter(x => x.alive).map(p => [
+                p.sid,
+                Math.round(p.x),
+                Math.round(p.y),
+                UTILS.fixTo(p.dir, 2),
+                p.buildIndex,
+                p.weaponIndex,
+                config.fetchVariant(p).id,
+                p.team,
+                false,
+                p.skinIndex,
+                p.tailIndex,
+                false,
+                1
+            ]).flatMap(x => x));
         }
     }
 
@@ -3537,22 +3555,6 @@ function gameLoop() {
     }
 
     if (server) {
-        server.broadcast("33", players.filter(x => x.alive).map(p => [
-            p.sid,
-            Math.round(p.x),
-            Math.round(p.y),
-            UTILS.fixTo(p.dir, 2),
-            p.buildIndex,
-            p.weaponIndex,
-            config.fetchVariant(p).id,
-            p.team,
-            false,
-            p.skinIndex,
-            p.tailIndex,
-            false,
-            1
-        ]).flatMap(x => x));
-
         if (sendObjects.length > 0) {
             server.send("self", "6", sendObjects.map(object => [
                 object.sid,
@@ -4008,14 +4010,14 @@ window.WebSocket = class {
             if (!player || !player.alive) return
             server.broadcast("ch", player.sid, data[0]);
             if (data[0] == "devmode") {
-            addBossArenaStones(config.totalRocks - 1, config.rockScales[1], config.mapScale / 2, config.mapScale - config.snowBiomeTop / 2)
-            addTree(200)
-            addBush(100)
-            addCacti(20)
-            addStoneGold(100, true)
-            addStoneGold(10, false)
-            addRiverStone(15)
-            addAnimal()
+                addBossArenaStones(config.totalRocks - 1, config.rockScales[1], config.mapScale / 2, config.mapScale - config.snowBiomeTop / 2)
+                addTree(200)
+                addBush(100)
+                addCacti(20)
+                addStoneGold(100, true)
+                addStoneGold(10, false)
+                addRiverStone(15)
+                addAnimal()
             }
         }
 
