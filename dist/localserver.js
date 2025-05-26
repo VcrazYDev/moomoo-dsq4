@@ -478,276 +478,277 @@ class GameObject {
 };
 
 class ObjectManager {
-    constructor(gameObjects) {
-        this.objects = gameObjects;
-        this.grids = {};
-        this.updateObjects = [];
+    constructor(GameObject, gameObjects, UTILS, config, players, server) {
+        this.count = 1
+        this.objects = gameObjects
+        this.grids = {}
+        this.updateObjects = []
 
-        this.tmpX = undefined;
-        this.tmpY = undefined;
-        this.tmpS = config.mapScale / config.colGrid;
-    }
-    // SET OBJECT GRIDS:
-    setObjectGrids(obj) {
-        var objX = Math.min(config.mapScale, Math.max(0, obj.x));
-        var objY = Math.min(config.mapScale, Math.max(0, obj.y));
-        for (var x = 0; x < config.colGrid; ++x) {
-            this.tmpX = x * this.tmpS;
-            for (var y = 0; y < config.colGrid; ++y) {
-                this.tmpY = y * this.tmpS;
-                if (objX + obj.scale >= this.tmpX && objX - obj.scale <= this.tmpX + this.tmpS &&
-                    objY + obj.scale >= this.tmpY && objY - obj.scale <= this.tmpY + this.tmpS) {
-                    if (!this.grids[x + "_" + y])
-                        this.grids[x + "_" + y] = [];
-                    this.grids[x + "_" + y].push(obj);
-                    obj.gridLocations.push(x + "_" + y);
+        // SET OBJECT GRIDS:
+        var tmpX, tmpY
+        var tmpS = config.mapScale / config.colGrid
+        this.setObjectGrids = function (obj) {
+            var objX = Math.min(config.mapScale, Math.max(0, obj.x))
+            var objY = Math.min(config.mapScale, Math.max(0, obj.y))
+            for (var x = 0; x < config.colGrid; ++x) {
+                tmpX = x * tmpS
+                for (var y = 0; y < config.colGrid; ++y) {
+                    tmpY = y * tmpS
+                    if (objX + obj.scale >= tmpX && objX - obj.scale <= tmpX + tmpS && objY + obj.scale >= tmpY && objY - obj.scale <= tmpY + tmpS) {
+                        if (!this.grids[x + "_" + y]) {
+                            this.grids[x + "_" + y] = []
+                        }
+                        this.grids[x + "_" + y].push(obj)
+                        obj.gridLocations.push(x + "_" + y)
+                    }
                 }
             }
         }
-    };
 
-    // REMOVE OBJECT FROM GRID:
-    removeObjGrid(obj) {
-        var tmpIndx;
-        for (var i = 0; i < obj.gridLocations.length; ++i) {
-            tmpIndx = this.grids[obj.gridLocations[i]].indexOf(obj);
-            if (tmpIndx >= 0) {
-                this.grids[obj.gridLocations[i]].splice(tmpIndx, 1);
-            }
-        }
-    };
-
-    // DISABLE OBJ:
-    disableObj(obj) {
-        obj.active = false;
-        if (server) {
-            if (obj.owner && obj.pps) obj.owner.pps -= obj.pps;
-            this.removeObjGrid(obj);
-            var tmpIndx = this.updateObjects.indexOf(obj);
-            if (tmpIndx >= 0) {
-                this.updateObjects.splice(tmpIndx, 1);
-            }
-        }
-    };
-
-    // HIT OBJECT:
-    hitObj(tmpObj, tmpDir) {
-        for (var p = 0; p < players.length; ++p) {
-            if (players[p].active) {
-                if (tmpObj.sentTo[players[p].id]) {
-                    if (!tmpObj.active) server.send(players[p].id, "12", tmpObj.sid);
-                    else if (players[p].canSee(tmpObj))
-                        server.send(players[p].id, "8", UTILS.fixTo(tmpDir, 1), tmpObj.sid);
-                } if (!tmpObj.active && tmpObj.owner == players[p])
-                    players[p].changeItemCount(tmpObj.group.id, -1);
-            }
-        }
-    };
-
-    // GET GRID ARRAY:
-    getGridArrays(xPos, yPos, s) {
-        let tmpArray = [];
-        let tmpGrid;
-        this.tmpX = mathFloor(xPos / this.tmpS);
-        this.tmpY = mathFloor(yPos / this.tmpS);
-        tmpArray.length = 0;
-        try {
-            if (this.grids[this.tmpX + "_" + this.tmpY])
-                tmpArray.push(this.grids[this.tmpX + "_" + this.tmpY]);
-            if (xPos + s >= (this.tmpX + 1) * this.tmpS) { // RIGHT
-                tmpGrid = this.grids[(this.tmpX + 1) + "_" + this.tmpY];
-                if (tmpGrid) tmpArray.push(tmpGrid);
-                if (this.tmpY && yPos - s <= this.tmpY * this.tmpS) { // TOP RIGHT
-                    tmpGrid = this.grids[(this.tmpX + 1) + "_" + (this.tmpY - 1)];
-                    if (tmpGrid) tmpArray.push(tmpGrid);
-                } else if (yPos + s >= (this.tmpY + 1) * this.tmpS) { // BOTTOM RIGHT
-                    tmpGrid = this.grids[(this.tmpX + 1) + "_" + (this.tmpY + 1)];
-                    if (tmpGrid) tmpArray.push(tmpGrid);
+        // REMOVE OBJECT FROM GRID:
+        this.removeObjGrid = function (obj) {
+            var tmpIndx
+            for (var i = 0; i < obj.gridLocations.length; ++i) {
+                tmpIndx = this.grids[obj.gridLocations[i]].indexOf(obj)
+                if (tmpIndx >= 0) {
+                    this.grids[obj.gridLocations[i]].splice(tmpIndx, 1)
                 }
-            } if (this.tmpX && xPos - s <= this.tmpX * this.tmpS) { // LEFT
-                tmpGrid = this.grids[(this.tmpX - 1) + "_" + this.tmpY];
-                if (tmpGrid) tmpArray.push(tmpGrid);
-                if (this.tmpY && yPos - s <= this.tmpY * this.tmpS) { // TOP LEFT
-                    tmpGrid = this.grids[(this.tmpX - 1) + "_" + (this.tmpY - 1)];
-                    if (tmpGrid) tmpArray.push(tmpGrid);
-                } else if (yPos + s >= (this.tmpY + 1) * this.tmpS) { // BOTTOM LEFT
-                    tmpGrid = this.grids[(this.tmpX - 1) + "_" + (this.tmpY + 1)];
-                    if (tmpGrid) tmpArray.push(tmpGrid);
-                }
-            } if (yPos + s >= (this.tmpY + 1) * this.tmpS) { // BOTTOM
-                tmpGrid = this.grids[this.tmpX + "_" + (this.tmpY + 1)];
-                if (tmpGrid) tmpArray.push(tmpGrid);
-            } if (this.tmpY && yPos - s <= this.tmpY * this.tmpS) { // TOP
-                tmpGrid = this.grids[this.tmpX + "_" + (this.tmpY - 1)];
-                if (tmpGrid) tmpArray.push(tmpGrid);
             }
-        } catch (e) {}
-        return tmpArray;
-    };
+        }
 
-    // ADD NEW:
-    add(sid, x, y, dir, s, type, data, setSID, owner) {
-        let tmpObj = null;
-        for (var i = 0; i < gameObjects.length; ++i) {
-            if (gameObjects[i].sid == sid) {
-                tmpObj = gameObjects[i];
-                break;
+        // DISABLE OBJ:
+        this.disableObj = function (obj) {
+            obj.active = false
+            if (server) {
+                if (obj.owner && obj.pps) obj.owner.pps -= obj.pps
+                this.removeObjGrid(obj)
+                var tmpIndx = this.updateObjects.indexOf(obj)
+                if (tmpIndx >= 0) {
+                    this.updateObjects.splice(tmpIndx, 1)
+                }
             }
-        } if (!tmpObj) {
+        }
+
+        // HIT OBJECT:
+        this.hitObj = function (tmpObj, tmpDir) {
+            for (var p = 0; p < players.length; ++p) {
+                if (players[p].active) {
+                    if (tmpObj.sentTo[players[p].id]) {
+                        if (!tmpObj.active) {
+                            server.send(players[p].id, "12", tmpObj.sid)
+                        } else if (players[p].canSee(tmpObj)) {
+                            server.send(players[p].id, "8", UTILS.fixTo(tmpDir, 1), tmpObj.sid)
+                        }
+                    }
+                    if (!tmpObj.active && tmpObj.owner == players[p]) {
+                        players[p].changeItemCount(tmpObj.group.id, -1)
+                    }
+                }
+            }
+        }
+
+        // GET GRID ARRAY:
+        var tmpArray = []
+        var tmpGrid
+        this.getGridArrays = function (xPos, yPos, s) {
+            tmpX = mathFloor(xPos / tmpS)
+            tmpY = mathFloor(yPos / tmpS)
+            tmpArray.length = 0
+            try {
+                if (this.grids[tmpX + "_" + tmpY]) {
+                    tmpArray.push(this.grids[tmpX + "_" + tmpY])
+                }
+                if (xPos + s >= (tmpX + 1) * tmpS) {
+                    // RIGHT
+                    tmpGrid = this.grids[tmpX + 1 + "_" + tmpY]
+                    if (tmpGrid) tmpArray.push(tmpGrid)
+                    if (tmpY && yPos - s <= tmpY * tmpS) {
+                        // TOP RIGHT
+                        tmpGrid = this.grids[tmpX + 1 + "_" + (tmpY - 1)]
+                        if (tmpGrid) tmpArray.push(tmpGrid)
+                    } else if (yPos + s >= (tmpY + 1) * tmpS) {
+                        // BOTTOM RIGHT
+                        tmpGrid = this.grids[tmpX + 1 + "_" + (tmpY + 1)]
+                        if (tmpGrid) tmpArray.push(tmpGrid)
+                    }
+                }
+                if (tmpX && xPos - s <= tmpX * tmpS) {
+                    // LEFT
+                    tmpGrid = this.grids[tmpX - 1 + "_" + tmpY]
+                    if (tmpGrid) tmpArray.push(tmpGrid)
+                    if (tmpY && yPos - s <= tmpY * tmpS) {
+                        // TOP LEFT
+                        tmpGrid = this.grids[tmpX - 1 + "_" + (tmpY - 1)]
+                        if (tmpGrid) tmpArray.push(tmpGrid)
+                    } else if (yPos + s >= (tmpY + 1) * tmpS) {
+                        // BOTTOM LEFT
+                        tmpGrid = this.grids[tmpX - 1 + "_" + (tmpY + 1)]
+                        if (tmpGrid) tmpArray.push(tmpGrid)
+                    }
+                }
+                if (yPos + s >= (tmpY + 1) * tmpS) {
+                    // BOTTOM
+                    tmpGrid = this.grids[tmpX + "_" + (tmpY + 1)]
+                    if (tmpGrid) tmpArray.push(tmpGrid)
+                }
+                if (tmpY && yPos - s <= tmpY * tmpS) {
+                    // TOP
+                    tmpGrid = this.grids[tmpX + "_" + (tmpY - 1)]
+                    if (tmpGrid) tmpArray.push(tmpGrid)
+                }
+            } catch (e) {}
+            return tmpArray
+        }
+
+        // ADD NEW:
+        var tmpObj
+        this.add = function (sid, x, y, dir, s, type, data, setSID, owner) {
+            tmpObj = null
+            for (let i = 0; i < gameObjects.length; ++i) {
+                if (gameObjects[i].sid == sid) {
+                    tmpObj = gameObjects[i]
+                    break
+                }
+            }
+            if (!tmpObj) {
+                for (let i = 0; i < gameObjects.length; ++i) {
+                    if (!gameObjects[i].active) {
+                        tmpObj = gameObjects[i]
+                        break
+                    }
+                }
+            }
+            if (!tmpObj) {
+                tmpObj = new GameObject(sid)
+                gameObjects.push(tmpObj)
+            }
+            if (setSID) {
+                tmpObj.sid = sid
+            }
+            tmpObj.init(x, y, dir, s, type, data, owner)
+            if (server) {
+                this.setObjectGrids(tmpObj)
+                if (tmpObj.doUpdate) {
+                    this.updateObjects.push(tmpObj)
+                }
+            }
+            return tmpObj
+        }
+
+        // DISABLE BY SID:
+        this.disableBySid = function (sid) {
             for (var i = 0; i < gameObjects.length; ++i) {
-                if (!gameObjects[i].active) {
-                    tmpObj = gameObjects[i];
-                    break;
+                if (gameObjects[i].sid == sid) {
+                    this.disableObj(gameObjects[i])
+                    break
                 }
             }
-        } if (!tmpObj) {
-            tmpObj = new GameObject(sid);
-            gameObjects.push(tmpObj);
         }
-        if (setSID)
-            tmpObj.sid = sid;
-        tmpObj.init(x, y, dir, s, type, data, owner);
-        if (server) {
-            this.setObjectGrids(tmpObj);
-            if (tmpObj.doUpdate)
-                this.updateObjects.push(tmpObj);
-        }
-    };
 
-    // DISABLE BY SID:
-    disableBySid(sid) {
-        for (var i = 0; i < gameObjects.length; ++i) {
-            if (gameObjects[i].sid == sid) {
-                this.disableObj(gameObjects[i]);
-                break;
-            }
-        }
-    };
-
-    // REMOVE ALL FROM PLAYER:
-    removeAllItems(sid, server) {
-        for (var i = 0; i < gameObjects.length; ++i) {
-            if (gameObjects[i].active && gameObjects[i].owner && gameObjects[i].owner.sid == sid) {
-                this.disableObj(gameObjects[i]);
-            }
-        }
-        if (server) {
-            server.broadcast("13", sid);
-        }
-    };
-
-    // FETCH SPAWN OBJECT:
-    fetchSpawnObj(sid) {
-        var tmpLoc = null;
-        for (var i = 0; i < gameObjects.length; ++i) {
-            tmpObj = gameObjects[i];
-            if (tmpObj.active && tmpObj.owner && tmpObj.owner.sid == sid && tmpObj.spawnPoint) {
-                tmpLoc = [tmpObj.x, tmpObj.y];
-                this.disableObj(tmpObj);
-                server.broadcast("12", tmpObj.sid);
-                if (tmpObj.owner) {
-                    tmpObj.owner.changeItemCount(tmpObj.group.id, -1);
+        // REMOVE ALL FROM PLAYER:
+        this.removeAllItems = function (sid, server) {
+            for (var i = 0; i < gameObjects.length; ++i) {
+                if (gameObjects[i].active && gameObjects[i].owner && gameObjects[i].owner.sid == sid) {
+                    this.disableObj(gameObjects[i])
                 }
-                break;
+            }
+            if (server) {
+                server.broadcast("13", sid)
             }
         }
-        return tmpLoc;
-    };
 
-    // CHECK IF PLACABLE:
-    checkItemLocation(x, y, s, sM, indx, ignoreWater, placer) {
-        for (var i = 0; i < gameObjects.length; ++i) {
-            var blockS = (gameObjects[i].blocker?
-                          gameObjects[i].blocker:gameObjects[i].getScale(sM, gameObjects[i].isItem));
-            if (gameObjects[i].active && UTILS.getDistance(x, y, gameObjects[i].x,
-                                                           gameObjects[i].y) < (s + blockS))
-                return false;
-        } if (!ignoreWater && indx != 18 && y >= (config.mapScale / 2) - (config.riverWidth / 2) && y <=
-              (config.mapScale / 2) + (config.riverWidth / 2)) {
-            return false;
-        }
-        return true;
-    };
-
-    // ADD PROJECTILE:
-    addProjectile(x, y, dir, range, indx) {
-        var tmpData = items.projectiles[indx];
-        var tmpProj;
-        for (var i = 0; i < projectiles.length; ++i) {
-            if (!projectiles[i].active) {
-                tmpProj = projectiles[i];
-                break;
-            }
-        }
-        if (!tmpProj) {
-            tmpProj = new Projectile(players, UTILS);
-            projectiles.push(tmpProj);
-        }
-        tmpProj.init(indx, x, y, dir, tmpData.speed, range, tmpData.scale);
-    };
-
-    // CHECK PLAYER COLLISION:
-    checkCollision(player, other, delta) {
-        delta = delta||1;
-        var dx = player.x - other.x;
-        var dy = player.y - other.y;
-        var tmpLen = player.scale + other.scale;
-        if (mathABS(dx) <= tmpLen || mathABS(dy) <= tmpLen) {
-            tmpLen = player.scale + (other.getScale?other.getScale():other.scale);
-            var tmpInt = mathSQRT(dx * dx + dy * dy) - tmpLen;
-            if (tmpInt <= 0) {
-                if (!other.ignoreCollision) {
-                    var tmpDir = UTILS.getDirection(player.x, player.y, other.x, other.y);
-                    var tmpDist = UTILS.getDistance(player.x, player.y, other.x, other.y);
-                    if (other.isPlayer) {
-                        tmpInt = (tmpInt * -1) / 2;
-                        player.x += (tmpInt * mathCOS(tmpDir));
-                        player.y += (tmpInt * mathSIN(tmpDir));
-                        other.x -= (tmpInt * mathCOS(tmpDir));
-                        other.y -= (tmpInt * mathSIN(tmpDir));
-                    } else {
-                        player.x = other.x + (tmpLen * mathCOS(tmpDir));
-                        player.y = other.y + (tmpLen * mathSIN(tmpDir));
-                        player.xVel *= 0.75;
-                        player.yVel *= 0.75;
+        // FETCH SPAWN OBJECT:
+        this.fetchSpawnObj = function (sid) {
+            var tmpLoc = null
+            for (var i = 0; i < gameObjects.length; ++i) {
+                tmpObj = gameObjects[i]
+                if (tmpObj.active && tmpObj.owner && tmpObj.owner.sid == sid && tmpObj.spawnPoint) {
+                    tmpLoc = [tmpObj.x, tmpObj.y]
+                    this.disableObj(tmpObj)
+                    server.broadcast("12", tmpObj.sid)
+                    if (tmpObj.owner) {
+                        tmpObj.owner.changeItemCount(tmpObj.group.id, -1)
                     }
-                    if (other.dmg && other.owner != player && !(other.owner &&
-                                                                other.owner.team && other.owner.team == player.team)) {
-                        player.changeHealth(-other.dmg, other.owner, other);
-                        var tmpSpd = 1.5 * (other.weightM||1);
-                        player.xVel += tmpSpd * mathCOS(tmpDir);
-                        player.yVel += tmpSpd * mathSIN(tmpDir);
-                        if (other.pDmg && !(player.skin && player.skin.poisonRes)) {
-                            player.dmgOverTime.dmg = other.pDmg;
-                            player.dmgOverTime.time = 5;
-                            player.dmgOverTime.doer = other.owner;
-                        }
-                        if (player.colDmg && other.health) {
-                            if (other.changeHealth(-player.colDmg)) this.disableObj(other);
-                            this.hitObj(other, UTILS.getDirection(player.x, player.y, other.x, other.y));
-                        }
-                    }
-                } else if (other.trap && !player.noTrap && other.owner != player && !(other.owner &&
-                                                                                      other.owner.team && other.owner.team == player.team)) {
-                    player.lockMove = true;
-                    other.hideFromEnemy = false;
-                } else if (other.boostSpeed) {
-                    player.xVel += (delta * other.boostSpeed * (other.weightM||1)) * mathCOS(other.dir);
-                    player.yVel += (delta * other.boostSpeed * (other.weightM||1)) * mathSIN(other.dir);
-                } else if (other.healCol) {
-                    player.healCol = other.healCol;
-                } else if (other.teleport) {
-                    player.x = UTILS.randInt(0, config.mapScale);
-                    player.y = UTILS.randInt(0, config.mapScale);
+                    break
                 }
-                if (other.zIndex > player.zIndex) player.zIndex = other.zIndex;
-                return true;
             }
+            return tmpLoc
         }
-        return false;
-    };
 
-};
+        // CHECK IF PLACABLE:
+        this.checkItemLocation = function (x, y, s, sM, indx, ignoreWater, placer) {
+            for (var i = 0; i < gameObjects.length; ++i) {
+                var blockS = gameObjects[i].blocker ? gameObjects[i].blocker : gameObjects[i].getScale(sM, gameObjects[i].isItem)
+                if (gameObjects[i].active && UTILS.getDistance(x, y, gameObjects[i].x, gameObjects[i].y) < s + blockS) {
+                    return false
+                }
+            }
+            if (!ignoreWater && indx != 18 && y >= config.mapScale / 2 - config.riverWidth / 2 && y <= config.mapScale / 2 + config.riverWidth / 2) {
+                return false
+            }
+            return true
+        }
+
+        // CHECK PLAYER COLLISION:
+        this.checkCollision = function (player, other, delta) {
+            delta = delta || 1
+            var dx = player.x - other.x
+            var dy = player.y - other.y
+            var tmpLen = player.scale + other.scale
+            if (mathABS(dx) <= tmpLen || mathABS(dy) <= tmpLen) {
+                tmpLen = player.scale + (other.getScale ? other.getScale() : other.scale)
+                var tmpInt = mathSQRT(dx * dx + dy * dy) - tmpLen
+                if (tmpInt <= 0) {
+                    if (!other.ignoreCollision) {
+                        var tmpDir = UTILS.getDirection(player.x, player.y, other.x, other.y)
+                        var tmpDist = UTILS.getDistance(player.x, player.y, other.x, other.y)
+                        if (other.isPlayer) {
+                            tmpInt = (tmpInt * -1) / 2
+                            player.x += tmpInt * mathCOS(tmpDir)
+                            player.y += tmpInt * mathSIN(tmpDir)
+                            other.x -= tmpInt * mathCOS(tmpDir)
+                            other.y -= tmpInt * mathSIN(tmpDir)
+                        } else {
+                            player.x = other.x + tmpLen * mathCOS(tmpDir)
+                            player.y = other.y + tmpLen * mathSIN(tmpDir)
+                            player.xVel *= 0.75
+                            player.yVel *= 0.75
+                        }
+                        if (other.dmg && other.owner != player && !(other.owner && other.owner.team && other.owner.team == player.team)) {
+                            player.changeHealth(-other.dmg, other.owner, other)
+                            var tmpSpd = 1.5 * (other.weightM || 1)
+                            player.xVel += tmpSpd * mathCOS(tmpDir)
+                            player.yVel += tmpSpd * mathSIN(tmpDir)
+                            if (other.pDmg && !(player.skin && player.skin.poisonRes)) {
+                                player.dmgOverTime.dmg = other.pDmg
+                                player.dmgOverTime.time = 5
+                                player.dmgOverTime.doer = other.owner
+                            }
+                            if (player.colDmg && other.health) {
+                                if (other.changeHealth(-player.colDmg)) this.disableObj(other)
+                                this.hitObj(other, UTILS.getDirection(player.x, player.y, other.x, other.y))
+                            }
+                        }
+                    } else if (other.trap && !player.noTrap && other.owner != player && !(other.owner && other.owner.team && other.owner.team == player.team)) {
+                        player.lockMove = true
+                        other.hideFromEnemy = false
+                    } else if (other.boostSpeed) {
+                        player.xVel += delta * other.boostSpeed * (other.weightM || 1) * mathCOS(other.dir)
+                        player.yVel += delta * other.boostSpeed * (other.weightM || 1) * mathSIN(other.dir)
+                    } else if (other.healCol) {
+                        player.healCol = other.healCol
+                    } else if (other.teleport) {
+                        player.x = UTILS.randInt(0, config.mapScale)
+                        player.y = UTILS.randInt(0, config.mapScale)
+                    }
+                    if (other.zIndex > player.zIndex) player.zIndex = other.zIndex
+                    return true
+                }
+            }
+            return false
+        }
+    }
+}
 const objectManager = new ObjectManager([]);
 
 const items = {}
@@ -1927,126 +1928,163 @@ class Projectile {
     constructor() {}
 
     // INIT:
-    init(indx, x, y, dir, spd, dmg, rng, scl, owner) {
-        console.log("creation projectile")
-        this.active = true;
-        this.indx = indx;
-        this.x = x;
-        this.y = y;
-        this.dir = dir;
-        this.skipMov = true;
-        this.speed = spd;
-        this.dmg = dmg;
-        this.scale = scl;
-        this.range = rng;
-        this.owner = owner;
-        this.objectsHit = [];
-        this.tmpObj = undefined;
+    init(players, ais, objectManager, items, config, UTILS, server) {
+	// INIT:
+	this.init = function (indx, x, y, dir, spd, dmg, rng, scl, owner) {
+		this.active = true
+		this.indx = indx
+		this.x = x
+		this.y = y
+		this.dir = dir
+		this.skipMov = true
+		this.speed = spd
+		this.dmg = dmg
+		this.scale = scl
+		this.range = rng
+		this.owner = owner
+		if (server) {
+			this.sentTo = {}
+		}
+	}
 
-        if (server)
-            this.sentTo = {};
-    };
+	// UPDATE:
+	var objectsHit = []
+	var tmpObj
+	this.update = function (delta) {
+		if (this.active) {
+			var tmpSpeed = this.speed * delta
+			var tmpScale
+			if (!this.skipMov) {
+				this.x += tmpSpeed * Math.cos(this.dir)
+				this.y += tmpSpeed * Math.sin(this.dir)
+				this.range -= tmpSpeed
+				if (this.range <= 0) {
+					this.x += this.range * Math.cos(this.dir)
+					this.y += this.range * Math.sin(this.dir)
+					tmpSpeed = 1
+					this.range = 0
+					this.active = false
+				}
+			} else {
+				this.skipMov = false
+			}
+			if (server) {
+				for (let i = 0; i < players.length; ++i) {
+					if (!this.sentTo[players[i].id] && players[i].canSee(this)) {
+						this.sentTo[players[i].id] = 1
+						server.send(players[i].id, "18",
+							UTILS.fixTo(this.x, 1),
+							UTILS.fixTo(this.y, 1),
+							UTILS.fixTo(this.dir, 2),
+							UTILS.fixTo(this.range, 1),
+							this.speed,
+							this.indx,
+							this.layer,
+							this.sid
+						)
+					}
+				}
+				objectsHit.length = 0
+				for (let i = 0; i < players.length + ais.length; ++i) {
+					tmpObj = players[i] || ais[i - players.length]
+					if (tmpObj.alive && tmpObj != this.owner && !(this.owner.team && tmpObj.team == this.owner.team)) {
+						if (
+							UTILS.lineInRect(
+								tmpObj.x - tmpObj.scale,
+								tmpObj.y - tmpObj.scale,
+								tmpObj.x + tmpObj.scale,
+								tmpObj.y + tmpObj.scale,
+								this.x,
+								this.y,
+								this.x + tmpSpeed * Math.cos(this.dir),
+								this.y + tmpSpeed * Math.sin(this.dir)
+							)
+						) {
+							objectsHit.push(tmpObj)
+						}
+					}
+				}
+				var tmpList = objectManager.getGridArrays(this.x, this.y, this.scale)
+				for (var x = 0; x < tmpList.length; ++x) {
+					for (var y = 0; y < tmpList[x].length; ++y) {
+						tmpObj = tmpList[x][y]
+						tmpScale = tmpObj.getScale()
+						if (
+							tmpObj.active &&
+							!(this.ignoreObj == tmpObj.sid) &&
+							this.layer <= tmpObj.layer &&
+							objectsHit.indexOf(tmpObj) < 0 &&
+							!tmpObj.ignoreCollision &&
+							UTILS.lineInRect(
+								tmpObj.x - tmpScale,
+								tmpObj.y - tmpScale,
+								tmpObj.x + tmpScale,
+								tmpObj.y + tmpScale,
+								this.x,
+								this.y,
+								this.x + tmpSpeed * Math.cos(this.dir),
+								this.y + tmpSpeed * Math.sin(this.dir)
+							)
+						) {
+							objectsHit.push(tmpObj)
+						}
+					}
+				}
 
-    // UPDATE:
-    update(delta) {
-        if (this.active) {
-            var tmpSpeed = this.speed * delta;
-            var tmpScale;
-            if (!this.skipMov) {
-                this.x += tmpSpeed * Math.cos(this.dir);
-                this.y += tmpSpeed * Math.sin(this.dir);
-                this.range -= tmpSpeed;
-                if (this.range <= 0) {
-                    this.x += this.range * Math.cos(this.dir);
-                    this.y += this.range * Math.sin(this.dir);
-                    tmpSpeed = 1;
-                    this.range = 0;
-                    this.active = false;
-                }
-            } else {
-                this.skipMov = false;
-            }
-            if (server) {
-                for (var i = 0; i < players.length; ++i) {
-                    if (!this.sentTo[players[i].id] && players[i].canSee(this)) {
-                        this.sentTo[players[i].id] = 1;
-                        server.send(players[i].id, "18", UTILS.fixTo(this.x, 1), UTILS.fixTo(this.y, 1),
-                                    UTILS.fixTo(this.dir, 2), UTILS.fixTo(this.range, 1), this.speed, this.indx, this.layer, this.sid);
-                    }
-                }
-                this.objectsHit.length = 0;
-                for (var i = 0; i < players.lengthh; ++i) {
-                    this.tmpObj = players[i];
-                    if (this.tmpObj.alive && this.tmpObj != this.owner && !(this.owner.team && this.tmpObj.team == this.owner.team)) {
-                        if (UTILS.lineInRect(tmpObj.x-tmpObj.scale, tmpObj.y-tmpObj.scale, tmpObj.x+tmpObj.scale,
-                                             this.tmpObj.y+this.tmpObj.scale, this.x, this.y, this.x+(tmpSpeed*Math.cos(this.dir)),
-                                             this.y+(tmpSpeed*Math.sin(this.dir)))) {
-                            this.objectsHit.push(this.tmpObj);
-                        }
-                    }
-                }
-                var tmpList = objectManager.getGridArrays(this.x, this.y, this.scale);
-                for (var x = 0; x < tmpList.length; ++x) {
-                    for (var y = 0; y < tmpList[x].length; ++y) {
-                        this.tmpObj = tmpList[x][y];
-                        tmpScale = this.tmpObj.getScale();
-                        if (this.tmpObj.active && !(this.ignoreObj == this.tmpObj.sid) && (this.layer <= this.tmpObj.layer) &&
-                            this.objectsHit.indexOf(this.tmpObj) < 0 && !this.tmpObj.ignoreCollision && UTILS.lineInRect(this.tmpObj.x-tmpScale, this.tmpObj.y-tmpScale, this.tmpObj.x+tmpScale, this.tmpObj.y+tmpScale,
-                                                                                                                         this.x, this.y, this.x+(tmpSpeed*Math.cos(this.dir)), this.y+(tmpSpeed*Math.sin(this.dir)))) {
-                            this.objectsHit.push(this.tmpObj);
-                        }
-                    }
-                }
-
-                // HIT OBJECTS:
-                if (this.objectsHit.length > 0) {
-                    var hitObj = null;
-                    var shortDist = null;
-                    var tmpDist = null;
-                    for (var i = 0; i < this.objectsHit.length; ++i) {
-                        tmpDist = UTILS.getDistance(this.x, this.y, this.objectsHit[i].x, this.objectsHit[i].y);
-                        if (shortDist == null || tmpDist < shortDist) {
-                            shortDist = tmpDist;
-                            hitObj = this.objectsHit[i];
-                        }
-                    }
-                    if (hitObj.isPlayer || hitObj.isAI) {
-                        var tmpSd = 0.3 * (hitObj.weightM||1);
-                        hitObj.xVel += tmpSd * Math.cos(this.dir);
-                        hitObj.yVel += tmpSd * Math.sin(this.dir);
-                        if (hitObj.weaponIndex == undefined || (!(items.weapons[hitObj.weaponIndex].shield &&
-                                                                  UTILS.getAngleDist(this.dir+Math.PI, hitObj.dir) <= config.shieldAngle))) {
-                            hitObj.changeHealth(-this.dmg, this.owner, this.owner);
-                        }
-                    } else {
-                        if (hitObj.projDmg && hitObj.health && hitObj.changeHealth(-this.dmg)) {
-                            objectManager.disableObj(hitObj);
-                        }
-                        for (var i = 0; i < players.length; ++i) {
-                            if (players[i].active) {
-                                if (hitObj.sentTo[players[i].id]) {
-                                    if (hitObj.active) {
-                                        if (players[i].canSee(hitObj))
-                                            server.send(players[i].id, "8", UTILS.fixTo(this.dir, 2), hitObj.sid);
-                                    } else {
-                                        server.send(players[i].id, "12", hitObj.sid);
-                                    }
-                                }
-                                if (!hitObj.active && hitObj.owner == players[i])
-                                    players[i].changeItemCount(hitObj.group.id, -1);
-                            }
-
-                        }
-                    }
-                    this.active = false;
-                    for (var i = 0; i < players.length; ++i) {
-                        if (this.sentTo[players[i].id])
-                            server.send(players[i].id, "19", this.sid, UTILS.fixTo(shortDist, 1));
-                    }
-                }
-            }
-        }
-    };
+				// HIT OBJECTS:
+				if (objectsHit.length > 0) {
+					var hitObj = null
+					var shortDist = null
+					var tmpDist = null
+					for (let i = 0; i < objectsHit.length; ++i) {
+						tmpDist = UTILS.getDistance(this.x, this.y, objectsHit[i].x, objectsHit[i].y)
+						if (shortDist == null || tmpDist < shortDist) {
+							shortDist = tmpDist
+							hitObj = objectsHit[i]
+						}
+					}
+					if (hitObj.isPlayer || hitObj.isAI) {
+						var tmpSd = 0.3 * (hitObj.weightM || 1)
+						hitObj.xVel += tmpSd * Math.cos(this.dir)
+						hitObj.yVel += tmpSd * Math.sin(this.dir)
+						if (
+							hitObj.weaponIndex == undefined ||
+							!(items.weapons[hitObj.weaponIndex].shield && UTILS.getAngleDist(this.dir + Math.PI, hitObj.dir) <= config.shieldAngle)
+						) {
+							hitObj.changeHealth(-this.dmg, this.owner, this.owner)
+						}
+					} else {
+						if (hitObj.projDmg && hitObj.health && hitObj.changeHealth(-this.dmg)) {
+							objectManager.disableObj(hitObj)
+						}
+						for (let i = 0; i < players.length; ++i) {
+							if (players[i].active) {
+								if (hitObj.sentTo[players[i].id]) {
+									if (hitObj.active) {
+										if (players[i].canSee(hitObj)) {
+											server.send(players[i].id, "8", UTILS.fixTo(this.dir, 2), hitObj.sid)
+										}
+									} else {
+										server.send(players[i].id, "12", hitObj.sid)
+									}
+								}
+								if (!hitObj.active && hitObj.owner == players[i]) {
+									players[i].changeItemCount(hitObj.group.id, -1)
+								}
+							}
+						}
+					}
+					this.active = false
+					for (let i = 0; i < players.length; ++i) {
+						if (this.sentTo[players[i].id]) {
+							server.send(players[i].id, "19", this.sid, UTILS.fixTo(shortDist, 1))
+						}
+					}
+				}
+			}
+		}
+	}
+}
 };
 
 class ProjectileManager {
@@ -3921,14 +3959,14 @@ window.WebSocket = class {
             if (!player || !player.alive) return
             server.broadcast("ch", player.sid, data[0]);
             if (data[0] == "devmode") {
-            addBossArenaStones(config.totalRocks - 1, config.rockScales[1], config.mapScale / 2, config.mapScale - config.snowBiomeTop / 2)
-            addTree(200)
-            addBush(100)
-            addCacti(20)
-            addStoneGold(100, true)
-            addStoneGold(10, false)
-            addRiverStone(15)
-            addAnimal()
+                addBossArenaStones(config.totalRocks - 1, config.rockScales[1], config.mapScale / 2, config.mapScale - config.snowBiomeTop / 2)
+                addTree(200)
+                addBush(100)
+                addCacti(20)
+                addStoneGold(100, true)
+                addStoneGold(10, false)
+                addRiverStone(15)
+                addAnimal()
             }
         }
 
