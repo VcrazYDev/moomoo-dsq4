@@ -3556,18 +3556,14 @@ function gameLoop() {
             1
         ]).flatMap(x => x));
 
-        const tmpAiData = []
-        for (let i = 0; i < ais.length; ++i) {
-            let tmpPlayer = [];
-            for (let i = 0; i < players.length; i++) {
-                tmpPlayer = players[i];
+            const tmpAiData = []
+            for (let i = 0; i < ais.length; ++i) {
+                let tmpObj = ais[i]
+                if (tmpObj && tmpObj.alive && tmpPlayer.canSee(tmpObj)) {
+                    tmpAiData.push(tmpObj.sid, tmpObj.index, tmpObj.x, tmpObj.y, tmpObj.dir, tmpObj.health, tmpObj.nameIndex)
+                }
             }
-            let tmpObj = ais[i]
-            if (tmpObj && tmpObj.alive && tmpPlayer.canSee(tmpObj)) {
-                tmpAiData.push(tmpObj.sid, tmpObj.index, tmpObj.x, tmpObj.y, tmpObj.dir, tmpObj.health, tmpObj.nameIndex)
-            }
-        }
-        server.send(tmpPlayer.id, "a", tmpAiData)
+            server.send("self", "a", tmpAiData)
 
         if (sendObjects.length > 0) {
             server.send("self", "6", sendObjects.map(object => [
