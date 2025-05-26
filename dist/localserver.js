@@ -3467,7 +3467,7 @@ function gameLoop() {
     lastUpdate = now;
 
     for (let i = 0; i < players.length; i++) players[i].update(delta);
-    for (let i = 0; i < ais.length; i++) ais[i].update(delta);
+    //for (let i = 0; i < ais.length; i++) ais[i].update(delta);
     for (let i = 0; i < projectileManager.projectiles.length; i++) projectileManager.projectiles[i].update(delta);
 
     for (let i = 0; i < players.length; i++) {
