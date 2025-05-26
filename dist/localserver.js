@@ -3537,57 +3537,35 @@ function gameLoop() {
 	for (let j = 0; j < players.length; j++) {
 		let tmpPlayer = players[j]
 		if (tmpPlayer && server) {
-			const tmpPlayersData = []
-			for (let i = 0; i < players.length; ++i) {
-				let tmpObj = players[i]
-				if (tmpObj && tmpPlayer.canSee(tmpObj)) {
-					if (!tmpObj.sentTo[tmpPlayer.id]) {
-						tmpObj.sentTo[tmpPlayer.id] = 1
-						server.send(tmpPlayer.id, "2",
-							[tmpObj.id, tmpObj.sid, tmpObj.name, tmpObj.x, tmpObj.y, tmpObj.dir, tmpObj.health, tmpObj.maxHealth, config.playerScale, tmpObj.skinColor],
-							tmpObj.id === tmpPlayer.id
-						)
-					}
-					if (tmpObj.alive) {
-						tmpPlayersData.push(
-							tmpObj.sid,
-							tmpObj.x,
-							tmpObj.y,
-							tmpObj.dir,
-							tmpObj.buildIndex,
-							tmpObj.weaponIndex,
-							config.fetchVariant(tmpObj).id,
-							tmpObj.team,
-							tmpObj.isLeader ? 1 : 0,
-							tmpObj.shameTimer > 0 ? 45 : tmpObj.skinIndex,
-							tmpObj.tailIndex,
-							tmpObj.iconIndex,
-							tmpObj.zIndex
-						)
-					}
-				}
-			}
-			server.send(tmpPlayer.id, "33", tmpPlayersData)
+        server.broadcast("33", players.filter(x => x.alive).map(p => [
+            p.sid,
+            Math.round(p.x),
+            Math.round(p.y),
+            UTILS.fixTo(p.dir, 2),
+            p.buildIndex,
+            p.weaponIndex,
+            config.fetchVariant(p).id,
+            p.team,
+            false,
+            p.skinIndex,
+            p.tailIndex,
+            false,
+            1
+        ]).flatMap(x => x));
 
-			const tmpAiData = []
-			for (let i = 0; i < ais.length; ++i) {
-				let tmpObj = ais[i]
-				if (tmpObj && tmpObj.alive && tmpPlayer.canSee(tmpObj)) {
-					tmpAiData.push(tmpObj.sid, tmpObj.index, tmpObj.x, tmpObj.y, tmpObj.dir, tmpObj.health, tmpObj.nameIndex)
-				}
-			}
-			server.send(tmpPlayer.id, "a", tmpAiData)
-
-			const tmpObjectsData = []
-			for (let i = 0; i < gameObjects.length; i++) {
-				let tmpObj = gameObjects[i]
-				if (tmpObj && tmpObj.active && tmpPlayer.canSee(tmpObj) && tmpObj.visibleToPlayer(tmpPlayer) && !tmpObj.sentTo[tmpPlayer.id]) {
-					tmpObj.sentTo[tmpPlayer.id] = 1
-					tmpObjectsData.push(tmpObj.sid, tmpObj.x, tmpObj.y, tmpObj.dir, tmpObj.scale, tmpObj.type, tmpObj.id, tmpObj.owner?.sid)
-				}
-			}
-			server.send(tmpPlayer.id, "6", tmpObjectsData)
+        if (sendObjects.length > 0) {
+            server.send("self", "6", sendObjects.map(object => [
+                object.sid,
+                Math.round(object.x),
+                Math.round(object.y),
+                UTILS.fixTo(object.dir, 2),
+                object.scale,
+                ,
+                object.type,
+                object.owner.sid
+            ]).flatMap(x => x));
 		}
+	}
 }
 
 // INIT SERVER
