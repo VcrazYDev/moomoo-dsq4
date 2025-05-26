@@ -2631,7 +2631,7 @@ class TribeManager {
                     const tmpPlayer = findPlayerBySID(tmpTribe.members[i])
                     tmpPlayer.team = null
                     tmpPlayer.isLeader = false
-                    server.send("self", "st", null, 0)
+                    server.send(tmpPlayer.id, "st", null, 0)
                 }
                 delete this.tribes[name]
             }
@@ -3415,7 +3415,6 @@ function encounterPlayer(p) {
 
 let players = [];
 var ais = []
-
 let seenPlayers = [];
 
 let delta,
@@ -3431,90 +3430,6 @@ function gameLoop() {
 
     for (let i = 0; i < players.length; i++) players[i].update(delta);
     for (let i = 0; i < ais.length; i++) ais[i].update(delta);
-    	for (let i = 0; i < players.length; ++i) {
-		let tmpObj = players[i]
-		if (tmpObj && tmpObj.alive) {
-			if (tmpObj.shootCount > 0) {
-				tmpObj.shootCount -= delta
-			} else if (tmpObj.skin && tmpObj.skin.turret) {
-				var tmpPlayer, bestDst, tmpDist
-				for (let i = 0; i < players.length; ++i) {
-					if (
-						players[i].alive &&
-						!(players[i].skin && players[i].skin.antiTurret) &&
-						players[i].sid !== tmpObj.sid &&
-						!(tmpObj.team && tmpObj.team == players[i].team)
-					) {
-						tmpDist = UTILS.getDistance(tmpObj.x, tmpObj.y, players[i].x, players[i].y)
-						if (tmpDist <= tmpObj.skin.turret.range && (!tmpPlayer || tmpDist < bestDst)) {
-							bestDst = tmpDist
-							tmpPlayer = players[i]
-						}
-					}
-				}
-				for (let i = 0; i < ais.length; ++i) {
-					if (ais[i].alive && ais[i].hostile) {
-						tmpDist = UTILS.getDistance(tmpObj.x, tmpObj.y, ais[i].x, ais[i].y)
-						if (tmpDist <= tmpObj.skin.turret.range && (!tmpPlayer || tmpDist < bestDst)) {
-							bestDst = tmpDist
-							tmpPlayer = ais[i]
-						}
-					}
-				}
-				if (tmpPlayer) {
-					tmpObj.shootCount = tmpObj.skin.turret.rate
-					projectileManager.addProjectile(
-						tmpObj.x,
-						tmpObj.y,
-						UTILS.getDirection(tmpPlayer.x, tmpPlayer.y, tmpObj.x, tmpObj.y),
-						tmpObj.skin.turret.range,
-						1.5,
-						tmpObj.skin.turret.proj,
-						tmpObj
-					)
-				}
-			}
-		}
-	}
-
-	for (let i = 0; i < objectManager.updateObjects.length; i++) {
-		let tmpObj = objectManager.updateObjects[i]
-		if (tmpObj.shootCount > 0) {
-			tmpObj.shootCount -= delta
-		} else {
-			var tmpPlayer, bestDst, tmpDist
-			for (let i = 0; i < players.length; ++i) {
-				if (
-					players[i].alive &&
-					!(players[i].skin && players[i].skin.antiTurret) &&
-					players[i].sid !== tmpObj.owner.sid &&
-					!(tmpObj.owner.team && tmpObj.owner.team == players[i].team)
-				) {
-					tmpDist = UTILS.getDistance(tmpObj.x, tmpObj.y, players[i].x, players[i].y)
-					if (tmpDist <= tmpObj.shootRange && (!tmpPlayer || tmpDist < bestDst)) {
-						bestDst = tmpDist
-						tmpPlayer = players[i]
-					}
-				}
-			}
-			for (let i = 0; i < ais.length; ++i) {
-				if (ais[i].alive && ais[i].hostile) {
-					tmpDist = UTILS.getDistance(tmpObj.x, tmpObj.y, ais[i].x, ais[i].y)
-					if (tmpDist <= tmpObj.shootRange && (!tmpPlayer || tmpDist < bestDst)) {
-						bestDst = tmpDist
-						tmpPlayer = ais[i]
-					}
-				}
-			}
-			if (tmpPlayer) {
-				tmpObj.dir = UTILS.getDirection(tmpPlayer.x, tmpPlayer.y, tmpObj.x, tmpObj.y)
-				tmpObj.shootCount = tmpObj.shootRate
-				projectileManager.addProjectile(tmpObj.x, tmpObj.y, tmpObj.dir, tmpObj.shootRange, 1.5, tmpObj.projectile, tmpObj.owner, tmpObj.sid)
-				server.broadcast("sp", tmpObj.sid, tmpObj.dir)
-			}
-		}
-	}
-
     for (let i = 0; i < projectileManager.projectiles.length; i++) projectileManager.projectiles[i].update(delta);
 
     for (let i = 0; i < players.length; i++) {
@@ -3534,56 +3449,36 @@ function gameLoop() {
         }
     }
 
-	for (let j = 0; j < players.length; j++) {
-		let tmpPlayer = players[j]
-		if (tmpPlayer && server) {
-			const tmpPlayersData = []
-			for (let i = 0; i < players.length; ++i) {
-				let tmpObj = players[i]
-				if (tmpObj && tmpPlayer.canSee(tmpObj)) {
-					if (!tmpObj.sentTo["self"]) {
-						encounterPlayer(tmpObj)
-					}
-					if (tmpObj.alive) {
-						tmpPlayersData.push(
-							tmpObj.sid,
-							tmpObj.x,
-							tmpObj.y,
-							tmpObj.dir,
-							tmpObj.buildIndex,
-							tmpObj.weaponIndex,
-							config.fetchVariant(tmpObj).id,
-							tmpObj.team,
-							tmpObj.isLeader ? 1 : 0,
-							tmpObj.shameTimer > 0 ? 45 : tmpObj.skinIndex,
-							tmpObj.tailIndex,
-							tmpObj.iconIndex,
-							tmpObj.zIndex
-						)
-					}
-				}
-			}
-			server.send("self", "33", tmpPlayersData)
+    if (server) {
+        server.broadcast("33", players.filter(x => x.alive).map(p => [
+            p.sid,
+            Math.round(p.x),
+            Math.round(p.y),
+            UTILS.fixTo(p.dir, 2),
+            p.buildIndex,
+            p.weaponIndex,
+            config.fetchVariant(p).id,
+            p.team,
+            false,
+            p.skinIndex,
+            p.tailIndex,
+            false,
+            1
+        ]).flatMap(x => x));
 
-			const tmpAiData = []
-			for (let i = 0; i < ais.length; ++i) {
-				let tmpObj = ais[i]
-				if (tmpObj && tmpObj.alive && tmpPlayer.canSee(tmpObj)) {
-					tmpAiData.push(tmpObj.sid, tmpObj.index, tmpObj.x, tmpObj.y, tmpObj.dir, tmpObj.health, tmpObj.nameIndex)
-				}
-			}
-			server.send("self", "a", tmpAiData)
-
-			const tmpObjectsData = []
-			for (let i = 0; i < gameObjects.length; i++) {
-				let tmpObj = gameObjects[i]
-				if (tmpObj && tmpObj.active && tmpPlayer.canSee(tmpObj) && tmpObj.visibleToPlayer(tmpPlayer) && !tmpObj.sentTo[tmpPlayer.id]) {
-					tmpObj.sentTo[tmpPlayer.id] = 1
-					tmpObjectsData.push(tmpObj.sid, tmpObj.x, tmpObj.y, tmpObj.dir, tmpObj.scale, tmpObj.type, tmpObj.id, tmpObj.owner?.sid)
-				}
-			}
-			server.send("self", "6", tmpObjectsData)
-		}
+        if (sendObjects.length > 0) {
+            server.send("self", "6", sendObjects.map(object => [
+                object.sid,
+                Math.round(object.x),
+                Math.round(object.y),
+                UTILS.fixTo(object.dir, 2),
+                object.scale,
+                ,
+                object.type,
+                object.owner.sid
+            ]).flatMap(x => x));
+        }
+    }
 }
 
 // INIT SERVER
