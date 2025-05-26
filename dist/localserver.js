@@ -3528,23 +3528,6 @@ function gameLoop() {
             encounterPlayer(players[i]);
             players[i].sentTo[player.id] = true;
         }
-        if (server) {
-            server.broadcast("33", players.filter(x => x.alive).map(p => [
-                p.sid,
-                Math.round(p.x),
-                Math.round(p.y),
-                UTILS.fixTo(p.dir, 2),
-                p.buildIndex,
-                p.weaponIndex,
-                config.fetchVariant(p).id,
-                p.team,
-                false,
-                p.skinIndex,
-                p.tailIndex,
-                false,
-                1
-            ]).flatMap(x => x));
-        }
     }
 
     let sendObjects = [];
@@ -3557,19 +3540,34 @@ function gameLoop() {
     }
 
     if (server) {
-        if (sendObjects.length > 0) {
-            server.send("self", "6", sendObjects.map(object => [
-                object.sid,
-                Math.round(object.x),
-                Math.round(object.y),
-                UTILS.fixTo(object.dir, 2),
-                object.scale,
-                ,
-                object.type,
-                object.owner.sid
-            ]).flatMap(x => x));
-        }
+        server.broadcast("33", players.filter(x => x.alive).map(p => [
+            p.sid,
+            Math.round(p.x),
+            Math.round(p.y),
+            UTILS.fixTo(p.dir, 2),
+            p.buildIndex,
+            p.weaponIndex,
+            config.fetchVariant(p).id,
+            p.team,
+            false,
+            p.skinIndex,
+            p.tailIndex,
+            false,
+            1
+        ]).flatMap(x => x));
+    if (sendObjects.length > 0) {
+        server.send("self", "6", sendObjects.map(object => [
+            object.sid,
+            Math.round(object.x),
+            Math.round(object.y),
+            UTILS.fixTo(object.dir, 2),
+            object.scale,
+            ,
+            object.type,
+            object.owner.sid
+        ]).flatMap(x => x));
     }
+}
 }
 
 function updateLeaderboard() {
