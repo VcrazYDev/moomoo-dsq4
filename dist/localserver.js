@@ -3520,25 +3520,14 @@ function gameLoop() {
     for (let i = 0; i < projectiles.length; i++) projectiles[i].update(delta);
 
     for (let i = 0; i < players.length; i++) {
-        if (!players[i].canSee(players[i])) return;
+        let tmpPlayer = players[i];
+        if (!tmpPlayer.canSee(player.id)) return;
         if (!player) break;
         if (!players[i].sentTo[player.id]) {
             encounterPlayer(players[i]);
             players[i].sentTo[player.id] = true;
         }
-    }
-
-    let sendObjects = [];
-    for (let i = 0; i < gameObjects.length; i++) {
-        if (!player) break;
-        if (!gameObjects[i].sentTo[player.id]) {
-            sendObjects.push(gameObjects[i]);
-            gameObjects[i].sentTo[player.id] = true;
-        }
-    }
-
-    if (server) {
-                if (server) {
+        if (server) {
             server.broadcast("33", players.filter(x => x.alive).map(p => [
                 p.sid,
                 Math.round(p.x),
@@ -3555,6 +3544,18 @@ function gameLoop() {
                 1
             ]).flatMap(x => x));
         }
+    }
+
+    let sendObjects = [];
+    for (let i = 0; i < gameObjects.length; i++) {
+        if (!player) break;
+        if (!gameObjects[i].sentTo[player.id]) {
+            sendObjects.push(gameObjects[i]);
+            gameObjects[i].sentTo[player.id] = true;
+        }
+    }
+
+    if (server) {
         if (sendObjects.length > 0) {
             server.send("self", "6", sendObjects.map(object => [
                 object.sid,
