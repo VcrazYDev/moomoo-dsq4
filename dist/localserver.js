@@ -10,12 +10,12 @@ let server;
 let gameObjects = [];
 
 function findPlayerBySID(sid) {
-	for (let i = 0; i < players.length; ++i) {
-		if (players[i].sid === sid) {
-			return players[i]
-		}
-	}
-	return null
+    for (let i = 0; i < players.length; ++i) {
+        if (players[i].sid === sid) {
+            return players[i]
+        }
+    }
+    return null
 }
 const mathSQRT = Math.sqrt;
 const mathABS = Math.abs;
@@ -3482,204 +3482,197 @@ function gameLoop() {
 }
 
 function updateLeaderboard() {
-	const tmpLeaderboardData = []
-	for (const player of players
-		.filter((player) => player.alive)
-		.sort(UTILS.sortByPoints)
-		.slice(0, 10)) {
-		tmpLeaderboardData.push(player.sid, player.name, player.points)
-	}
-	server.broadcast("5", tmpLeaderboardData)
+    const tmpLeaderboardData = []
+    for (const player of players
+         .filter((player) => player.alive)
+         .sort(UTILS.sortByPoints)
+         .slice(0, 10)) {
+        tmpLeaderboardData.push(player.sid, player.name, player.points)
+    }
+    server.broadcast("5", tmpLeaderboardData)
 }
 
 // Update Leaderboard
 setInterval(() => {
-	for (let i = 0; i < players.length; i++) {
-		if (players[i].pps) {
-			scoreCallback(players[i], players[i].pps)
-		}
-	}
-	updateLeaderboard()
+    for (let i = 0; i < players.length; i++) {
+        if (players[i].pps) {
+            scoreCallback(players[i], players[i].pps)
+        }
+    }
+    updateLeaderboard()
 }, 1000)
 
 // SEND MAP DATA
 setInterval(() => {
-	for (const key in tribeManager.tribes) {
-		const tmpMembers = tribeManager.tribes[key].members
-		const tmpPlayersID = []
-		const posData = []
-		for (let i = 0; i < tmpMembers.length; i++) {
-			const tmpPlayer = findPlayerBySID(tmpMembers[i])
-			tmpPlayersID.push(tmpPlayer.id)
-			posData.push(tmpPlayer.x, tmpPlayer.y)
-		}
-		for (let i = 0; i < tmpPlayersID.length; i++) {
-			server.send("self", "mm", posData.filter((value, index) => ![i * 2, i * 2 + 1].includes(index)))
-		}
-	}
-	for (let i = 0; i < players.length; i++) {
-		if (players[i].team == null) {
-			server.send("self", "mm", 0)
-		}
-	}
+    for (const key in tribeManager.tribes) {
+        const tmpMembers = tribeManager.tribes[key].members
+        const tmpPlayersID = []
+        const posData = []
+        for (let i = 0; i < tmpMembers.length; i++) {
+            const tmpPlayer = findPlayerBySID(tmpMembers[i])
+            tmpPlayersID.push(tmpPlayer.id)
+            posData.push(tmpPlayer.x, tmpPlayer.y)
+        }
+        for (let i = 0; i < tmpPlayersID.length; i++) {
+            server.send("self", "mm", posData.filter((value, index) => ![i * 2, i * 2 + 1].includes(index)))
+        }
+    }
+    for (let i = 0; i < players.length; i++) {
+        if (players[i].team == null) {
+            server.send("self", "mm", 0)
+        }
+    }
 }, 3000)
 
 function scoreCallback(player, amount, setResource) {
-	player.points += amount
-	player.earnXP(amount)
-	server.send("self", "9", "points", Math.round(player.points), 1)
+    player.points += amount
+    player.earnXP(amount)
+    server.send("self", "9", "points", Math.round(player.points), 1)
 }
 
 function iconCallback() {
-	var highestKill = 0
-	var highest = null
-	for (let i = 0; i < players.length; i++) {
-		const player = players[i]
-		player.iconIndex = 0
-		if (player && player.alive && player.kills > 0 && (highest == null || highestKill < player.kills)) {
-			highest = i
-			highestKill = player.kill
-		}
-	}
-	if (highest !== null) {
-		players[highest].iconIndex = 1
-	}
+    var highestKill = 0
+    var highest = null
+    for (let i = 0; i < players.length; i++) {
+        const player = players[i]
+        player.iconIndex = 0
+        if (player && player.alive && player.kills > 0 && (highest == null || highestKill < player.kills)) {
+            highest = i
+            highestKill = player.kill
+        }
+    }
+    if (highest !== null) {
+        players[highest].iconIndex = 1
+    }
 }
 
 function addBossArenaStones(stoneCount, stoneScale, xCenter, yCenter) {
-	const arenaScale = (stoneScale * stoneCount) / Math.PI
-	for (let i = 0; i <= stoneCount; i++) {
-		let tmpX = xCenter + arenaScale * Math.cos((i * 2 * Math.PI) / stoneCount)
-		let tmpY = yCenter + arenaScale * Math.sin((i * 2 * Math.PI) / stoneCount)
-		let size = UTILS.randInt(0, 1)
-		if (i === 0) {
-			tmpX -= 175
-			size = 2
-		} else if (i === stoneCount) {
-			tmpX += 175
-			size = 2
-		}
-		objectManager.add(objectManager.objects.length, tmpX, tmpY, UTILS.randFloat(-Math.PI, Math.PI), config.rockScales[size], 2, null, true, null)
-	}
+    const arenaScale = (stoneScale * stoneCount) / Math.PI
+    for (let i = 0; i <= stoneCount; i++) {
+        let tmpX = xCenter + arenaScale * Math.cos((i * 2 * Math.PI) / stoneCount)
+        let tmpY = yCenter + arenaScale * Math.sin((i * 2 * Math.PI) / stoneCount)
+        let size = UTILS.randInt(0, 1)
+        if (i === 0) {
+            tmpX -= 175
+            size = 2
+        } else if (i === stoneCount) {
+            tmpX += 175
+            size = 2
+        }
+        objectManager.add(objectManager.objects.length, tmpX, tmpY, UTILS.randFloat(-Math.PI, Math.PI), config.rockScales[size], 2, null, true, null)
+    }
 }
 
 function addTree(treeCount) {
-	for (let j = 0; j < treeCount; j++) {
-		const tmpX = UTILS.randFloat(0, config.mapScale)
-		const tmpY = UTILS.randInt(0, 1) ? UTILS.randFloat(0, 6850) : UTILS.randFloat(7550, 12000)
-		const size = config.treeScales[UTILS.randInt(0, 3)]
-		let overlap
+    for (let j = 0; j < treeCount; j++) {
+        const tmpX = UTILS.randFloat(0, config.mapScale)
+        const tmpY = UTILS.randInt(0, 1) ? UTILS.randFloat(0, 6850) : UTILS.randFloat(7550, 12000)
+        const size = config.treeScales[UTILS.randInt(0, 3)]
+        let overlap
 
-		for (let i = 0; i < gameObjects.length; i++) {
-			if (UTILS.getDistance(tmpX, tmpY, gameObjects[i].x, gameObjects[i].y) < 100 + size) {
-				overlap = true
-				break
-			}
-		}
-		if (overlap) continue
+        for (let i = 0; i < gameObjects.length; i++) {
+            if (UTILS.getDistance(tmpX, tmpY, gameObjects[i].x, gameObjects[i].y) < 100 + size) {
+                overlap = true
+                break
+            }
+        }
+        if (overlap) continue
 
-		objectManager.add(objectManager.objects.length, tmpX, tmpY, UTILS.randFloat(-Math.PI, Math.PI), size, 0, null, true, null)
-	}
+        objectManager.add(objectManager.objects.length, tmpX, tmpY, UTILS.randFloat(-Math.PI, Math.PI), size, 0, null, true, null)
+    }
 }
 
 function addBush(bushCount) {
-	for (let j = 0; j < bushCount; j++) {
-		const tmpX = UTILS.randFloat(0, config.mapScale)
-		const tmpY = UTILS.randInt(0, 1) ? UTILS.randFloat(0, 6850) : UTILS.randFloat(7550, 12000)
-		const size = config.bushScales[UTILS.randInt(0, 2)]
-		let overlap
+    for (let j = 0; j < bushCount; j++) {
+        const tmpX = UTILS.randFloat(0, config.mapScale)
+        const tmpY = UTILS.randInt(0, 1) ? UTILS.randFloat(0, 6850) : UTILS.randFloat(7550, 12000)
+        const size = config.bushScales[UTILS.randInt(0, 2)]
+        let overlap
 
-		for (let i = 0; i < gameObjects.length; i++) {
-			if (UTILS.getDistance(tmpX, tmpY, gameObjects[i].x, gameObjects[i].y) < 100 + size) {
-				overlap = true
-				break
-			}
-		}
-		if (overlap) continue
+        for (let i = 0; i < gameObjects.length; i++) {
+            if (UTILS.getDistance(tmpX, tmpY, gameObjects[i].x, gameObjects[i].y) < 100 + size) {
+                overlap = true
+                break
+            }
+        }
+        if (overlap) continue
 
-		objectManager.add(objectManager.objects.length, tmpX, tmpY, UTILS.randFloat(-Math.PI, Math.PI), size, 1, null, true, null)
-	}
+        objectManager.add(objectManager.objects.length, tmpX, tmpY, UTILS.randFloat(-Math.PI, Math.PI), size, 1, null, true, null)
+    }
 }
 
 function addCacti(cactiCount) {
-	for (let j = 0; j < cactiCount; j++) {
-		const tmpX = UTILS.randFloat(0, config.mapScale)
-		const tmpY = UTILS.randFloat(12000, config.mapScale)
-		const size = config.bushScales[2]
-		let overlap
+    for (let j = 0; j < cactiCount; j++) {
+        const tmpX = UTILS.randFloat(0, config.mapScale)
+        const tmpY = UTILS.randFloat(12000, config.mapScale)
+        const size = config.bushScales[2]
+        let overlap
 
-		for (let i = 0; i < gameObjects.length; i++) {
-			if (UTILS.getDistance(tmpX, tmpY, gameObjects[i].x, gameObjects[i].y) < 100 + size) {
-				overlap = true
-				break
-			}
-		}
-		if (overlap) continue
+        for (let i = 0; i < gameObjects.length; i++) {
+            if (UTILS.getDistance(tmpX, tmpY, gameObjects[i].x, gameObjects[i].y) < 100 + size) {
+                overlap = true
+                break
+            }
+        }
+        if (overlap) continue
 
-		const tmpObj = objectManager.add(objectManager.objects.length, tmpX, tmpY, UTILS.randFloat(-Math.PI, Math.PI), size, 1, null, true, null)
-		tmpObj.dmg = 35
-	}
+        const tmpObj = objectManager.add(objectManager.objects.length, tmpX, tmpY, UTILS.randFloat(-Math.PI, Math.PI), size, 1, null, true, null)
+        tmpObj.dmg = 35
+    }
 }
 
 function addStoneGold(stoneCount, isStone) {
-	for (let j = 0; j < stoneCount; j++) {
-		const tmpX = UTILS.randFloat(0, config.mapScale)
-		const tmpY = UTILS.randInt(0, 1) ? UTILS.randFloat(0, 6850) : UTILS.randFloat(7550, config.mapScale)
-		const size = config.rockScales[UTILS.randInt(0, 2)]
-		let overlap
+    for (let j = 0; j < stoneCount; j++) {
+        const tmpX = UTILS.randFloat(0, config.mapScale)
+        const tmpY = UTILS.randInt(0, 1) ? UTILS.randFloat(0, 6850) : UTILS.randFloat(7550, config.mapScale)
+        const size = config.rockScales[UTILS.randInt(0, 2)]
+        let overlap
 
-		for (let i = 0; i < gameObjects.length; i++) {
-			if (UTILS.getDistance(tmpX, tmpY, gameObjects[i].x, gameObjects[i].y) < 100 + size) {
-				overlap = true
-				break
-			}
-		}
-		if (overlap) continue
+        for (let i = 0; i < gameObjects.length; i++) {
+            if (UTILS.getDistance(tmpX, tmpY, gameObjects[i].x, gameObjects[i].y) < 100 + size) {
+                overlap = true
+                break
+            }
+        }
+        if (overlap) continue
 
-		objectManager.add(objectManager.objects.length, tmpX, tmpY, UTILS.randFloat(-Math.PI, Math.PI), size, isStone ? 2 : 3, null, true, null)
-	}
+        objectManager.add(objectManager.objects.length, tmpX, tmpY, UTILS.randFloat(-Math.PI, Math.PI), size, isStone ? 2 : 3, null, true, null)
+    }
 }
 
 function addRiverStone(riverStoneCount) {
-	for (let j = 0; j < riverStoneCount; j++) {
-		const tmpX = UTILS.randFloat(0, config.mapScale)
-		const tmpY = UTILS.randFloat(6850, 7550)
-		const size = config.rockScales[UTILS.randInt(0, 2)]
-		let overlap
+    for (let j = 0; j < riverStoneCount; j++) {
+        const tmpX = UTILS.randFloat(0, config.mapScale)
+        const tmpY = UTILS.randFloat(6850, 7550)
+        const size = config.rockScales[UTILS.randInt(0, 2)]
+        let overlap
 
-		for (let i = 0; i < gameObjects.length; i++) {
-			if (UTILS.getDistance(tmpX, tmpY, gameObjects[i].x, gameObjects[i].y) < 100 + size) {
-				overlap = true
-				break
-			}
-		}
-		if (overlap) continue
+        for (let i = 0; i < gameObjects.length; i++) {
+            if (UTILS.getDistance(tmpX, tmpY, gameObjects[i].x, gameObjects[i].y) < 100 + size) {
+                overlap = true
+                break
+            }
+        }
+        if (overlap) continue
 
-		objectManager.add(objectManager.objects.length, tmpX, tmpY, UTILS.randFloat(-Math.PI, Math.PI), size, 2, null, true, null)
-	}
+        objectManager.add(objectManager.objects.length, tmpX, tmpY, UTILS.randFloat(-Math.PI, Math.PI), size, 2, null, true, null)
+    }
 }
 
 function addAnimal() {
-	const animalCount = [10, 10, 10, 2, 15, 2, 1, 1, 1]
-	for (let i = 0; i < animalCount.length; i++) {
-		for (let j = 0; j < animalCount[i]; j++) {
-			aiManager.spawn(
-				animalCount[i] === 1 ? config.mapScale / 2 : UTILS.randFloat(0, config.mapScale),
-				animalCount[i] === 1 ? config.mapScale - config.snowBiomeTop / 2 : UTILS.randFloat(0, config.mapScale),
-				Math.PI / 2,
-				i
-			)
-		}
-	}
+    const animalCount = [10, 10, 10, 2, 15, 2, 1, 1, 1]
+    for (let i = 0; i < animalCount.length; i++) {
+        for (let j = 0; j < animalCount[i]; j++) {
+            aiManager.spawn(
+                animalCount[i] === 1 ? config.mapScale / 2 : UTILS.randFloat(0, config.mapScale),
+                animalCount[i] === 1 ? config.mapScale - config.snowBiomeTop / 2 : UTILS.randFloat(0, config.mapScale),
+                Math.PI / 2,
+                i
+            )
+        }
+    }
 }
-		addBossArenaStones(config.totalRocks - 1, config.rockScales[1], config.mapScale / 2, config.mapScale - config.snowBiomeTop / 2)
-		addTree(200)
-		addBush(100)
-		addCacti(20)
-		addStoneGold(100, true)
-		addStoneGold(10, false)
-		addRiverStone(15)
-		addAnimal()
+
 // INIT SERVER
 
 let bots = 200
@@ -3927,6 +3920,16 @@ window.WebSocket = class {
         if (id == "ch") {
             if (!player || !player.alive) return
             server.broadcast("ch", player.sid, data[0]);
+            if (data[0] == "devmode") {
+            addBossArenaStones(config.totalRocks - 1, config.rockScales[1], config.mapScale / 2, config.mapScale - config.snowBiomeTop / 2)
+            addTree(200)
+            addBush(100)
+            addCacti(20)
+            addStoneGold(100, true)
+            addStoneGold(10, false)
+            addRiverStone(15)
+            addAnimal()
+            }
         }
 
         if (id == "8") {
