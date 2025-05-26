@@ -3521,7 +3521,7 @@ function gameLoop() {
 
     for (let i = 0; i < players.length; i++) {
         let tmpPlayer = players[i];
-        if (!tmpPlayer.canSee(player.id)) return;
+        if (!tmpPlayer.canSee("self")) return;
         if (!player) break;
         if (!players[i].sentTo[player.id]) {
             encounterPlayer(players[i]);
