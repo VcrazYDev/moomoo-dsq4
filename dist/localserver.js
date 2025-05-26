@@ -3514,12 +3514,12 @@ setInterval(() => {
 			posData.push(tmpPlayer.x, tmpPlayer.y)
 		}
 		for (let i = 0; i < tmpPlayersID.length; i++) {
-			server.send(tmpPlayersID[i], "mm", posData.filter((value, index) => ![i * 2, i * 2 + 1].includes(index)))
+			server.send("self", "mm", posData.filter((value, index) => ![i * 2, i * 2 + 1].includes(index)))
 		}
 	}
 	for (let i = 0; i < players.length; i++) {
 		if (players[i].team == null) {
-			server.send(players[i].id, "mm", 0)
+			server.send("self", "mm", 0)
 		}
 	}
 }, 3000)
@@ -3527,7 +3527,7 @@ setInterval(() => {
 function scoreCallback(player, amount, setResource) {
 	player.points += amount
 	player.earnXP(amount)
-	server.send(player.id, "9", "points", Math.round(player.points), 1)
+	server.send("self", "9", "points", Math.round(player.points), 1)
 }
 
 function iconCallback() {
@@ -3672,7 +3672,15 @@ function addAnimal() {
 		}
 	}
 }
-
+		config.canHitObj = true
+		addBossArenaStones(config.totalRocks - 1, config.rockScales[1], config.mapScale / 2, config.mapScale - config.snowBiomeTop / 2)
+		addTree(200)
+		addBush(100)
+		addCacti(20)
+		addStoneGold(100, true)
+		addStoneGold(10, false)
+		addRiverStone(15)
+		addAnimal()
 // INIT SERVER
 
 let bots = 200
