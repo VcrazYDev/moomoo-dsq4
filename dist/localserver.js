@@ -3567,7 +3567,7 @@ function gameLoop() {
                 tmpAiData.push(tmpObj.sid, tmpObj.index, tmpObj.x, tmpObj.y, tmpObj.dir, tmpObj.health, tmpObj.nameIndex)
             }
         }
-        server.send(tmpPlayer.id, "a", [tmpAiData])
+        server.send(tmpPlayer.id, "a", tmpAiData)
 
         if (sendObjects.length > 0) {
             server.send("self", "6", sendObjects.map(object => [
