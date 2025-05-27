@@ -4117,3 +4117,31 @@ window.WebSocket = class {
         }
     }
 }
+function setupServer() {
+	config.isStarted = false
+	ais = []
+	players = []
+	gameObjects = []
+	projectiles = []
+	playersSid = []
+	objectManager = new ObjectManager(GameObject, gameObjects, UTILS, config, players, server)
+	aiManager = new AiManager(ais, AI, players, items, objectManager, config, UTILS, scoreCallback, server)
+	projectileManager = new ProjectileManager(Projectile, projectiles, players, ais, objectManager, items, config, UTILS, server)
+	tribeManager = new TribeManager(Tribe, findPlayerBySID, server)
+
+	/*server.clients.forEach((socket) => {
+		if (socket.readyState === WebSocket.OPEN) {
+			socket.close()
+		}
+	})*/
+
+		config.canHitObj = true
+		addBossArenaStones(config.totalRocks - 1, config.rockScales[1], config.mapScale / 2, config.mapScale - config.snowBiomeTop / 2)
+		addTree(200)
+		addBush(100)
+		addCacti(20)
+		addStoneGold(100, true)
+		addStoneGold(10, false)
+		addRiverStone(15)
+		addAnimal()
+}
