@@ -4111,6 +4111,26 @@ window.WebSocket = class {
                 }
             }
         }
+        if (id == "18") {
+		var tmpData = items.projectiles[data[5]]
+		var tmpProj
+		for (var i = 0; i < projectiles.length; ++i) {
+			if (!projectiles[i].active) {
+				tmpProj = projectiles[i]
+				tmpProj.sid = data[7]
+				break
+			}
+		}
+		if (!tmpProj) {
+			tmpProj = new Projectile(data[7])
+			projectiles.push(tmpProj)
+		}
+		tmpProj.init(data[5], data[0], data[1], data[2], data[4], tmpData.dmg, data[3], tmpData.scale)
+		tmpProj.ignoreObj = null
+		tmpProj.layer = data[6] || tmpData.layer
+		tmpProj.src = tmpData.src
+
+        }
     }
 
     error() {
