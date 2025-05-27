@@ -4131,6 +4131,13 @@ window.WebSocket = class {
 		tmpProj.src = tmpData.src
 
         }
+        if (id == "19") {
+        		for (var o = 0; o < projectiles.length; ++o) {
+			if (projectiles[o].sid == data[0]) {
+				projectiles[o].range = data[1]
+			}
+		}
+        }
     }
 
     error() {
