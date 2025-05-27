@@ -3956,43 +3956,54 @@ window.WebSocket = class {
         }
 
         if (id == "6") {
-			if (data[0] < 0 || data[0] > items.weapons.length + items.list.length) return
+            if (data[0] < 0 || data[0] > items.weapons.length + items.list.length) return
+            if (!player || !player.alive) return
+            let item = data[0];
+            const upgradableItems = items.list.filter(item => item.age == player.upgrAge);
+            const upgradableWeapons = items.weapons.filter(item => item.age == player.upgrAge);
 
-			if (player && player.alive) {
-				if (items.weapons[data[0]]) {
-					if (player.weaponIndex < 9 && data[0] < 9) {
-						player.weaponIndex = data[0]
-					} else if (!(player.weaponIndex < 9) && !(data[0] < 9)) {
-						player.weaponIndex = data[0]
-					}
-					player.weapons[data[0] < 9 ? 0 : 1] = data[0]
-                server.send("self", "17", player.weapons, 1);
-				} else {
-					data[0] -= 16
-					if (player.buildIndex !== -1 && items.list[data[0]].group.id === items.list[player.buildIndex].group.id) {
-						player.buildIndex = data[0]
-					}
+            let worked = false;
 
-					let addedItem = false
-					for (let i = 0; i < player.items.length; i++) {
-						if (items.list[player.items[i]].group.id === items.list[data[0]].group.id) {
-							player.items[i] = data[0]
-							addedItem = true
-							break
-						}
-					}
-					if (!addedItem) {
-						player.items.push(data[0])
-					}
+            if (item <= 15) {
+                if (upgradableWeapons.map(weapon => weapon.id).indexOf(item) != -1) {
+                    if (upgradableWeapons.filter(weapon => weapon.type == 0).map(weapon => weapon.id).indexOf(item) != -1) {
+                        if (player.buildIndex == -1 && player.weaponIndex == player.weapons[0]) {
+                            player.weaponIndex = item;
+                        }
+                        console.log("primary update");
+                        player.weapons[0] = item;
+                        player.weaponXP[0] = 0;
+                    } else {
+                        if (player.buildIndex == -1 && player.weaponIndex == player.weapons[1]) {
+                            player.weaponIndex = item;
+                        }
+                        console.log("secondary update");
+                        player.weapons[1] = item;
+                        player.weaponXP[1] = 0;
+                    }
+                    worked = true;
+                }
+                console.log(player.weapons);
+            } else {
+                item -= 16;
+                if (upgradableItems.map(weapon => weapon.id).indexOf(item) != -1) {
+                    player.items[items.list[item].group.id] = item;
+                    worked = true;
+                }
+            }
+
+            if (worked) {
+                player.upgrAge++;
+
                 server.send("self", "17", player.items, 0);
-				}
-				player.upgrAge++
+                server.send("self", "17", player.weapons, 1);
+
                 if (player.age - player.upgrAge + 1) {
                     server.send("self", "16", player.age - player.upgrAge + 1, player.upgrAge);
                 } else {
                     server.send("self", "16", 0, 0);
                 }
-			}
+            }
         }
 
         if (id == "13c") {
