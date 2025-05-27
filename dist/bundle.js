@@ -8483,7 +8483,7 @@
                                 UTILS.generateElement({
                                     tag: "img",
                                     class: "hatPreview",
-                                    src: "https://vcrazydev.github.io/moomoo.github.io/img/" + (index ? "accessories/access_" : "hats/hat_") + tmpArray[i].id + (tmpArray[i].topSprite ? "_p" : "") + ".png",
+                                    src: "../img/" + (index ? "accessories/access_" : "hats/hat_") + tmpArray[i].id + (tmpArray[i].topSprite ? "_p" : "") + ".png",
                                     parent: tmp
                                 });
                                 UTILS.generateElement({
@@ -8612,7 +8612,7 @@
                                 tmpContext.fillRect(-tmpCanvas.width / 2, -tmpCanvas.height / 2, tmpCanvas.width, tmpCanvas.height);
                                 document.getElementById('actionBarItem' + i).style.backgroundImage = "url(" + tmpCanvas.toDataURL() + ")";
                             };
-                            tmpSprite.src = "https://vcrazydev.github.io/moomoo.github.io/img/weapons/" + items.weapons[i].src + ".png";
+                            tmpSprite.src = "../img/weapons/" + items.weapons[i].src + ".png";
                             var tmpUnit = document.getElementById('actionBarItem' + i);
                             tmpUnit.onmouseover = UTILS.checkTrusted(function () {
                                 showItemInfo(items.weapons[i], true);
@@ -9111,7 +9111,7 @@
                     tmpSprite.onload = function () {
                         this.isLoaded = true;
                     };
-                    tmpSprite.src = "https://vcrazydev.github.io/moomoo.github.io/img/icons/" + icons[i] + ".png";
+                    tmpSprite.src = "../img/icons/" + icons[i] + ".png";
                     iconSprites[icons[i]] = tmpSprite;
                 }
             }
@@ -9562,7 +9562,7 @@
                         tmpSprite.onload = function () {
                             this.isLoaded = true;
                         }
-                        tmpSprite.src = "https://vcrazydev.github.io/moomoo.github.io/img/weapons/" + tmpSrc + ".png";
+                        tmpSprite.src = "../img/weapons/" + tmpSrc + ".png";
                         projectileSprites[tmpSrc] = tmpSprite;
                     }
                     if (tmpSprite.isLoaded)
@@ -9713,7 +9713,7 @@
                         this.isLoaded = true;
                         this.onload = null;
                     };
-                    tmpImage.src = "https://vcrazydev.github.io/moomoo.github.io/img/hats/hat_" + index + ".png";
+                    tmpImage.src = "../img/hats/hat_" + index + ".png";
                     skinSprites[index] = tmpImage;
                     tmpSkin = tmpImage;
                 }
@@ -9748,7 +9748,7 @@
                         this.isLoaded = true;
                         this.onload = null;
                     };
-                    tmpImage.src = "https://vcrazydev.github.io/moomoo.github.io/img/accessories/access_" + index + ".png";
+                    tmpImage.src = "../img/accessories/access_" + index + ".png";
                     accessSprites[index] = tmpImage;
                     tmpSkin = tmpImage;
                 }
@@ -9782,7 +9782,7 @@
                     tmpSprite.onload = function () {
                         this.isLoaded = true;
                     }
-                    tmpSprite.src = "https://vcrazydev.github.io/moomoo.github.io/img/weapons/" + tmpSrc + ".png";
+                    tmpSprite.src = "../img/weapons/" + tmpSrc + ".png";
                     toolSprites[tmpSrc] = tmpSprite;
                 }
                 if (tmpSprite.isLoaded)
@@ -10233,7 +10233,7 @@
                         this.isLoaded = true;
                         this.onload = null;
                     };
-                    tmpImg.src = "https://vcrazydev.github.io/moomoo.github.io/img/animals/" + obj.src + ".png";
+                    tmpImg.src = "../img/animals/" + obj.src + ".png";
                     tmpSprite = tmpImg;
                     aiSprites[tmpIndx] = tmpSprite;
                 }
