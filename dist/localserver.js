@@ -4056,7 +4056,7 @@ window.WebSocket = class {
                 const tmpObj = findPlayerBySID(data[0])
                 if (tmpObj) {
                     tribeManager.getTribe(player.team).removePlayer(tmpObj)
-                    server.send(tmpObj.id, "st", null, 0)
+                    server.send("self", "st", null, 0)
                 }
             }
         }
@@ -4075,7 +4075,7 @@ window.WebSocket = class {
 
                     if (!isRequestSent) {
                         tmpClan.joinQueue.push([player.sid, player.id])
-                        server.send(findPlayerBySID(tmpClan.ownerID).id, "an", player.sid, player.name)
+                        server.send("self", "an", player.sid, player.name)
                     }
                 }
             }
@@ -4090,7 +4090,7 @@ window.WebSocket = class {
                     if (queue[1] !== tmpObj.id) return
                     if (data[1] && tmpObj.team == null) {
                         tmpClan.addPlayer(tmpObj)
-                        server.send(tmpObj.id, "st", player.team, 0)
+                        server.send("self", "st", player.team, 0)
                     }
                 }
             }
@@ -4102,7 +4102,7 @@ window.WebSocket = class {
                     if (player.team) {
                         for (let i = 0; i < players.length; i++) {
                             if (players[i] && players[i].team === player.team) {
-                                server.send(players[i].id, "p", player.x, player.y)
+                                server.send("self", "p", player.x, player.y)
                             }
                         }
                     } else {
@@ -4110,33 +4110,6 @@ window.WebSocket = class {
                     }
                 }
             }
-        }
-        if (id == "18") {
-		var tmpData = items.projectiles[data[5]]
-		var tmpProj
-		for (var i = 0; i < projectiles.length; ++i) {
-			if (!projectiles[i].active) {
-				tmpProj = projectiles[i]
-				tmpProj.sid = data[7]
-				break
-			}
-		}
-		if (!tmpProj) {
-			tmpProj = new Projectile(data[7])
-			projectiles.push(tmpProj)
-		}
-		tmpProj.init(data[5], data[0], data[1], data[2], data[4], tmpData.dmg, data[3], tmpData.scale)
-		tmpProj.ignoreObj = null
-		tmpProj.layer = data[6] || tmpData.layer
-		tmpProj.src = tmpData.src
-
-        }
-        if (id == "19") {
-        		for (var o = 0; o < projectiles.length; ++o) {
-			if (projectiles[o].sid == data[0]) {
-				projectiles[o].range = data[1]
-			}
-		}
         }
     }
 
