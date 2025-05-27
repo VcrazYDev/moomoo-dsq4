@@ -550,7 +550,7 @@ span {
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	border-radius: 4px;
-	background-image: url(/img/icons/skull.png);
+	background-image: url(./img/icons/skull.);
 }
 
 .leaderScore {
@@ -598,15 +598,15 @@ span {
 }
 
 #foodDisplay {
-	background-image: url(/img/resources/food_ico.png);
+	background-image: url(./img/resources/food_ico.png);
 }
 
 #woodDisplay {
-	background-image: url(/img/resources/wood_ico.png);
+	background-image: url(./img/resources/wood_ico.png);
 }
 
 #stoneDisplay {
-	background-image: url(/img/resources/stone_ico.png);
+	background-image: url(./img/resources/stone_ico.png);
 }
 
 #scoreDisplay {
@@ -617,7 +617,7 @@ span {
 	padding-left: 40px;
 	padding-right: 10px;
 	background-position: left 6px center;
-	background-image: url(/img/resources/gold_ico.png);
+	background-image: url(./img/resources/gold_ico.png);
 }
 
 #stoneDisplay {
