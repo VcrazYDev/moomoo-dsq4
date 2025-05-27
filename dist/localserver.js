@@ -4,11 +4,6 @@
 // @version      ALFA
 // ==/UserScript==
 
-var MODE = "SANDBOX"
-var PASSWORD = "kooky"
-var PREFIX = "!"
-const PORT = "1234" || 1234
-
 let player;
 let server;
 
@@ -3961,53 +3956,40 @@ window.WebSocket = class {
         }
 
         if (id == "6") {
-            if (!player || !player.alive) return
-            let item = data[0];
-            const upgradableItems = items.list.filter(item => item.age == player.upgrAge);
-            const upgradableWeapons = items.weapons.filter(item => item.age == player.upgrAge);
+			if (data[0] < 0 || data[0] > items.weapons.length + items.list.length) return
 
-            let worked = false;
+			if (player && player.alive) {
+				if (items.weapons[data[0]]) {
+					if (player.weapondata[0] < 9 && data[0] < 9) {
+						player.weapondata[0] = data[0]
+					} else if (!(player.weapondata[0] < 9) && !(data[0] < 9)) {
+						player.weapondata[0] = data[0]
+					}
+					player.weapons[data[0] < 9 ? 0 : 1] = data[0]
+					server.send("self", "17", player.weapons, 1)
+				} else {
+					data[0] -= 16
+					if (player.builddata[0] !== -1 && items.list[data[0]].group.id === items.list[player.builddata[0]].group.id) {
+						player.builddata[0] = data[0]
+					}
 
-            if (item <= 15) {
-                if (upgradableWeapons.map(weapon => weapon.id).indexOf(item) != -1) {
-                    if (upgradableWeapons.filter(weapon => weapon.type == 0).map(weapon => weapon.id).indexOf(item) != -1) {
-                        if (player.buildIndex == -1 && player.weaponIndex == player.weapons[0]) {
-                            player.weaponIndex = item;
-                        }
-                        console.log("primary update");
-                        player.weapons[0] = item;
-                        player.weaponXP[0] = 0;
-                    } else {
-                        if (player.buildIndex == -1 && player.weaponIndex == player.weapons[1]) {
-                            player.weaponIndex = item;
-                        }
-                        console.log("secondary update");
-                        player.weapons[1] = item;
-                        player.weaponXP[1] = 0;
-                    }
-                    worked = true;
-                }
-                console.log(player.weapons);
-            } else {
-                item -= 16;
-                if (upgradableItems.map(weapon => weapon.id).indexOf(item) != -1) {
-                    player.items[items.list[item].group.id] = item;
-                    worked = true;
-                }
-            }
-
-            if (worked) {
-                player.upgrAge++;
-
-                server.send("self", "17", player.items, 0);
-                server.send("self", "17", player.weapons, 1);
-
-                if (player.age - player.upgrAge + 1) {
-                    server.send("self", "16", player.age - player.upgrAge + 1, player.upgrAge);
-                } else {
-                    server.send("self", "16", 0, 0);
-                }
-            }
+					let addedItem = false
+					for (let i = 0; i < player.items.length; i++) {
+						if (items.list[player.items[i]].group.id === items.list[data[0]].group.id) {
+							player.items[i] = data[0]
+							addedItem = true
+							break
+						}
+					}
+					if (!addedItem) {
+						player.items.push(data[0])
+					}
+					server.send("self", "17", player.items)
+				}
+				player.upgrAge++
+				player.upgradePoints--
+				server.send("self", "16", player.upgradePoints, player.upgrAge)
+			}
         }
 
         if (id == "13c") {
@@ -4027,79 +4009,8 @@ window.WebSocket = class {
         }
 
         if (id == "ch") {
-			if (!player || !player.alive) return
-			if (data[0] === `${PREFIX}login ${PASSWORD}` && !player.admin) {
-				player.admin = true
-				return
-			}
-			if (data[0].startsWith(PREFIX) && player.admin) {
-				if (data[0] === `${PREFIX}setup`) {
-					for (let i = 0; i < 9; i++) {
-						player.addResource(3, 999999, true)
-					}
-					player.addResource(2, 999999, true)
-					player.addResource(1, 999999, true)
-					player.addResource(0, 999999, true)
-				} else if (data[0].startsWith(`${PREFIX}speed`)) {
-					var speedmlt = data[0].replace(PREFIX + "speed ", "")
-					if (UTILS.isNumber(parseFloat(speedmlt))) {
-						player.speed = parseFloat(speedmlt)
-					}
-				} else if (data[0].startsWith(`${PREFIX}tp`)) {
-					var tmpArgs = data[0].replace(PREFIX + "tp ", "").split(" ")
-					if (tmpArgs[1] == null) {
-						var tmpObj = findPlayerBySID(parseInt(tmpArgs[0]))
-						if (tmpObj) {
-							player.x = player.x
-							player.y = player.y
-						}
-					} else {
-						const tmpX = parseInt(tmpArgs[0])
-						const tmpY = parseInt(tmpArgs[1])
-						if (UTILS.isNumber(tmpX) && UTILS.isNumber(tmpY)) {
-							player.x = tmpX
-							player.y = tmpY
-						}
-					}
-				} else if (data[0].startsWith(`${PREFIX}v`)) {
-					var msg = data[0].replace(PREFIX + "v ", "")
-					switch (msg) {
-						case "ruby":
-							player.weaponXP[player.weaponIndex] = 12000
-							break
-						case "diamond":
-							player.weaponXP[player.weaponIndex] = 7000
-							break
-						case "gold":
-							player.weaponXP[player.weaponIndex] = 3000
-							break
-						case "normal":
-							player.weaponXP[player.weaponIndex] = 0
-							break
-					}
-				} else if (data[0] === PREFIX + "die") {
-					player.kill(player)
-				} else if (data[0].startsWith(`${PREFIX}upgrade`)) {
-					var msg = data[0].replace(PREFIX + "upgrade ", "")
-					sendUpgrade(parseInt(msg))
-				} else if (data[0].startsWith(PREFIX + "dmg")) {
-					if (data[0] === PREFIX + "dmg") {
-						player.customDmg = null
-					} else {
-						var dmg = data[0].replace(PREFIX + "dmg ", "")
-						if (UTILS.isNumber(parseFloat(dmg))) {
-							player.customDmg = parseFloat(dmg)
-						}
-					}
-				} else if (data[0] === PREFIX + "breakall") {
-					objectManager.removeAllItems(player.sid, server)
-					for (let i = 0; i < items.groups.length; i++) {
-						player.changeItemAllCount(i, 0)
-					}
-				}
-			} else {
-				server.broadcast("ch", player.sid, data[0].toString())
-			}
+            if (!player || !player.alive) return
+            server.broadcast("ch", player.sid, data[0].toString())
         }
 
         if (id == "8") {
@@ -4187,9 +4098,9 @@ window.WebSocket = class {
             }
         }
     }
-    
+
     error() {
-    console.log();
+        console.log();
     }
 }
 function setupServer() {
