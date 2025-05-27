@@ -4,6 +4,11 @@
 // @version      ALFA
 // ==/UserScript==
 
+var MODE = "SANDBOX"
+var PASSWORD = "kooky"
+var PREFIX = "!"
+const PORT = "1234" || 1234
+
 let player;
 let server;
 
@@ -3414,6 +3419,7 @@ function encounterPlayer(p) {
     p.sentTo[player.id] = true;
 }
 
+var alliances = [];
 let players = [];
 var ais = []
 let seenPlayers = [];
@@ -3556,14 +3562,14 @@ function gameLoop() {
             1
         ]).flatMap(x => x));
 
-            const tmpAiData = []
-            for (let i = 0; i < ais.length; ++i) {
-                let tmpObj = ais[i]
-                if (tmpObj && tmpObj.alive && tmpPlayer.canSee(tmpObj)) {
-                    tmpAiData.push(tmpObj.sid, tmpObj.index, tmpObj.x, tmpObj.y, tmpObj.dir, tmpObj.health, tmpObj.nameIndex)
-                }
+        const tmpAiData = []
+        for (let i = 0; i < ais.length; ++i) {
+            let tmpObj = ais[i]
+            if (tmpObj && tmpObj.alive && tmpPlayer.canSee(tmpObj)) {
+                tmpAiData.push(tmpObj.sid, tmpObj.index, tmpObj.x, tmpObj.y, tmpObj.dir, tmpObj.health, tmpObj.nameIndex)
             }
-            server.send("self", "a", tmpAiData)
+        }
+        server.send("self", "a", tmpAiData)
 
         if (sendObjects.length > 0) {
             server.send("self", "6", sendObjects.map(object => [
@@ -3850,6 +3856,10 @@ window.WebSocket = class {
     send(msg) {
         const [id, data] = msgpack.decode(msg);
 
+        if (id == "id") {
+            alliances = data[0].teams;
+        }
+
         if (id == "pp") {
             //server.send("self", "pp")
         }
@@ -4017,18 +4027,79 @@ window.WebSocket = class {
         }
 
         if (id == "ch") {
-            if (!player || !player.alive) return
-            server.broadcast("ch", player.sid, data[0]);
-            if (data[0] == "devmode") {
-                addBossArenaStones(config.totalRocks - 1, config.rockScales[1], config.mapScale / 2, config.mapScale - config.snowBiomeTop / 2)
-                addTree(200)
-                addBush(100)
-                addCacti(20)
-                addStoneGold(100, true)
-                addStoneGold(10, false)
-                addRiverStone(15)
-                addAnimal()
-            }
+			if (!player || !player.alive) return
+			if (data[0] === `${PREFIX}login ${PASSWORD}` && !player.admin) {
+				player.admin = true
+				return
+			}
+			if (data[0].startsWith(PREFIX) && player.admin) {
+				if (data[0] === `${PREFIX}setup`) {
+					for (let i = 0; i < 9; i++) {
+						player.addResource(3, 999999, true)
+					}
+					player.addResource(2, 999999, true)
+					player.addResource(1, 999999, true)
+					player.addResource(0, 999999, true)
+				} else if (data[0].startsWith(`${PREFIX}speed`)) {
+					var speedmlt = data[0].replace(PREFIX + "speed ", "")
+					if (UTILS.isNumber(parseFloat(speedmlt))) {
+						player.speed = parseFloat(speedmlt)
+					}
+				} else if (data[0].startsWith(`${PREFIX}tp`)) {
+					var tmpArgs = data[0].replace(PREFIX + "tp ", "").split(" ")
+					if (tmpArgs[1] == null) {
+						var tmpObj = findPlayerBySID(parseInt(tmpArgs[0]))
+						if (tmpObj) {
+							player.x = player.x
+							player.y = player.y
+						}
+					} else {
+						const tmpX = parseInt(tmpArgs[0])
+						const tmpY = parseInt(tmpArgs[1])
+						if (UTILS.isNumber(tmpX) && UTILS.isNumber(tmpY)) {
+							player.x = tmpX
+							player.y = tmpY
+						}
+					}
+				} else if (data[0].startsWith(`${PREFIX}v`)) {
+					var msg = data[0].replace(PREFIX + "v ", "")
+					switch (msg) {
+						case "ruby":
+							player.weaponXP[player.weaponIndex] = 12000
+							break
+						case "diamond":
+							player.weaponXP[player.weaponIndex] = 7000
+							break
+						case "gold":
+							player.weaponXP[player.weaponIndex] = 3000
+							break
+						case "normal":
+							player.weaponXP[player.weaponIndex] = 0
+							break
+					}
+				} else if (data[0] === PREFIX + "die") {
+					player.kill(player)
+				} else if (data[0].startsWith(`${PREFIX}upgrade`)) {
+					var msg = data[0].replace(PREFIX + "upgrade ", "")
+					sendUpgrade(parseInt(msg))
+				} else if (data[0].startsWith(PREFIX + "dmg")) {
+					if (data[0] === PREFIX + "dmg") {
+						player.customDmg = null
+					} else {
+						var dmg = data[0].replace(PREFIX + "dmg ", "")
+						if (UTILS.isNumber(parseFloat(dmg))) {
+							player.customDmg = parseFloat(dmg)
+						}
+					}
+				} else if (data[0] === PREFIX + "breakall") {
+					objectManager.removeAllItems(player.sid, server)
+					for (let i = 0; i < items.groups.length; i++) {
+						player.changeItemAllCount(i, 0)
+					}
+				}
+			} else {
+				server.broadcast("ch", player.sid, data[0].toString())
+			}
         }
 
         if (id == "8") {
@@ -4116,32 +4187,36 @@ window.WebSocket = class {
             }
         }
     }
+    
+    error() {
+    console.log();
+    }
 }
 function setupServer() {
-	config.isStarted = false
-	ais = []
-	players = []
-	gameObjects = []
-	projectiles = []
-	playersSid = []
-	objectManager = new ObjectManager(GameObject, gameObjects, UTILS, config, players, server)
-	aiManager = new AiManager(ais, AI, players, items, objectManager, config, UTILS, scoreCallback, server)
-	projectileManager = new ProjectileManager(Projectile, projectiles, players, ais, objectManager, items, config, UTILS, server)
-	tribeManager = new TribeManager(Tribe, findPlayerBySID, server)
+    config.isStarted = false
+    ais = []
+    players = []
+    gameObjects = []
+    projectiles = []
+    playersSid = []
+    objectManager = new ObjectManager(GameObject, gameObjects, UTILS, config, players, server)
+    aiManager = new AiManager(ais, AI, players, items, objectManager, config, UTILS, scoreCallback, server)
+    projectileManager = new ProjectileManager(Projectile, projectiles, players, ais, objectManager, items, config, UTILS, server)
+    tribeManager = new TribeManager(Tribe, findPlayerBySID, server)
 
-	/*server.clients.forEach((socket) => {
+    /*server.clients.forEach((socket) => {
 		if (socket.readyState === WebSocket.OPEN) {
 			socket.close()
 		}
 	})*/
 
-		config.canHitObj = true
-		addBossArenaStones(config.totalRocks - 1, config.rockScales[1], config.mapScale / 2, config.mapScale - config.snowBiomeTop / 2)
-		addTree(200)
-		addBush(100)
-		addCacti(20)
-		addStoneGold(100, true)
-		addStoneGold(10, false)
-		addRiverStone(15)
-		addAnimal()
+    config.canHitObj = true
+    addBossArenaStones(config.totalRocks - 1, config.rockScales[1], config.mapScale / 2, config.mapScale - config.snowBiomeTop / 2)
+    addTree(200)
+    addBush(100)
+    addCacti(20)
+    addStoneGold(100, true)
+    addStoneGold(10, false)
+    addRiverStone(15)
+    addAnimal()
 }
