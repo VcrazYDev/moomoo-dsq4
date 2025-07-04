@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <link rel="icon" href="data:,"/>
+        <script>
+            ( () => {
+                "use strict";
+                var e = {
+                    9040: (e, t, _) => {
+                        function a(e) {
+                            return !0 === e || "true" === e || 1 === e || "1" === e || !1 !== e && "false" !== e && 0 !== e && "0" !== e && null
+                        }
+                        _.d(t, {
+                            g: () => a
+                        })
+                    }
+                    ,
+                    9631: (e, t, _) => {
+                        _.d(t, {
+                            A: () => r,
+                            U: () => n
+                        });
+                        var a = _(947);
+                        function r(e) {
+                            let t;
+                            try {
+                                t = JSON.stringify(e, ( (e, t) => {
+                                    if (null != t && "" !== t)
+                                        return t
+                                }
+                                ))
+                            } catch (e) {
+                                a.Z.error(e)
+                            }
+                            return a.Z.debug("lander event: " + t),
+                            t
+                        }
+                        function n(e, t) {
+                            const _ = r(t);
+                            return fetch(e += "?abp=1", {
+                                method: "POST",
+                                credentials: "omit",
+                                body: _,
+                                headers: {
+                                    "Content-Type": "application/json"
+                                }
+                            }).then((e => {
+                                e.ok || a.Z.error("error publishing event - HTTP Status: " + e.status)
+                            }
+                            )).catch((e => {
+                                a.Z.error("error publishing event - " + e.toString())
+                            }
+                            ))
+                        }
+                    }
+                    ,
+                    947: (e, t, _) => {
+                        _.d(t, {
+                            B: () => r,
+                            Z: () => a
+                        });
+                        class a {
+                            static logMessage(e, t) {
+                                if (a.Severity[a.level] >= a.Severity[e]) {
+                                    let _ = "warn";
+                                    e === a.Level.ERROR && (_ = "error"),
+                                    console[_]("".concat(e, ": ").concat(r(t)))
+                                }
+                            }
+                            static error(e) {
+                                return a.logMessage(a.Level.ERROR, e)
+                            }
+                            static warn(e) {
+                                return a.logMessage(a.Level.WARN, e)
+                            }
+                            static info(e) {
+                                return a.logMessage(a.Level.INFO, e)
+                            }
+                            static debug(e) {
+                                return a.logMessage(a.Level.DEBUG, e)
+                            }
+                            static trace(e) {
+                                return a.logMessage(a.Level.TRACE, e)
+                            }
+                        }
+                        function r(e) {
+                            if ("object" == typeof e)
+                                try {
+                                    return JSON.stringify(e)
+                                } catch (t) {
+                                    return a.error(t),
+                                    e
+                                }
+                            return Array.isArray(e) ? e.toString() : e
+                        }
+                        a.Level = {
+                            NONE: "NONE",
+                            ERROR: "ERROR",
+                            WARN: "WARN",
+                            INFO: "INFO",
+                            DEBUG: "DEBUG",
+                            TRACE: "TRACE"
+                        },
+                        a.Severity = {
+                            NONE: 0,
+                            ERROR: 1,
+                            WARN: 2,
+                            INFO: 3,
+                            DEBUG: 4,
+                            TRACE: 5
+                        },
+                        a.level = a.Level.NONE
+                    }
+                    ,
+                    77: (e, t, _) => {
+                        _.d(t, {
+                            Settings: () => a
+                        });
+                        const a = {
+                            DOMAIN_CONFIG_API: "https://api.aws.parking.godaddy.com",
+                            PARKWEB_LANDER_API: "https://api.aws.parking.godaddy.com",
+                            EVENT_PUBLISH_API: "https://api.aws.parking.godaddy.com/v1/parkingEvents",
+                            GODADDY_HOST: "https://www.godaddy.com",
+                            GOOGLE_ADSENSE_ADTEST: "off",
+                            DEBUG_MODE: (0,
+                            _(9040).g)("false"),
+                            VERIZON_FEED_PARTNER: {
+                                TEST: {
+                                    NODE_ENV: "production",
+                                    PUBLIC_URL: "https://img1.wsimg.com/parking-lander",
+                                    WDS_SOCKET_HOST: void 0,
+                                    WDS_SOCKET_PATH: void 0,
+                                    WDS_SOCKET_PORT: void 0,
+                                    FAST_REFRESH: !0,
+                                    REACT_APP_DOMAIN_CONFIG_API: "https://api.aws.parking.godaddy.com",
+                                    REACT_APP_PARKWEB_LANDER_API: "https://api.aws.parking.godaddy.com",
+                                    REACT_APP_EVENT_PUBLISH_API: "https://api.aws.parking.godaddy.com/v1/parkingEvents",
+                                    REACT_APP_GODADDY_HOST: "https://www.godaddy.com",
+                                    REACT_APP_ADSENSE_ADTEST: "off",
+                                    REACT_APP_DEBUG_MODE: "false",
+                                    REACT_APP_VERIZON_FEED_PARTNER_PW: "nameadmin_park_dm_2903_parkweb",
+                                    REACT_APP_VERIZON_FEED_PARTNER_SN: "nameadmin_park_dm_2903_afternic",
+                                    REACT_APP_VERIZON_FEED_PARTNER_CP: "nameadmin_park_dm_2903_godaddy",
+                                    REACT_APP_VERIZON_FEED_PROXY: "https://api.aws.parking.godaddy.com",
+                                    REACT_APP_FORWARDER_LANDER_URL_DAN: "https://dan.com/buy-domain/{DOMAIN}",
+                                    REACT_APP_FORWARDER_LANDER_URL_TDFS_GD: "https://www.godaddy.com/forsale/{DOMAIN}?utm_source=TDFS_BINNS&utm_medium=BINNS&utm_campaign=TDFS_BINNS&traffic_type=TDFS_BINNS&traffic_id=binns&{QUERY}",
+                                    REACT_APP_FORWARDER_LANDER_URL_TDFS_AFTERNIC: "https://www.afternic.com/forsale/{DOMAIN}?utm_source=TDFS_DASLNC&utm_medium=DASLNC&utm_campaign=TDFS_DASLNC&traffic_type=TDFS_DASLNC&traffic_id=daslnc&{QUERY}",
+                                    REACT_APP_FORWARDER_LANDER_API: "",
+                                    REACT_APP_PARKING_ENV: "prod",
+                                    REACT_APP_TRUSTARC_DOMAIN_ID: "godaddy_parking_iab.com",
+                                    REACT_APP_TRUSTARC_SCRIPT_URI: "//consent.truste.com/notice"
+                                }.REACT_APP_VERIZON_FEED_PARTNER_TEST,
+                                PW: "nameadmin_park_dm_2903_parkweb",
+                                SN: "nameadmin_park_dm_2903_afternic",
+                                CP: "nameadmin_park_dm_2903_godaddy"
+                            },
+                            VERIZON_FEED_PROXY: "https://api.aws.parking.godaddy.com",
+                            VERIZON_FEED_PATH: "https://api.aws.parking.godaddy.com/d/search/p/godaddy/xml/domain/multiset/v4/",
+                            PRIVACY_POLICY_URL: "https://www.godaddy.com/agreements/showdoc?pageid=PRIVACY",
+                            ForwarderLanderToUrl: {
+                                DAN: "https://dan.com/buy-domain/{DOMAIN}",
+                                TDFS_GD: "https://www.godaddy.com/forsale/{DOMAIN}?utm_source=TDFS_BINNS&utm_medium=BINNS&utm_campaign=TDFS_BINNS&traffic_type=TDFS_BINNS&traffic_id=binns&{QUERY}",
+                                TDFS_AFTERNIC: "https://www.afternic.com/forsale/{DOMAIN}?utm_source=TDFS_DASLNC&utm_medium=DASLNC&utm_campaign=TDFS_DASLNC&traffic_type=TDFS_DASLNC&traffic_id=daslnc&{QUERY}"
+                            },
+                            FORWARDER_LANDER_API: "",
+                            NORMAL_DOMAIN_LENGTH_LIMIT: 20,
+                            CONSENT_MANAGER_JS: {
+                                NODE_ENV: "production",
+                                PUBLIC_URL: "https://img1.wsimg.com/parking-lander",
+                                WDS_SOCKET_HOST: void 0,
+                                WDS_SOCKET_PATH: void 0,
+                                WDS_SOCKET_PORT: void 0,
+                                FAST_REFRESH: !0,
+                                REACT_APP_DOMAIN_CONFIG_API: "https://api.aws.parking.godaddy.com",
+                                REACT_APP_PARKWEB_LANDER_API: "https://api.aws.parking.godaddy.com",
+                                REACT_APP_EVENT_PUBLISH_API: "https://api.aws.parking.godaddy.com/v1/parkingEvents",
+                                REACT_APP_GODADDY_HOST: "https://www.godaddy.com",
+                                REACT_APP_ADSENSE_ADTEST: "off",
+                                REACT_APP_DEBUG_MODE: "false",
+                                REACT_APP_VERIZON_FEED_PARTNER_PW: "nameadmin_park_dm_2903_parkweb",
+                                REACT_APP_VERIZON_FEED_PARTNER_SN: "nameadmin_park_dm_2903_afternic",
+                                REACT_APP_VERIZON_FEED_PARTNER_CP: "nameadmin_park_dm_2903_godaddy",
+                                REACT_APP_VERIZON_FEED_PROXY: "https://api.aws.parking.godaddy.com",
+                                REACT_APP_FORWARDER_LANDER_URL_DAN: "https://dan.com/buy-domain/{DOMAIN}",
+                                REACT_APP_FORWARDER_LANDER_URL_TDFS_GD: "https://www.godaddy.com/forsale/{DOMAIN}?utm_source=TDFS_BINNS&utm_medium=BINNS&utm_campaign=TDFS_BINNS&traffic_type=TDFS_BINNS&traffic_id=binns&{QUERY}",
+                                REACT_APP_FORWARDER_LANDER_URL_TDFS_AFTERNIC: "https://www.afternic.com/forsale/{DOMAIN}?utm_source=TDFS_DASLNC&utm_medium=DASLNC&utm_campaign=TDFS_DASLNC&traffic_type=TDFS_DASLNC&traffic_id=daslnc&{QUERY}",
+                                REACT_APP_FORWARDER_LANDER_API: "",
+                                REACT_APP_PARKING_ENV: "prod",
+                                REACT_APP_TRUSTARC_DOMAIN_ID: "godaddy_parking_iab.com",
+                                REACT_APP_TRUSTARC_SCRIPT_URI: "//consent.truste.com/notice"
+                            }.REACT_APP_CONSENT_MANAGER_JS,
+                            CONSENT_MANAGER_CSS: {
+                                NODE_ENV: "production",
+                                PUBLIC_URL: "https://img1.wsimg.com/parking-lander",
+                                WDS_SOCKET_HOST: void 0,
+                                WDS_SOCKET_PATH: void 0,
+                                WDS_SOCKET_PORT: void 0,
+                                FAST_REFRESH: !0,
+                                REACT_APP_DOMAIN_CONFIG_API: "https://api.aws.parking.godaddy.com",
+                                REACT_APP_PARKWEB_LANDER_API: "https://api.aws.parking.godaddy.com",
+                                REACT_APP_EVENT_PUBLISH_API: "https://api.aws.parking.godaddy.com/v1/parkingEvents",
+                                REACT_APP_GODADDY_HOST: "https://www.godaddy.com",
+                                REACT_APP_ADSENSE_ADTEST: "off",
+                                REACT_APP_DEBUG_MODE: "false",
+                                REACT_APP_VERIZON_FEED_PARTNER_PW: "nameadmin_park_dm_2903_parkweb",
+                                REACT_APP_VERIZON_FEED_PARTNER_SN: "nameadmin_park_dm_2903_afternic",
+                                REACT_APP_VERIZON_FEED_PARTNER_CP: "nameadmin_park_dm_2903_godaddy",
+                                REACT_APP_VERIZON_FEED_PROXY: "https://api.aws.parking.godaddy.com",
+                                REACT_APP_FORWARDER_LANDER_URL_DAN: "https://dan.com/buy-domain/{DOMAIN}",
+                                REACT_APP_FORWARDER_LANDER_URL_TDFS_GD: "https://www.godaddy.com/forsale/{DOMAIN}?utm_source=TDFS_BINNS&utm_medium=BINNS&utm_campaign=TDFS_BINNS&traffic_type=TDFS_BINNS&traffic_id=binns&{QUERY}",
+                                REACT_APP_FORWARDER_LANDER_URL_TDFS_AFTERNIC: "https://www.afternic.com/forsale/{DOMAIN}?utm_source=TDFS_DASLNC&utm_medium=DASLNC&utm_campaign=TDFS_DASLNC&traffic_type=TDFS_DASLNC&traffic_id=daslnc&{QUERY}",
+                                REACT_APP_FORWARDER_LANDER_API: "",
+                                REACT_APP_PARKING_ENV: "prod",
+                                REACT_APP_TRUSTARC_DOMAIN_ID: "godaddy_parking_iab.com",
+                                REACT_APP_TRUSTARC_SCRIPT_URI: "//consent.truste.com/notice"
+                            }.REACT_APP_CONSENT_MANAGER_CSS,
+                            PARKING_ENV: "prod",
+                            TRUSTARC_SCRIPT_URI: "//consent.truste.com/notice",
+                            TRUSTARC_DOMAIN_ID: "godaddy_parking_iab.com"
+                        }
+                    }
+                }
+                  , t = {};
+                function _(a) {
+                    var r = t[a];
+                    if (void 0 !== r)
+                        return r.exports;
+                    var n = t[a] = {
+                        exports: {}
+                    };
+                    return e[a].call(n.exports, n, n.exports, _),
+                    n.exports
+                }
+                _.m = e,
+                _.n = e => {
+                    var t = e && e.__esModule ? () => e.default : () => e;
+                    return _.d(t, {
+                        a: t
+                    }),
+                    t
+                }
+                ,
+                _.d = (e, t) => {
+                    for (var a in t)
+                        _.o(t, a) && !_.o(e, a) && Object.defineProperty(e, a, {
+                            enumerable: !0,
+                            get: t[a]
+                        })
+                }
+                ,
+                _.f = {},
+                _.e = e => Promise.all(Object.keys(_.f).reduce(( (t, a) => (_.f[a](e, t),
+                t)), [])),
+                _.u = e => "static/js/" + e + "." + {
+                    207: "b1890382",
+                    763: "9343e816"
+                }[e] + ".chunk.js",
+                _.miniCssF = e => "static/css/" + e + ".1b609023.chunk.css",
+                _.g = function() {
+                    if ("object" == typeof globalThis)
+                        return globalThis;
+                    try {
+                        return this || new Function("return this")()
+                    } catch (e) {
+                        if ("object" == typeof window)
+                            return window
+                    }
+                }(),
+                _.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t),
+                ( () => {
+                    var e = {}
+                      , t = "parking-lander:";
+                    _.l = (a, r, n, o) => {
+                        if (e[a])
+                            e[a].push(r);
+                        else {
+                            var R, i;
+                            if (void 0 !== n)
+                                for (var A = document.getElementsByTagName("script"), d = 0; d < A.length; d++) {
+                                    var E = A[d];
+                                    if (E.getAttribute("src") == a || E.getAttribute("data-webpack") == t + n) {
+                                        R = E;
+                                        break
+                                    }
+                                }
+                            R || (i = !0,
+                            (R = document.createElement("script")).charset = "utf-8",
+                            R.timeout = 120,
+                            _.nc && R.setAttribute("nonce", _.nc),
+                            R.setAttribute("data-webpack", t + n),
+                            R.src = a),
+                            e[a] = [r];
+                            var s = (t, _) => {
+                                R.onerror = R.onload = null,
+                                clearTimeout(c);
+                                var r = e[a];
+                                if (delete e[a],
+                                R.parentNode && R.parentNode.removeChild(R),
+                                r && r.forEach((e => e(_))),
+                                t)
+                                    return t(_)
+                            }
+                              , c = setTimeout(s.bind(null, void 0, {
+                                type: "timeout",
+                                target: R
+                            }), 12e4);
+                            R.onerror = s.bind(null, R.onerror),
+                            R.onload = s.bind(null, R.onload),
+                            i && document.head.appendChild(R)
+                        }
+                    }
+                }
+                )(),
+                _.r = e => {
+                    "undefined" != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, {
+                        value: "Module"
+                    }),
+                    Object.defineProperty(e, "__esModule", {
+                        value: !0
+                    })
+                }
+                ,
+                _.p = "https://img1.wsimg.com/parking-lander/",
+                ( () => {
+                    if ("undefined" != typeof document) {
+                        var e = e => new Promise(( (t, a) => {
+                            var r = _.miniCssF(e)
+                              , n = _.p + r;
+                            if (( (e, t) => {
+                                for (var _ = document.getElementsByTagName("link"), a = 0; a < _.length; a++) {
+                                    var r = (o = _[a]).getAttribute("data-href") || o.getAttribute("href");
+                                    if ("stylesheet" === o.rel && (r === e || r === t))
+                                        return o
+                                }
+                                var n = document.getElementsByTagName("style");
+                                for (a = 0; a < n.length; a++) {
+                                    var o;
+                                    if ((r = (o = n[a]).getAttribute("data-href")) === e || r === t)
+                                        return o
+                                }
+                            }
+                            )(r, n))
+                                return t();
+                            ( (e, t, _, a, r) => {
+                                var n = document.createElement("link");
+                                n.rel = "stylesheet",
+                                n.type = "text/css",
+                                n.onerror = n.onload = _ => {
+                                    if (n.onerror = n.onload = null,
+                                    "load" === _.type)
+                                        a();
+                                    else {
+                                        var o = _ && _.type
+                                          , R = _ && _.target && _.target.href || t
+                                          , i = new Error("Loading CSS chunk " + e + " failed.\n(" + o + ": " + R + ")");
+                                        i.name = "ChunkLoadError",
+                                        i.code = "CSS_CHUNK_LOAD_FAILED",
+                                        i.type = o,
+                                        i.request = R,
+                                        n.parentNode && n.parentNode.removeChild(n),
+                                        r(i)
+                                    }
+                                }
+                                ,
+                                n.href = t,
+                                document.head.appendChild(n)
+                            }
+                            )(e, n, 0, t, a)
+                        }
+                        ))
+                          , t = {
+                            641: 0
+                        };
+                        _.f.miniCss = (_, a) => {
+                            t[_] ? a.push(t[_]) : 0 !== t[_] && {
+                                763: 1
+                            }[_] && a.push(t[_] = e(_).then(( () => {
+                                t[_] = 0
+                            }
+                            ), (e => {
+                                throw delete t[_],
+                                e
+                            }
+                            )))
+                        }
+                    }
+                }
+                )(),
+                ( () => {
+                    var e = {
+                        641: 0
+                    };
+                    _.f.j = (t, a) => {
+                        var r = _.o(e, t) ? e[t] : void 0;
+                        if (0 !== r)
+                            if (r)
+                                a.push(r[2]);
+                            else {
+                                var n = new Promise(( (_, a) => r = e[t] = [_, a]));
+                                a.push(r[2] = n);
+                                var o = _.p + _.u(t)
+                                  , R = new Error;
+                                _.l(o, (a => {
+                                    if (_.o(e, t) && (0 !== (r = e[t]) && (e[t] = void 0),
+                                    r)) {
+                                        var n = a && ("load" === a.type ? "missing" : a.type)
+                                          , o = a && a.target && a.target.src;
+                                        R.message = "Loading chunk " + t + " failed.\n(" + n + ": " + o + ")",
+                                        R.name = "ChunkLoadError",
+                                        R.type = n,
+                                        R.request = o,
+                                        r[1](R)
+                                    }
+                                }
+                                ), "chunk-" + t, t)
+                            }
+                    }
+                    ;
+                    var t = (t, a) => {
+                        var r, n, o = a[0], R = a[1], i = a[2], A = 0;
+                        if (o.some((t => 0 !== e[t]))) {
+                            for (r in R)
+                                _.o(R, r) && (_.m[r] = R[r]);
+                            i && i(_)
+                        }
+                        for (t && t(a); A < o.length; A++)
+                            n = o[A],
+                            _.o(e, n) && e[n] && e[n][0](),
+                            e[n] = 0
+                    }
+                      , a = self.webpackChunkparking_lander = self.webpackChunkparking_lander || [];
+                    a.forEach(t.bind(null, 0)),
+                    a.push = t.bind(null, a.push.bind(a))
+                }
+                )(),
+                ( () => {
+                    var e = _(77);
+                    const t = {
+                        DAN: "DAN",
+                        TDFS_GD: "TDFS_GD",
+                        TDFS_AFTERNIC: "TDFS_AFTERNIC",
+                        PARKING: "PARKING"
+                    }
+                      , a = {
+                        DOMAIN: "domain"
+                    }
+                      , r = {
+                        FORWARDER: "FORWARDER",
+                        ERROR: "ERROR"
+                    }
+                      , n = {
+                        ERROR_INVALID_STATUS_CODE: "ERROR_INVALID_STATUS_CODE",
+                        ERROR_API_ERROR: "ERROR_API_ERROR",
+                        ERROR_TIMEOUT: "ERROR_TIMEOUT",
+                        ERROR_CLIENT_ERROR: "ERROR_CLIENT_ERROR"
+                    };
+                    var o = _(9631);
+                    function R(t, _) {
+                        let a = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : null;
+                        const n = function(e, t, _) {
+                            const a = new Date;
+                            return {
+                                eventType: r.FORWARDER,
+                                domain: e,
+                                url: window.location.href,
+                                createdAt: a.toISOString(),
+                                forwardTo: t,
+                                apiCallDuration: a - _
+                            }
+                        }(t.domainName, _, t.requestedAt);
+                        null !== a && (n.eventType = r.ERROR,
+                        n.errorCode = a,
+                        n.forwarderApiStatus = t.xhr.status),
+                        (0,
+                        o.U)(e.Settings.EVENT_PUBLISH_API, n)
+                    }
+                    const {ForwarderLanderToUrl: i, FORWARDER_LANDER_API: A} = e.Settings;
+                    function d(e, t) {
+                        const _ = window.location.search ? window.location.search.replace(/^\?/, "") : "";
+                        return i[e].replace(/{DOMAIN}/g, t).replace(/{QUERY}/, _)
+                    }
+                    function E(e) {
+                        try {
+                            if (200 !== e.xhr.status) {
+                                if (404 === e.xhr.status)
+                                    return R(e, t.TDFS_AFTERNIC, n.ERROR_INVALID_STATUS_CODE),
+                                    void window.location.replace(d(t.TDFS_AFTERNIC, e.domainName));
+                                s(e, n.ERROR_INVALID_STATUS_CODE)
+                            } else {
+                                const a = e.xhr.response.landingPage;
+                                if (a in i)
+                                    R(e, a),
+                                    window.location.replace(d(a, e.domainName));
+                                else {
+                                    if (a !== t.PARKING)
+                                        throw new Error("not expected lander:" + a);
+                                    R(e, a),
+                                    function() {
+                                        window.LANDER_SYSTEM = "CP";
+                                        const e = document.createElement("script");
+                                        e.setAttribute("type", "text/javascript"),
+                                        e.setAttribute("src", "https://www.google.com/adsense/domains/caf.js?abp=1"),
+                                        e.onload = e.onerror = function() {
+                                            Promise.all([_.e(207), _.e(763)]).then(_.bind(_, 8226)).then((e => {
+                                                e.default()
+                                            }
+                                            ))
+                                        }
+                                        ,
+                                        document.head.appendChild(e)
+                                    }()
+                                }
+                            }
+                        } catch (t) {
+                            s(e, n.ERROR_CLIENT_ERROR)
+                        }
+                    }
+                    function s(e, _) {
+                        R(e, t.TDFS_AFTERNIC, _),
+                        window.location.replace(d(t.TDFS_AFTERNIC, e.domainName))
+                    }
+                    function c() {
+                        const e = new URLSearchParams(window.location.search).get(a.DOMAIN);
+                        return null != e && "" !== e ? e : window.location.hostname
+                    }
+                    !function() {
+                        const e = new XMLHttpRequest
+                          , t = {
+                            domainName: c(),
+                            xhr: e,
+                            requestedAt: new Date
+                        }
+                          , _ = "".concat(A, "/v1/aftermarket/landers/").concat(t.domainName);
+                        e.timeout = 2e3,
+                        e.responseType = "json",
+                        e.open("GET", _),
+                        e.onload = () => {
+                            E(t)
+                        }
+                        ,
+                        e.onerror = () => {
+                            s(t, n.ERROR_API_ERROR)
+                        }
+                        ,
+                        e.ontimeout = () => {
+                            s(t, n.ERROR_TIMEOUT)
+                        }
+                        ,
+                        e.send()
+                    }()
+                }
+                )()
+            }
+            )()
+        </script>
+    </head>
+    <body>
+        <div id="root"></div>
+    </body>
+</html>
