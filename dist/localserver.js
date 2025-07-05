@@ -4,16 +4,6 @@
 // @version      ALFA
 // ==/UserScript==
 
-require('dotenv').config();
-const express = require("express");
-const http = require("http");
-const WebSocket = require("ws");
-
-const app = express();
-const server = http.createServer(app);
-const wss = new WebSocket.Server({ const socket = new WebSocket("wss://moomoo-dsq4.onrender.com")});
-
-wss.on("connection", socket => {
   let player;
 let server;
 
@@ -4155,9 +4145,3 @@ function setupServer() {
     addRiverStone(15)
     addAnimal()
 }
-});
-
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log("Serveur lancé sur http://localhost:3000");
-});
