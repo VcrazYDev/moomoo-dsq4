@@ -1,0 +1,21 @@
+# 📦 Node.js
+node_modules/
+.env
+npm-debug.log
+yarn-error.log
+
+# 🧱 Dossier de build temporaire (si utilisé)
+dist/
+
+# ✍️ Fichiers système
+.DS_Store
+Thumbs.db
+
+# 💻 Systèmes d'exploitation
+.idea/
+.vscode/
+*.swp
+
+# 🚫 Cache divers
+.cache/
+*.log
