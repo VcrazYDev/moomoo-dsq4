@@ -4,7 +4,16 @@
 // @version      ALFA
 // ==/UserScript==
 
-let player;
+const express = require("express");
+const http = require("http");
+const WebSocket = require("ws");
+
+const app = express();
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ const socket = new WebSocket("wss://moomoo-dsq4.onrender.com")});
+
+wss.on("connection", socket => {
+  let player;
 let server;
 
 let gameObjects = [];
@@ -4145,3 +4154,4 @@ function setupServer() {
     addRiverStone(15)
     addAnimal()
 }
+});
